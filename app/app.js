@@ -34,6 +34,14 @@ const MEN = [
   { id:'m5', name:'Ken',     age:35, img:'img/m5.jpg', best:105, ave:112, plan:'STANDARD', rounds:12, rating:4.5, rc:6,  hist:'3年', area:['東京','千葉'], dates:['7/15','7/22'], meet:'駅集合', drink:'少し飲む', style:'エンジョイ', bio:'仕事の合間にコツコツ練習中です。' },
   { id:'m6', name:'BUMA',    age:48, img:'img/m6.jpg', best:79,  ave:94,  plan:'PREMIUM',  rounds:80, rating:4.9, rc:33, hist:'15年', area:['千葉','茨城','栃木'], dates:['7/10','7/17','7/24'], meet:'車送迎OK', drink:'飲む', style:'真剣勝負も歓迎', bio:'ベスト79。バーディ合戦しましょう。' },
 ];
+/* extra photos per profile (portrait + play/course shots) */
+const PHOTOS = {
+  w1:['c3','c4'], w2:['c5','c1'], w3:['c6','c7'], w4:['c2'], w5:['c8','c1'],
+  w6:['c4','c6'], w7:['c5'], w8:['c2'], w9:['c7','c3'], w10:['c8'],
+  m1:['c9','c13'], m2:['c10'], m3:['c11','c13'], m4:['c12'], m5:['c10'], m6:['c11','c9'],
+};
+const photosOf = u => [u.img, ...(PHOTOS[u.id]||[]).map(p=>`img/${p}.jpg`)];
+
 const COMPES = [
   { id:'c1', title:'PREGO OPEN 平日コンペ', course:'大多喜城ゴルフ倶楽部', pref:'千葉', date:'7/19（日）', fmt:'2:2 ペアラウンド', fee:10000, left:2, avs:['img/w2.jpg','img/m2.jpg','img/w5.jpg','img/m4.jpg'], note:'昼食付き・初参加歓迎・表彰あり' },
   { id:'c2', title:'サンセットハーフコンペ', course:'市原京急カントリークラブ', pref:'千葉', date:'7/26（日）', fmt:'3:3 グループ', fee:8000, left:4, avs:['img/w6.jpg','img/m3.jpg','img/w9.jpg'], note:'午後スルー・ハーフ9H・お茶会つき' },
@@ -162,8 +170,12 @@ V.login = () => `
     </g>
   </svg>
   <div class="brandmark">
-    <div class="logo">PreGo</div>
+    <div class="morph">
+      <div class="premium">PREMIUM&nbsp;GOLF</div>
+      <div class="logo">PreGo</div>
+    </div>
     <div class="under"></div>
+    <div class="pg-cap">PREMIUM GOLF</div>
     <div class="copy">都合の合うゴルフ仲間が、見つかる。</div>
   </div>
   <div class="proof"><span class="chip">${I.shield} 本人確認制</span><span class="chip">実名非公開</span></div>
@@ -247,10 +259,10 @@ function suNext(){
 V.home = () => {
   const list = pool();
   const isM = S.role === 'm';
-  const cards = list.map(u => {
+  const cards = list.map((u, ci) => {
     const liked = S.likes[u.id];
     return `
-    <div class="pcard">
+    <div class="pcard" style="--i:${ci}">
       <div class="ph" onclick="go('#/profile/${u.id}')">
         <img src="${u.img}" alt="">
         ${u.reply!==false?'<span class="chip brass rep" style="font-size:9px">返信率↑</span>':''}
@@ -395,6 +407,7 @@ V.miss = () => {
 V.profile = id => {
   const u = find(id); if(!u) return V.home();
   const isWoman = WOMEN.includes(u);
+  const pics = photosOf(u);
   const myDates = me().dates || ['7/14','7/17','7/26','7/30'];
   const dchips = u.dates.map(d => `
     <div class="dchip ${myDates.includes(d)?'hot':''}"><div class="d">${d}</div><div class="w">${TEE_DAYS.find(x=>x.d===d)?.w||''}</div></div>`).join('');
@@ -402,7 +415,13 @@ V.profile = id => {
   return `
   <div class="page" style="padding-bottom:0">
     <div class="prof-hero">
-      <img src="${u.img}">
+      <div class="hero-track" onscroll="heroScrolled(this)">
+        ${pics.map((p,i)=>`<div class="hero-slide"><img src="${p}" class="${i===0?'kb':''}" alt=""></div>`).join('')}
+      </div>
+      <div class="hero-shade"></div>
+      ${pics.length>1?`
+      <div class="pcount" id="pcount">1 / ${pics.length}</div>
+      <div class="hero-dots" id="hero-dots">${pics.map((_,i)=>`<i class="${i===0?'on':''}"></i>`).join('')}</div>`:''}
       <div class="topbar">
         <button class="cbtn" onclick="history.back()">${I.back}</button>
         <button class="cbtn" onclick="toggleLike('${u.id}')" style="${S.likes[u.id]?'color:#FF7A93':''}">${I.heart}</button>
@@ -766,7 +785,7 @@ V.points = () => {
     <div class="page">
       <div class="balance">
         <div class="k">CURRENT BALANCE</div>
-        <div class="v">${S.coins.toLocaleString()}<small>コイン</small></div>
+        <div class="v"><span data-count="${S.coins}">0</span><small>コイン</small></div>
         <div class="sub">1コイン＝1円で換金・月末締め翌月末払い・振込手数料 ¥500</div>
       </div>
       <div class="wrap" style="margin-top:14px;display:flex;gap:10px">
@@ -784,7 +803,7 @@ V.points = () => {
   <div class="page">
     <div class="balance">
       <div class="k">CURRENT BALANCE</div>
-      <div class="v">${S.points.toLocaleString()}<small>pt</small></div>
+      <div class="v"><span data-count="${S.points}">0</span><small>pt</small></div>
       <div class="sub">1pt＝¥1としてオファー料金に利用できます</div>
     </div>
     <div class="wrap sec">
@@ -835,6 +854,24 @@ V.roundlog = () => {
   </div>
   ${tabbar('feed')}${demoPill()}`;
 };
+function heroScrolled(el){
+  const i = Math.round(el.scrollLeft / el.clientWidth);
+  const dots = document.querySelectorAll('#hero-dots i');
+  dots.forEach((d,k)=>d.classList.toggle('on', k===i));
+  const pc = document.getElementById('pcount');
+  if(pc) pc.textContent = `${i+1} / ${dots.length}`;
+}
+function countUp(){
+  document.querySelectorAll('[data-count]').forEach(el=>{
+    const t = +el.dataset.count; const start = performance.now(); const dur = 750;
+    const step = now=>{
+      const p = Math.min(1,(now-start)/dur);
+      el.textContent = Math.round(t*(1-Math.pow(1-p,3))).toLocaleString();
+      if(p<1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  });
+}
 function frameTier(s){ return s<80?'BLACK':s<90?'GOLD':s<100?'SILVER':s<110?'BRONZE':'WHITE'; }
 function drawFrame(){
   const cv = document.getElementById('frame-cv'); if(!cv) return;
@@ -966,6 +1003,7 @@ function render(){
   };
   $app.innerHTML = (map[route] || V.login)();
   window.scrollTo(0,0);
+  countUp();
   if(route==='roundlog'){ document.fonts ? document.fonts.ready.then(drawFrame) : drawFrame(); setTimeout(drawFrame,300); }
 }
 window.addEventListener('hashchange', render);
