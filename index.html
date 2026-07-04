@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>PreGo UIリニューアル提案</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   PreGo Design System — Proposal
+   fairway green × ivory × brass
+   ============================================================ */
+:root{
+  --fairway:#0C4633;        /* primary */
+  --fairway-deep:#082E21;   /* presentation bg / dark surface */
+  --turf:#1B7A4E;           /* secondary green */
+  --turf-soft:#E4F0E7;      /* green tint surface */
+  --ivory:#FAF8F2;          /* app bg */
+  --paper:#FFFFFF;          /* card */
+  --ink:#20281F;            /* text */
+  --ink-soft:#6B7568;       /* sub text */
+  --brass:#B08A3C;          /* accent / rating / premium */
+  --brass-soft:#F4EBD8;
+  --line:#E6E2D6;
+  --danger:#B4543A;
+  --radius:14px;
+  --font-ui:'Zen Kaku Gothic New',-apple-system,sans-serif;
+  --font-brand:'Marcellus',serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font-ui);
+  background:var(--fairway-deep);
+  color:var(--ivory);
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%}
+
+/* ---------- presentation layout ---------- */
+.wrap{max-width:1280px;margin:0 auto;padding:0 32px}
+
+/* course contour backdrop */
+.contour{
+  position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.35;
+}
+.contour svg{width:100%;height:100%}
+
+main{position:relative;z-index:1}
+
+/* ---------- hero ---------- */
+.hero{padding:96px 0 72px;border-bottom:1px solid rgba(250,248,242,.12)}
+.eyebrow{
+  font-family:var(--font-brand);
+  letter-spacing:.42em;
+  font-size:13px;
+  color:var(--brass);
+  text-transform:uppercase;
+  margin-bottom:28px;
+}
+.hero h1{
+  font-size:clamp(34px,4.6vw,58px);
+  font-weight:900;
+  line-height:1.32;
+  letter-spacing:.02em;
+}
+.hero h1 em{
+  font-style:normal;
+  color:transparent;
+  background:linear-gradient(120deg,#D9B96A,#B08A3C);
+  -webkit-background-clip:text;background-clip:text;
+}
+.hero .thesis{
+  margin-top:30px;max-width:720px;
+  font-size:16px;color:rgba(250,248,242,.78);
+}
+.hero .meta{
+  margin-top:44px;display:flex;gap:28px;flex-wrap:wrap;
+  font-size:12.5px;letter-spacing:.08em;color:rgba(250,248,242,.55);
+}
+.hero .meta span b{color:var(--ivory);font-weight:700;margin-left:8px}
+
+/* ---------- principles ---------- */
+.principles{padding:72px 0;border-bottom:1px solid rgba(250,248,242,.12)}
+.sec-label{
+  display:flex;align-items:baseline;gap:18px;margin-bottom:40px;
+}
+.sec-label .no{
+  font-family:var(--font-brand);font-size:15px;color:var(--brass);letter-spacing:.3em;
+}
+.sec-label h2{font-size:26px;font-weight:900;letter-spacing:.04em}
+.p-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.p-card{
+  background:rgba(250,248,242,.05);
+  border:1px solid rgba(250,248,242,.12);
+  border-radius:18px;padding:30px 28px;
+}
+.p-card .flag{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--fairway);
+  border:1px solid rgba(217,185,106,.5);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:18px;color:#D9B96A;font-family:var(--font-brand);font-size:15px;
+}
+.p-card h3{font-size:17px;font-weight:700;margin-bottom:10px;letter-spacing:.03em}
+.p-card p{font-size:13.5px;color:rgba(250,248,242,.68)}
+.p-card p strong{color:#D9B96A;font-weight:700}
+
+/* ---------- tokens ---------- */
+.tokens{padding:72px 0;border-bottom:1px solid rgba(250,248,242,.12)}
+.token-flex{display:grid;grid-template-columns:1.2fr 1fr;gap:48px}
+@media(max-width:900px){.token-flex{grid-template-columns:1fr}}
+.swatches{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+@media(max-width:600px){.swatches{grid-template-columns:repeat(2,1fr)}}
+.sw{border-radius:14px;overflow:hidden;border:1px solid rgba(250,248,242,.14)}
+.sw .chip{height:76px}
+.sw .nm{background:rgba(250,248,242,.06);padding:10px 12px;font-size:11.5px;line-height:1.5}
+.sw .nm b{display:block;font-size:12.5px;letter-spacing:.04em}
+.sw .nm code{color:rgba(250,248,242,.55);font-family:var(--font-brand);letter-spacing:.06em}
+.type-spec{display:flex;flex-direction:column;gap:22px}
+.ts{border-left:2px solid var(--brass);padding-left:20px}
+.ts .role{font-size:11px;letter-spacing:.22em;color:var(--brass);margin-bottom:6px}
+.ts .sample-brand{font-family:var(--font-brand);font-size:34px;letter-spacing:.12em;color:var(--ivory)}
+.ts .sample-ui{font-size:22px;font-weight:700}
+.ts .sample-body{font-size:14px;color:rgba(250,248,242,.75)}
+.ts .note{font-size:12px;color:rgba(250,248,242,.5);margin-top:4px}
+
+/* ---------- screens section ---------- */
+.screens{padding:72px 0 40px}
+.screen-row{
+  display:grid;grid-template-columns:340px 1fr;gap:56px;align-items:start;
+  padding:56px 0;border-bottom:1px solid rgba(250,248,242,.1);
+}
+.screen-row:last-child{border-bottom:none}
+@media(max-width:900px){.screen-row{grid-template-columns:1fr}}
+.note-col{position:sticky;top:40px}
+.note-col .tag{
+  display:inline-block;font-size:11px;letter-spacing:.2em;
+  border:1px solid var(--brass);color:#D9B96A;
+  padding:5px 14px;border-radius:99px;margin-bottom:18px;
+}
+.note-col h3{font-size:23px;font-weight:900;margin-bottom:16px;letter-spacing:.03em}
+.note-col p{font-size:14px;color:rgba(250,248,242,.72);margin-bottom:14px}
+.note-col ul{list-style:none;margin-top:6px}
+.note-col li{
+  font-size:13px;color:rgba(250,248,242,.72);
+  padding:9px 0 9px 24px;position:relative;
+  border-bottom:1px dashed rgba(250,248,242,.14);
+}
+.note-col li::before{
+  content:"";position:absolute;left:2px;top:16px;
+  width:7px;height:7px;border-radius:50%;background:var(--brass);
+}
+.note-col li b{color:var(--ivory)}
+
+/* ---------- phone ---------- */
+.phones{display:flex;gap:36px;flex-wrap:wrap;justify-content:center}
+.phone{
+  width:340px;flex:none;
+  background:#10130F;
+  border-radius:44px;
+  padding:12px;
+  box-shadow:0 30px 80px rgba(0,0,0,.55),0 2px 0 rgba(255,255,255,.08) inset;
+}
+.phone .screen{
+  background:var(--ivory);
+  border-radius:34px;
+  overflow:hidden;
+  height:660px;
+  position:relative;
+  display:flex;flex-direction:column;
+  color:var(--ink);
+}
+.phone .cap{
+  text-align:center;font-size:12px;letter-spacing:.12em;
+  color:rgba(250,248,242,.55);padding:14px 0 2px;
+}
+
+/* ---------- shared app ui ---------- */
+.scr{flex:1;overflow:hidden;display:flex;flex-direction:column;font-size:14px}
+.app-head{
+  padding:18px 20px 12px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--ivory);
+}
+.app-head .ttl{font-weight:900;font-size:17px;letter-spacing:.05em}
+.app-head .bell{width:22px;height:22px;color:var(--ink-soft)}
+.tabbar{
+  margin-top:auto;
+  display:flex;justify-content:space-around;align-items:center;
+  padding:10px 8px 16px;
+  background:var(--paper);
+  border-top:1px solid var(--line);
+}
+.tb{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  font-size:9.5px;color:var(--ink-soft);letter-spacing:.04em;min-width:52px;
+}
+.tb svg{width:21px;height:21px}
+.tb.on{color:var(--fairway);font-weight:700}
+.tb.on svg{color:var(--fairway)}
+.btn-primary{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--fairway);color:#fff;
+  border-radius:12px;padding:14px;
+  font-weight:700;font-size:14.5px;letter-spacing:.06em;
+  box-shadow:0 6px 18px rgba(12,70,51,.35);
+}
+.btn-ghost{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  background:transparent;color:var(--fairway);
+  border:1.5px solid var(--fairway);
+  border-radius:12px;padding:13px;
+  font-weight:700;font-size:14px;letter-spacing:.06em;
+}
+.chip{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:11px;font-weight:700;letter-spacing:.03em;
+  background:var(--turf-soft);color:var(--fairway);
+  border-radius:99px;padding:5px 11px;
+}
+.chip.brass{background:var(--brass-soft);color:#8A6B25}
+
+/* avatar circles (css portraits) */
+.av{width:44px;height:44px;border-radius:50%;flex:none;position:relative;overflow:hidden}
+.av::after{
+  content:"";position:absolute;inset:0;border-radius:50%;
+  border:1.5px solid rgba(12,70,51,.18);
+}
+.av.f1{background:radial-gradient(circle at 35% 30%,#F5D9C4 0 38%,#B98A6A 39% 55%,#4C3A2E 56% 100%)}
+.av.f2{background:radial-gradient(circle at 60% 35%,#F2CEB8 0 36%,#8C6D51 37% 58%,#2E2620 59% 100%)}
+.av.f3{background:radial-gradient(circle at 45% 40%,#F7DCC6 0 40%,#C99A72 41% 60%,#5C4632 61% 100%)}
+.av.m1{background:radial-gradient(circle at 50% 35%,#EBC3A2 0 40%,#3E5C48 41% 100%)}
+.av.big{width:88px;height:88px}
+
+/* ============ SCREEN 1 : login ============ */
+.login{
+  background:
+    linear-gradient(180deg,rgba(8,46,33,.25) 0%,rgba(8,46,33,.78) 62%,#082E21 100%),
+    radial-gradient(140% 90% at 80% -10%,#2E8B5E 0%,#14603F 45%,#0A3A28 100%);
+  color:var(--ivory);
+  justify-content:flex-end;
+  padding:0 26px 34px;
+  position:relative;
+}
+.login .fairway-lines{position:absolute;inset:0;opacity:.22}
+.login .brandmark{
+  position:relative;text-align:center;margin-bottom:auto;padding-top:120px;
+}
+.login .brandmark .logo{
+  font-family:var(--font-brand);font-size:44px;letter-spacing:.2em;color:#fff;
+}
+.login .brandmark .under{
+  width:44px;height:2px;background:#D9B96A;margin:14px auto 16px;
+}
+.login .brandmark .copy{
+  font-size:13.5px;letter-spacing:.14em;color:rgba(250,248,242,.85);
+}
+.login .actions{position:relative;display:flex;flex-direction:column;gap:12px}
+.btn-line{
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  background:#06C755;color:#fff;border-radius:12px;padding:15px;
+  font-weight:700;font-size:14.5px;letter-spacing:.04em;
+  box-shadow:0 8px 22px rgba(0,0,0,.28);
+}
+.btn-mail{
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  background:rgba(250,248,242,.12);color:#fff;
+  border:1px solid rgba(250,248,242,.4);
+  border-radius:12px;padding:14px;font-weight:700;font-size:14px;letter-spacing:.04em;
+  backdrop-filter:blur(4px);
+}
+.login .sub-links{
+  display:flex;justify-content:center;gap:26px;margin-top:16px;
+  font-size:11.5px;color:rgba(250,248,242,.62);letter-spacing:.06em;
+}
+.login .proof{
+  position:relative;display:flex;justify-content:center;gap:8px;margin-bottom:18px;
+}
+.login .proof .chip{
+  background:rgba(250,248,242,.14);color:#fff;backdrop-filter:blur(4px);
+  border:1px solid rgba(250,248,242,.22);
+}
+
+/* ============ SCREEN 2 : tee sheet ============ */
+.tee-head{
+  background:var(--fairway);color:var(--ivory);
+  padding:20px 20px 0;
+}
+.tee-head .row1{display:flex;justify-content:space-between;align-items:center}
+.tee-head .ttl{font-weight:900;font-size:17px;letter-spacing:.06em}
+.tee-head .month{font-family:var(--font-brand);font-size:12px;letter-spacing:.3em;color:#D9B96A}
+.tee-head .strip{
+  display:flex;gap:8px;margin:16px -20px 0;padding:0 20px 16px;overflow:hidden;
+}
+.day{
+  flex:none;width:52px;text-align:center;border-radius:12px;padding:9px 0 7px;
+  background:rgba(250,248,242,.08);
+}
+.day .dw{font-size:9.5px;letter-spacing:.1em;color:rgba(250,248,242,.6)}
+.day .dn{font-family:var(--font-brand);font-size:19px;color:var(--ivory);line-height:1.25}
+.day .dot{width:5px;height:5px;border-radius:50%;background:#D9B96A;margin:3px auto 0}
+.day.sel{background:var(--ivory)}
+.day.sel .dw{color:var(--fairway);font-weight:700}
+.day.sel .dn{color:var(--fairway)}
+.day.sel .dot{background:var(--brass)}
+.tee-body{flex:1;overflow:hidden;padding:16px 16px 0;display:flex;flex-direction:column;gap:12px}
+.tee-date-lbl{
+  display:flex;align-items:baseline;gap:10px;margin:2px 4px 0;
+}
+.tee-date-lbl .d{font-family:var(--font-brand);font-size:20px;color:var(--fairway)}
+.tee-date-lbl .t{font-size:11.5px;color:var(--ink-soft);letter-spacing:.06em}
+.tee-card{
+  background:var(--paper);border:1px solid var(--line);border-radius:16px;
+  padding:14px 16px;box-shadow:0 3px 14px rgba(32,40,31,.05);
+}
+.tee-card .top{display:flex;align-items:center;gap:12px}
+.tee-card .info{flex:1;min-width:0}
+.tee-card .nm{font-weight:700;font-size:14.5px;display:flex;align-items:center;gap:7px;white-space:nowrap}
+.tee-card .nm .age{font-weight:500;color:var(--ink-soft);font-size:12px}
+.tee-card .nm .chip{font-size:9.5px;padding:3px 8px;white-space:nowrap}
+.tee-card .stats{display:flex;gap:10px;font-size:11px;color:var(--ink-soft);margin-top:3px;white-space:nowrap}
+.tee-card .stats b{color:var(--ink);font-family:var(--font-brand);letter-spacing:.04em}
+.tee-card .cta{color:var(--fairway)}
+.tee-card .cta svg{width:20px;height:20px}
+.compe{
+  background:linear-gradient(135deg,#0C4633,#17603F);
+  color:var(--ivory);border-radius:16px;padding:16px;
+  position:relative;overflow:hidden;
+}
+.compe::before{
+  content:"";position:absolute;right:-28px;top:-28px;width:110px;height:110px;
+  border:1.5px solid rgba(217,185,106,.35);border-radius:50%;
+}
+.compe::after{
+  content:"";position:absolute;right:2px;top:2px;width:110px;height:110px;
+  border:1px solid rgba(217,185,106,.2);border-radius:50%;
+}
+.compe .lbl{
+  font-family:var(--font-brand);font-size:10.5px;letter-spacing:.32em;color:#D9B96A;margin-bottom:7px;
+}
+.compe h4{font-size:15.5px;font-weight:900;letter-spacing:.03em;margin-bottom:5px}
+.compe .meta{font-size:11.5px;color:rgba(250,248,242,.78)}
+.compe .foot{
+  display:flex;justify-content:space-between;align-items:center;margin-top:12px;
+}
+.compe .avs{display:flex}
+.compe .avs .av{width:28px;height:28px;border:2px solid #0C4633;margin-left:-8px}
+.compe .avs .av:first-child{margin-left:0}
+.compe .avs .more{
+  width:28px;height:28px;border-radius:50%;margin-left:-8px;
+  background:rgba(250,248,242,.18);border:2px solid #0C4633;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:700;color:#fff;
+}
+.compe .join{
+  background:#D9B96A;color:#082E21;font-weight:900;font-size:12px;
+  padding:8px 16px;border-radius:99px;letter-spacing:.06em;
+}
+
+/* ============ SCREEN 3 : profile ============ */
+.prof-photo{
+  height:236px;flex:none;position:relative;
+  background:
+    linear-gradient(180deg,rgba(8,46,33,0) 40%,rgba(8,46,33,.72) 100%),
+    radial-gradient(120% 100% at 30% 0%,#8FBF9F 0%,#4E8F68 55%,#2A6B48 100%);
+}
+.prof-photo .back{
+  position:absolute;top:14px;left:14px;width:30px;height:30px;border-radius:50%;
+  background:rgba(8,46,33,.4);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;color:#fff;
+}
+.prof-photo .silhouette{
+  position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:150px;height:170px;
+  background:radial-gradient(circle at 50% 22%,#F2CEB8 0 17%,transparent 18%),
+             linear-gradient(180deg,transparent 26%,#FFFFFF 27% 60%,#E8E4D8 61% 100%);
+  border-radius:40px 40px 0 0;opacity:.92;
+}
+.prof-photo .id{
+  position:absolute;left:20px;bottom:14px;color:#fff;
+}
+.prof-photo .id .nm{font-size:21px;font-weight:900;display:flex;align-items:center;gap:8px}
+.prof-photo .id .nm .age{font-size:14px;font-weight:500;opacity:.85}
+.prof-photo .id .vf{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:10px;font-weight:700;letter-spacing:.05em;
+  background:rgba(217,185,106,.92);color:#082E21;
+  padding:3px 9px;border-radius:99px;margin-top:5px;
+}
+.prof-body{flex:1;overflow:hidden;padding:16px 18px 0;display:flex;flex-direction:column;gap:13px}
+.scorecard{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  background:var(--paper);border:1px solid var(--line);border-radius:14px;
+  overflow:hidden;text-align:center;
+}
+.scorecard .cell{padding:12px 4px 10px;border-right:1px dashed var(--line)}
+.scorecard .cell:last-child{border-right:none}
+.scorecard .v{font-family:var(--font-brand);font-size:21px;color:var(--fairway);line-height:1.2}
+.scorecard .k{font-size:9.5px;letter-spacing:.14em;color:var(--ink-soft);margin-top:2px}
+.prof-sec .h{
+  font-size:10.5px;letter-spacing:.2em;color:var(--brass);font-weight:700;margin-bottom:7px;
+}
+.prof-sec .chips{display:flex;flex-wrap:wrap;gap:6px}
+.prof-sec .txt{font-size:12.5px;color:var(--ink);line-height:1.75}
+.date-chips{display:flex;gap:6px;flex-wrap:wrap}
+.dchip{
+  border:1px solid var(--line);background:var(--paper);
+  border-radius:10px;padding:6px 10px;text-align:center;
+}
+.dchip .d{font-family:var(--font-brand);font-size:14px;color:var(--fairway);line-height:1.2}
+.dchip .w{font-size:8.5px;color:var(--ink-soft);letter-spacing:.08em}
+.dchip.hot{border-color:var(--brass);background:var(--brass-soft)}
+.review-line{
+  display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-soft);
+}
+.review-line .stars{color:var(--brass);letter-spacing:2px;font-size:13px}
+.review-line b{color:var(--ink);font-family:var(--font-brand);font-size:14px}
+.prof-cta{
+  padding:12px 18px 14px;display:flex;gap:10px;align-items:center;
+  background:linear-gradient(180deg,rgba(250,248,242,0),var(--ivory) 30%);
+}
+.prof-cta .btn-primary{flex:1}
+.prof-cta .msg{
+  width:50px;height:50px;flex:none;border-radius:12px;
+  border:1.5px solid var(--fairway);color:var(--fairway);
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* ============ SCREEN 4 : round log ============ */
+.rl-head{
+  padding:18px 20px 14px;text-align:center;
+}
+.rl-head .lbl{font-family:var(--font-brand);font-size:10.5px;letter-spacing:.32em;color:var(--brass)}
+.rl-head h4{font-size:17px;font-weight:900;margin-top:4px;letter-spacing:.04em}
+.share-card{
+  margin:0 18px;border-radius:18px;overflow:hidden;flex:none;
+  background:linear-gradient(160deg,#0C4633 0%,#14603F 70%,#1B7A4E 100%);
+  color:var(--ivory);position:relative;
+  box-shadow:0 14px 34px rgba(12,70,51,.35);
+}
+.share-card .inner{padding:20px 20px 16px;position:relative}
+.share-card .course{
+  font-size:11px;letter-spacing:.14em;color:rgba(250,248,242,.75);
+}
+.share-card .date{
+  font-family:var(--font-brand);font-size:11px;letter-spacing:.22em;color:#D9B96A;margin-top:2px;
+}
+.share-card .score-row{
+  display:flex;align-items:baseline;gap:14px;margin:14px 0 4px;
+}
+.share-card .score{
+  font-family:var(--font-brand);font-size:56px;line-height:1;color:#fff;
+}
+.share-card .score-k{font-size:11px;letter-spacing:.2em;color:rgba(250,248,242,.65)}
+.share-card .halves{display:flex;gap:16px;font-size:11.5px;color:rgba(250,248,242,.8)}
+.share-card .halves b{font-family:var(--font-brand);font-size:14px;color:#fff;margin-left:5px}
+.share-card .members{
+  display:flex;align-items:center;gap:9px;margin-top:16px;padding-top:13px;padding-right:64px;
+  border-top:1px dashed rgba(250,248,242,.25);
+}
+.share-card .members .av{width:30px;height:30px;border:1.5px solid rgba(217,185,106,.6)}
+.share-card .members .t{font-size:11px;color:rgba(250,248,242,.8)}
+.share-card .wm{
+  position:absolute;right:16px;bottom:12px;
+  font-family:var(--font-brand);font-size:12px;letter-spacing:.24em;color:rgba(217,185,106,.75);
+}
+.rl-body{flex:1;overflow:hidden;padding:16px 18px 0;display:flex;flex-direction:column;gap:13px}
+.rate-box{
+  background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:14px 16px;
+}
+.rate-box .who{display:flex;align-items:center;gap:11px}
+.rate-box .who .nm{font-weight:700;font-size:13.5px}
+.rate-box .who .sub{font-size:10.5px;color:var(--ink-soft)}
+.rate-box .stars-big{
+  text-align:center;font-size:26px;letter-spacing:10px;color:var(--brass);margin-top:10px;
+}
+.rate-box .hint{text-align:center;font-size:10.5px;color:var(--ink-soft);margin-top:2px}
+.rl-actions{padding:0 18px 8px;display:flex;flex-direction:column;gap:9px}
+.btn-share{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--brass);color:#fff;border-radius:12px;padding:13px;
+  font-weight:700;font-size:13.5px;letter-spacing:.05em;
+}
+
+/* ============ SCREEN 5 : near-miss match ============ */
+.miss-badges{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap}
+.mb{font-size:10px;font-weight:700;border-radius:6px;padding:3px 8px;letter-spacing:.04em;white-space:nowrap}
+.mb.ok{background:var(--turf-soft);color:var(--fairway)}
+.mb.ng{background:#F6E8E2;color:var(--danger)}
+.bridge{
+  margin-top:11px;background:var(--ivory);border:1px dashed #D8CFB8;
+  border-radius:10px;padding:10px 12px;font-size:11.5px;line-height:1.65;color:var(--ink);
+}
+.bridge b{color:var(--fairway)}
+.bridge .lbl{font-size:9.5px;letter-spacing:.18em;color:var(--brass);font-weight:700;display:block;margin-bottom:3px}
+.mini-btn{
+  display:inline-flex;align-items:center;gap:6px;background:var(--fairway);color:#fff;
+  border-radius:8px;padding:8px 14px;font-size:11.5px;font-weight:700;letter-spacing:.04em;margin-top:10px;
+}
+.miss-head{padding:18px 20px 10px}
+.miss-head .ttl{font-weight:900;font-size:17px;letter-spacing:.05em}
+.miss-head .sub{font-size:11px;color:var(--ink-soft);margin-top:3px}
+
+/* ---------- photo frames ---------- */
+.frames{padding:72px 0;border-bottom:1px solid rgba(250,248,242,.12)}
+.frame-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px;max-width:900px}
+.pframe{
+  aspect-ratio:1/1;border-radius:20px;overflow:hidden;position:relative;
+  box-shadow:0 18px 44px rgba(0,0,0,.4);
+}
+.pframe .cap2{
+  position:absolute;left:0;right:0;bottom:-30px;text-align:center;
+  font-size:11.5px;letter-spacing:.1em;color:rgba(250,248,242,.55);
+}
+.frame-wrap{padding-bottom:36px}
+/* frame 1: round log */
+.pf-round{background:linear-gradient(160deg,#0C4633 0%,#14603F 62%,#1B7A4E 100%);color:var(--ivory);padding:22px;display:flex;flex-direction:column}
+.pf-round .eyebrow2{font-family:var(--font-brand);font-size:10px;letter-spacing:.34em;color:#D9B96A}
+.pf-round .course2{font-size:13px;font-weight:700;margin-top:6px}
+.pf-round .date2{font-family:var(--font-brand);font-size:10.5px;letter-spacing:.2em;color:rgba(250,248,242,.7);margin-top:2px}
+.pf-round .big{font-family:var(--font-brand);font-size:88px;line-height:1;margin:auto 0;color:#fff}
+.pf-round .big small{font-size:13px;letter-spacing:.18em;color:rgba(250,248,242,.65);display:block;margin-top:4px;font-family:var(--font-ui)}
+.pf-round .foot2{display:flex;justify-content:space-between;align-items:flex-end;border-top:1px dashed rgba(250,248,242,.3);padding-top:12px}
+.pf-round .mem{font-size:11px;color:rgba(250,248,242,.8)}
+.pf-round .wm2{font-family:var(--font-brand);font-size:12px;letter-spacing:.26em;color:#D9B96A}
+/* frame 2: best update */
+.pf-best{background:radial-gradient(120% 120% at 50% 0%,#2A2417 0%,#12100A 55%,#000 100%);color:#F4EBD8;padding:22px;display:flex;flex-direction:column;text-align:center}
+.pf-best .laurel{font-family:var(--font-brand);font-size:10px;letter-spacing:.4em;color:#D9B96A;border:1px solid rgba(217,185,106,.4);border-radius:99px;padding:6px 14px;margin:0 auto}
+.pf-best .big{font-family:var(--font-brand);font-size:96px;line-height:1;margin:auto 0;color:transparent;background:linear-gradient(160deg,#F0D48A,#B08A3C);-webkit-background-clip:text;background-clip:text}
+.pf-best .delta{font-size:12px;font-weight:700;color:#D9B96A;letter-spacing:.1em}
+.pf-best .foot2{font-family:var(--font-brand);font-size:11px;letter-spacing:.26em;color:rgba(244,235,216,.55);border-top:1px dashed rgba(217,185,106,.3);padding-top:12px;margin-top:14px}
+/* frame 3: tier (user's layout refined) */
+.pf-tier{display:flex;background:#0E0E0C}
+.pf-tier .photo{flex:1.15;background:radial-gradient(circle at 50% 30%,#F2CEB8 0 18%,transparent 19%),linear-gradient(180deg,#7FA98C 0%,#4E8F68 45%,#2A6B48 100%);position:relative}
+.pf-tier .photo::after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:72%;height:52%;background:linear-gradient(180deg,#FFFFFF 0 55%,#E8E4D8 56% 100%);border-radius:34px 34px 0 0}
+.pf-tier .panel{flex:1;color:#fff;padding:16px 14px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.pf-tier .score3{font-family:var(--font-brand);font-size:52px;line-height:1;margin-top:8px}
+.pf-tier .k3{font-size:8.5px;letter-spacing:.3em;background:#B4231F;padding:3px 10px;border-radius:3px;font-weight:700;margin-top:8px}
+.pf-tier .ave3{font-size:9.5px;letter-spacing:.14em;color:rgba(255,255,255,.65);margin-top:10px}
+.pf-tier .ave3 b{font-family:var(--font-brand);font-size:13px;color:#fff;margin-left:4px}
+.pf-tier .nm3{font-family:var(--font-brand);font-size:24px;letter-spacing:.12em;margin:auto 0 4px}
+.pf-tier .tierbar{width:100%;background:linear-gradient(120deg,#F0D48A,#B08A3C);color:#12100A;font-weight:900;font-size:10.5px;letter-spacing:.3em;padding:6px 0;border-radius:6px}
+.tiers{display:flex;gap:10px;flex-wrap:wrap;margin-top:34px}
+.tier{display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(250,248,242,.78);border:1px solid rgba(250,248,242,.15);border-radius:99px;padding:6px 14px}
+.tier .sw2{width:13px;height:13px;border-radius:50%;flex:none}
+.tiers-note{font-size:12.5px;color:rgba(250,248,242,.6);margin-top:14px}
+
+/* ---------- impl notes ---------- */
+.impl{padding:72px 0 110px}
+.impl-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:900px){.impl-grid{grid-template-columns:1fr}}
+.impl-card{
+  background:rgba(250,248,242,.05);
+  border:1px solid rgba(250,248,242,.12);
+  border-radius:18px;padding:28px;
+}
+.impl-card h3{font-size:16px;font-weight:700;margin-bottom:12px;color:#D9B96A;letter-spacing:.04em}
+.impl-card p,.impl-card li{font-size:13.5px;color:rgba(250,248,242,.75)}
+.impl-card ol{padding-left:20px;display:flex;flex-direction:column;gap:8px}
+.impl-card code{
+  font-family:ui-monospace,Menlo,monospace;font-size:12px;
+  background:rgba(0,0,0,.35);border-radius:6px;padding:2px 7px;color:#CBE3D2;
+}
+pre{
+  background:rgba(0,0,0,.35);border:1px solid rgba(250,248,242,.1);
+  border-radius:12px;padding:18px 20px;overflow-x:auto;
+  font-family:ui-monospace,Menlo,monospace;font-size:12px;line-height:1.8;color:#CBE3D2;
+  margin-top:14px;
+}
+footer{
+  border-top:1px solid rgba(250,248,242,.12);
+  padding:28px 0;text-align:center;
+  font-size:11.5px;letter-spacing:.14em;color:rgba(250,248,242,.4);
+}
+
+/* ---------- mobile ---------- */
+@media(max-width:480px){
+  .wrap{padding:0 16px}
+  .hero{padding:64px 0 52px}
+  .phone{width:302px;padding:10px}
+  .phone .screen{height:620px}
+  .screen-row{gap:36px;padding:44px 0}
+  .note-col{position:static}
+  .frame-grid{grid-template-columns:1fr;max-width:340px}
+}
+</style>
+</head>
+<body>
+
+<div class="contour" aria-hidden="true">
+<svg viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" stroke="#1B7A4E" stroke-width="1">
+    <path d="M-50,700 C250,620 400,760 700,690 S1150,600 1450,660" opacity=".5"/>
+    <path d="M-50,760 C250,680 420,820 720,750 S1160,660 1450,720" opacity=".4"/>
+    <path d="M-50,820 C250,740 440,880 740,810 S1170,720 1450,780" opacity=".3"/>
+    <path d="M-50,120 C300,180 500,60 800,130 S1200,220 1450,150" opacity=".35"/>
+    <path d="M-50,60 C300,120 520,10 820,80 S1210,170 1450,100" opacity=".25"/>
+    <circle cx="1180" cy="210" r="120" opacity=".25"/>
+    <circle cx="1180" cy="210" r="90" opacity=".2"/>
+    <circle cx="150" cy="560" r="150" opacity=".2"/>
+    <circle cx="150" cy="560" r="110" opacity=".15"/>
+  </g>
+</svg>
+</div>
+
+<main>
+<div class="wrap">
+
+  <!-- ================= HERO ================= -->
+  <header class="hero">
+    <p class="eyebrow">PreGo UI Renewal Proposal</p>
+    <h1>「出会い系の顔」を卒業し、<br><em>クラブハウスの品格</em>をアプリに。</h1>
+    <p class="thesis">
+      現状のUIは機能が揃っているのに、色が4系統（緑・ピンク・青・黄）に割れ、世界観が定まっていません。
+      本提案はブランドを「フェアウェイグリーン × アイボリー × 真鍮」の1系統に統一し、
+      マッチングを増やす3つのUX原則とともに再設計したものです。
+    </p>
+    <div class="meta">
+      <span>提案日<b>2026.07.04</b></span>
+      <span>対象<b>prego-app.golf（Vite + React PWA）</b></span>
+      <span>作成<b>森（株式会社エフオーピーシー）</b></span>
+    </div>
+  </header>
+
+  <!-- ================= PRINCIPLES ================= -->
+  <section class="principles">
+    <div class="sec-label"><span class="no">01</span><h2>デザイン原則 — 見た目の前に、構造を直す</h2></div>
+    <div class="p-grid">
+      <div class="p-card">
+        <div class="flag">1</div>
+        <h3>色は1系統に絞る</h3>
+        <p>主役は<strong>フェアウェイグリーン</strong>、格を出す差し色は<strong>真鍮ゴールド</strong>のみ。ピンク・青・黄のCTA混在を廃止し、「押すべきボタンは常に緑」を全画面で徹底します。</p>
+      </div>
+      <div class="p-card">
+        <div class="flag">2</div>
+        <h3>過疎を見せない</h3>
+        <p>「7/14（火）2人」という<strong>供給の少なさを数字で晒す表示</strong>を廃止。日付起点のティーシート形式と公式コンペ枠で、常に画面が埋まっている状態を設計でつくります。</p>
+      </div>
+      <div class="p-card">
+        <div class="flag">3</div>
+        <h3>ゴルフ情報ファースト</h3>
+        <p>プロフィールの主役を写真の雰囲気から<strong>ベスト・平均・ラウンド回数のスコアカード</strong>へ。出会い系の空気を薄め、女性の登録ハードルと男性の真剣度の両方を改善します。</p>
+      </div>
+      <div class="p-card">
+        <div class="flag">4</div>
+        <h3>マッチの成果を資産に</h3>
+        <p>ラウンド後に<strong>シェアしたくなるスコアカード画像</strong>を自動生成。UGC・紹介が「お願いして書いてもらうもの」ではなく「自慢したくて勝手に出るもの」になる導線です。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TOKENS ================= -->
+  <section class="tokens">
+    <div class="sec-label"><span class="no">02</span><h2>デザイントークン — この5色と2書体だけで作る</h2></div>
+    <div class="token-flex">
+      <div>
+        <div class="swatches">
+          <div class="sw"><div class="chip" style="background:#0C4633"></div><div class="nm"><b>Fairway</b><code>#0C4633</code>主役・CTA</div></div>
+          <div class="sw"><div class="chip" style="background:#1B7A4E"></div><div class="nm"><b>Turf</b><code>#1B7A4E</code>補助グリーン</div></div>
+          <div class="sw"><div class="chip" style="background:#FAF8F2"></div><div class="nm"><b>Ivory</b><code>#FAF8F2</code>背景</div></div>
+          <div class="sw"><div class="chip" style="background:#B08A3C"></div><div class="nm"><b>Brass</b><code>#B08A3C</code>評価・プレミアム</div></div>
+          <div class="sw"><div class="chip" style="background:#20281F"></div><div class="nm"><b>Ink</b><code>#20281F</code>テキスト</div></div>
+        </div>
+      </div>
+      <div class="type-spec">
+        <div class="ts">
+          <div class="role">BRAND / 数字・日付・スコア</div>
+          <div class="sample-brand">PREGO — 36 · 7/14</div>
+          <div class="note">Marcellus。クラブハウスの銘板のような格。スコアと日付を「飾る」書体。</div>
+        </div>
+        <div class="ts">
+          <div class="role">UI / 見出し・ボタン</div>
+          <div class="sample-ui">都合の合う仲間と、いいゴルフを。</div>
+          <div class="note">Zen Kaku Gothic New 700–900。Noto Sansより表情が柔らかく上質。</div>
+        </div>
+        <div class="ts">
+          <div class="role">BODY / 本文</div>
+          <div class="sample-body">プレー希望日を登録しておくと、同じ日に行ける仲間が自動で見つかります。</div>
+          <div class="note">同 400–500。行間1.7で余裕を持たせる。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SCREENS ================= -->
+  <section class="screens">
+    <div class="sec-label"><span class="no">03</span><h2>画面提案 — 4スクリーン</h2></div>
+
+    <!-- ========== ROW 1 : LOGIN ========== -->
+    <div class="screen-row">
+      <div class="note-col">
+        <span class="tag">SCREEN 1 / ログイン</span>
+        <h3>世界観は入口の3秒で決まる</h3>
+        <p>現状は白背景にグレーのボタンで、サービスの「格」が伝わる要素がゼロ。夕暮れのフェアウェイを思わせる深緑のグラデーションに、ロゴと約束をひとつだけ置きます。</p>
+        <ul>
+          <li><b>LINEログインを最上位</b>に固定（現状の主要導線を尊重）</li>
+          <li>信頼チップ（本人確認制・実名非公開）を<b>入口で先に見せる</b></li>
+          <li>フォーム露出をやめ、タップ後に表示（画面の圧を下げる）</li>
+        </ul>
+      </div>
+      <div class="phones">
+        <div class="phone">
+          <div class="screen">
+            <div class="scr login">
+              <svg class="fairway-lines" viewBox="0 0 340 660" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+                <g fill="none" stroke="#D9B96A" stroke-width="1">
+                  <path d="M-20,530 C80,490 160,560 260,520 S380,470 420,500"/>
+                  <path d="M-20,570 C80,530 170,600 270,560 S390,510 420,540" opacity=".6"/>
+                  <circle cx="285" cy="120" r="60" opacity=".5"/>
+                  <circle cx="285" cy="120" r="42" opacity=".35"/>
+                </g>
+              </svg>
+              <div class="brandmark">
+                <div class="logo">PreGo</div>
+                <div class="under"></div>
+                <div class="copy">都合の合うゴルフ仲間が、見つかる。</div>
+              </div>
+              <div class="proof">
+                <span class="chip">✓ 本人確認制</span>
+                <span class="chip">✓ 実名非公開</span>
+              </div>
+              <div class="actions">
+                <div class="btn-line">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 3.9 3.4 7.2 8 7.9.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.6s6-3.6 8.2-6.1C21.4 14 22 12.6 22 11c0-4.4-4.5-8-10-8z"/></svg>
+                  LINEではじめる
+                </div>
+                <div class="btn-mail">メールアドレスではじめる</div>
+                <div class="sub-links"><span>ログイン</span><span>引き継ぎの方はこちら</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="cap">01 — LOGIN</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== ROW 2 : TEE SHEET ========== -->
+    <div class="screen-row">
+      <div class="note-col">
+        <span class="tag">SCREEN 2 / 日程マッチ → ティーシート</span>
+        <h3>「2人」と表示しない。<br>予定から誘う</h3>
+        <p>日程マッチはPreGo最大の独自機能なのに、現状は人数の少なさを正直に数字で見せてしまっています。クラブの予約表（ティーシート）のメタファーに置き換え、公式コンペ枠を常設して画面を埋めます。</p>
+        <ul>
+          <li>日付は<b>横スクロールのカレンダーストリップ</b>で選ぶ</li>
+          <li>人数表示を廃止し、<b>候補カード＋コンペ枠</b>で構成</li>
+          <li><b>公式コンペ（2:2・3:3）</b>が過疎の日の受け皿になる</li>
+          <li>カードにはベスト/平均/エリアの<b>ゴルフ情報を先に</b></li>
+        </ul>
+      </div>
+      <div class="phones">
+        <div class="phone">
+          <div class="screen">
+            <div class="scr">
+              <div class="tee-head">
+                <div class="row1">
+                  <span class="ttl">ティーシート</span>
+                  <span class="month">JULY 2026</span>
+                </div>
+                <div class="strip">
+                  <div class="day"><div class="dw">SUN</div><div class="dn">12</div></div>
+                  <div class="day"><div class="dw">MON</div><div class="dn">13</div></div>
+                  <div class="day sel"><div class="dw">TUE</div><div class="dn">14</div><div class="dot"></div></div>
+                  <div class="day"><div class="dw">WED</div><div class="dn">15</div></div>
+                  <div class="day"><div class="dw">FRI</div><div class="dn">17</div><div class="dot"></div></div>
+                  <div class="day"><div class="dw">THU</div><div class="dn">30</div><div class="dot"></div></div>
+                </div>
+              </div>
+              <div class="tee-body">
+                <div class="tee-date-lbl"><span class="d">7/14</span><span class="t">火曜日・あなたのプレー希望日</span></div>
+                <div class="compe">
+                  <div class="lbl">PREGO OPEN</div>
+                  <h4>平日コンペ＠大多喜城GC</h4>
+                  <div class="meta">2:2ペアラウンド・昼食付き・初参加歓迎</div>
+                  <div class="foot">
+                    <div class="avs">
+                      <div class="av f1"></div><div class="av m1"></div><div class="av f2"></div>
+                      <div class="more">+5</div>
+                    </div>
+                    <div class="join">残り1枠</div>
+                  </div>
+                </div>
+                <div class="tee-card">
+                  <div class="top">
+                    <div class="av f1"></div>
+                    <div class="info">
+                      <div class="nm">manami <span class="age">31</span><span class="chip">✓ 本人確認済</span></div>
+                      <div class="stats"><span>Best <b>132</b></span><span>Ave <b>132</b></span><span>千葉・埼玉 ほか</span></div>
+                    </div>
+                    <div class="cta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>
+                  </div>
+                </div>
+                <div class="tee-card">
+                  <div class="top">
+                    <div class="av f2"></div>
+                    <div class="info">
+                      <div class="nm">an <span class="age">46</span><span class="chip brass">マッチ中</span></div>
+                      <div class="stats"><span>Best <b>121</b></span><span>歴 <b>10年+</b></span><span>関東 6エリア</span></div>
+                    </div>
+                    <div class="cta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>
+                  </div>
+                </div>
+              </div>
+              <div class="tabbar">
+                <div class="tb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 21V4l10 3-10 3"/><path d="M5 21h14"/></svg>投稿</div>
+                <div class="tb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>ホーム</div>
+                <div class="tb on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>ティーシート</div>
+                <div class="tb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a8 8 0 0 1-8 8H4l2-3a8 8 0 1 1 15-5z"/></svg>メッセージ</div>
+                <div class="tb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>マイページ</div>
+              </div>
+            </div>
+          </div>
+          <div class="cap">02 — TEE SHEET</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== ROW 3 : PROFILE ========== -->
+    <div class="screen-row">
+      <div class="note-col">
+        <span class="tag">SCREEN 3 / プロフィール</span>
+        <h3>スコアカードが名刺になる</h3>
+        <p>現状は大判のグラビア的写真が最初に目に入り、ゴルフ情報は下に沈んでいます。写真は残しつつ高さを抑え、直下に「ベスト・平均・ラウンド回数」のスコアカードを置いて、ゴルファーとしての信頼を先に伝えます。</p>
+        <ul>
+          <li>CTAは<b>「ラウンドに誘う」1本</b>。メッセージはアイコンに格下げ</li>
+          <li>プレー希望日は<b>日付チップ</b>で一覧（希望日が近い順）</li>
+          <li>評価とラウンド実績を<b>写真より上のレイヤー</b>で扱う</li>
+        </ul>
+      </div>
+      <div class="phones">
+        <div class="phone">
+          <div class="screen">
+            <div class="scr">
+              <div class="prof-photo">
+                <div class="back"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 5l-7 7 7 7"/></svg></div>
+                <div class="silhouette"></div>
+                <div class="id">
+                  <div class="nm">an <span class="age">46</span></div>
+                  <span class="vf">✓ 本人確認済</span>
+                </div>
+              </div>
+              <div class="prof-body">
+                <div class="scorecard">
+                  <div class="cell"><div class="v">121</div><div class="k">BEST</div></div>
+                  <div class="cell"><div class="v">—</div><div class="k">AVERAGE</div></div>
+                  <div class="cell"><div class="v">10年+</div><div class="k">ゴルフ歴</div></div>
+                </div>
+                <div class="review-line">
+                  <span class="stars">★★★★★</span><b>5.0</b><span>（1件のレビュー）・ラウンド 0回</span>
+                </div>
+                <div class="prof-sec">
+                  <div class="h">プレー希望日</div>
+                  <div class="date-chips">
+                    <div class="dchip hot"><div class="d">7/14</div><div class="w">TUE</div></div>
+                    <div class="dchip hot"><div class="d">7/17</div><div class="w">FRI</div></div>
+                    <div class="dchip"><div class="d">7/30</div><div class="w">THU</div></div>
+                    <div class="dchip"><div class="d">+18</div><div class="w">日程</div></div>
+                  </div>
+                </div>
+                <div class="prof-sec">
+                  <div class="h">プレーエリア</div>
+                  <div class="chips">
+                    <span class="chip">東京</span><span class="chip">千葉</span><span class="chip">埼玉</span><span class="chip">神奈川</span><span class="chip">+3</span>
+                  </div>
+                </div>
+                <div class="prof-sec">
+                  <div class="h">自己紹介</div>
+                  <div class="txt">港区在住。レッスンに通い始めて2〜3年、美味しいビールのために頑張っています。日程・場所次第で自力参加も可。</div>
+                </div>
+              </div>
+              <div class="prof-cta">
+                <div class="btn-primary">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 21V4l12 4-12 4"/></svg>
+                  ラウンドに誘う
+                </div>
+                <div class="msg"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-8 8H4l2-3a8 8 0 1 1 15-5z"/></svg></div>
+              </div>
+            </div>
+          </div>
+          <div class="cap">03 — PROFILE</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== ROW 4 : ROUND LOG ========== -->
+    <div class="screen-row">
+      <div class="note-col">
+        <span class="tag">SCREEN 4 / ラウンド録（新機能）</span>
+        <h3>UGCは「お願い」ではなく<br>「自慢」から生まれる</h3>
+        <p>マッチしたラウンドの翌日、両者にこの画面を出します。スコアカード画像は自動生成され、そのままInstagram・Xにシェア可能。相手へのレビューも同じ画面で完結させ、プロフィールの信頼情報を積み上げます。</p>
+        <ul>
+          <li>シェア画像に<b>PreGoロゴを焼き込み</b>＝広告費ゼロの認知獲得</li>
+          <li>レビュー投稿で<b>コイン付与</b>（既存コイン制度と接続）</li>
+          <li>ラウンド録の蓄積が<b>「ラウンド回数」の実績値</b>になる</li>
+        </ul>
+      </div>
+      <div class="phones">
+        <div class="phone">
+          <div class="screen">
+            <div class="scr">
+              <div class="rl-head">
+                <div class="lbl">ROUND LOG</div>
+                <h4>昨日はナイスラウンドでした</h4>
+              </div>
+              <div class="share-card">
+                <div class="inner">
+                  <div class="course">大多喜城ゴルフ倶楽部・千葉</div>
+                  <div class="date">2026.07.14 TUE</div>
+                  <div class="score-row">
+                    <span class="score">94</span>
+                    <div>
+                      <div class="score-k">TOTAL SCORE</div>
+                      <div class="halves"><span>OUT<b>46</b></span><span>IN<b>48</b></span></div>
+                    </div>
+                  </div>
+                  <div class="members">
+                    <div class="av m1"></div><div class="av f1"></div>
+                    <div class="t">SHU・manami のラウンド</div>
+                  </div>
+                  <div class="wm">PREGO</div>
+                </div>
+              </div>
+              <div class="rl-body">
+                <div class="rate-box">
+                  <div class="who">
+                    <div class="av f1"></div>
+                    <div>
+                      <div class="nm">manami さんはどうでしたか？</div>
+                      <div class="sub">レビューは匿名で相手のプロフィールに反映されます</div>
+                    </div>
+                  </div>
+                  <div class="stars-big">★★★★★</div>
+                  <div class="hint">タップして評価・レビュー投稿で 500コイン</div>
+                </div>
+              </div>
+              <div class="rl-actions">
+                <div class="btn-share">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg>
+                  スコアカードをシェア
+                </div>
+                <div class="btn-ghost">あとで書く</div>
+              </div>
+            </div>
+          </div>
+          <div class="cap">04 — ROUND LOG（新設）</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== ROW 5 : NEAR-MISS MATCH ========== -->
+    <div class="screen-row">
+      <div class="note-col">
+        <span class="tag">SCREEN 5 / 惜しいマッチ（新設）</span>
+        <h3>「0件です」と言わない。<br>あと一歩を、橋渡しする</h3>
+        <p>全国展開×少人数の宿命で、「日程は合うが遠い」「近いが日程が合わない」がマッチ不成立の大半を占めます。現状は「まだマッチ候補のお相手がいません」で終了。ここを「惜しい候補＋解決アクション」に変えます。</p>
+        <ul>
+          <li><b>日程◎×距離△</b> → 双方の拠点から等距離の<b>中間地点コースを自動提案</b>（拠点設定・市区町村精度は実装済みなので流用可能）</li>
+          <li><b>距離◎×日程△</b> → 相手の空き日に合わせる<b>日程リクエスト</b>を1タップ送信（Webプッシュ実装済み＝通知もすぐ届く）</li>
+          <li>プロフィールに<b>移動許容度</b>（〜60分/〜90分/遠征OK）を追加し、二値ではなくスコアでマッチ</li>
+          <li>それでも埋まらない日は<b>公式コンペ枠が受け皿</b>になる</li>
+        </ul>
+      </div>
+      <div class="phones">
+        <div class="phone">
+          <div class="screen">
+            <div class="scr">
+              <div class="miss-head">
+                <div class="ttl">惜しいマッチ</div>
+                <div class="sub">あと一歩で成立する3件があります</div>
+              </div>
+              <div class="tee-body">
+                <div class="tee-card">
+                  <div class="top">
+                    <div class="av f1"></div>
+                    <div class="info">
+                      <div class="nm">SAKI <span class="age">28</span></div>
+                      <div class="miss-badges"><span class="mb ok">日程 ◎ 7/14 空き</span><span class="mb ng">距離 △ 車95分</span></div>
+                    </div>
+                  </div>
+                  <div class="bridge">
+                    <span class="lbl">中間地点の提案</span>
+                    <b>市原京急カントリークラブ</b>（あなた48分・SAKIさん51分）
+                  </div>
+                  <div class="mini-btn">この案を送ってみる</div>
+                </div>
+                <div class="tee-card">
+                  <div class="top">
+                    <div class="av f2"></div>
+                    <div class="info">
+                      <div class="nm">manami <span class="age">31</span></div>
+                      <div class="miss-badges"><span class="mb ok">距離 ◎ 拠点12km</span><span class="mb ng">日程 △ 合わず</span></div>
+                    </div>
+                  </div>
+                  <div class="bridge">
+                    <span class="lbl">日程リクエスト</span>
+                    manamiさんは <b>7/21（火）</b> が空いています。合わせられますか？
+                  </div>
+                  <div class="mini-btn">7/21で打診する</div>
+                </div>
+                <div class="compe">
+                  <div class="lbl">それでも合わない週は</div>
+                  <h4>7/19 公式コンペ＠千葉</h4>
+                  <div class="meta">2:2ペアラウンド・残り2枠</div>
+                </div>
+              </div>
+              <div class="tabbar">
+                <div class="tb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 21V4l10 3-10 3"/><path d="M5 21h14"/></svg>投稿</div>
+                <div class="tb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>ホーム</div>
+                <div class="tb on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>ティーシート</div>
+                <div class="tb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a8 8 0 0 1-8 8H4l2-3a8 8 0 1 1 15-5z"/></svg>メッセージ</div>
+                <div class="tb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>マイページ</div>
+              </div>
+            </div>
+          </div>
+          <div class="cap">05 — NEAR-MISS MATCH（新設）</div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ================= PHOTO FRAMES ================= -->
+  <section class="frames">
+    <div class="sec-label"><span class="no">04</span><h2>フォトフレーム — スコアが勲章になる</h2></div>
+    <p style="max-width:720px;font-size:14px;color:rgba(250,248,242,.72);margin-bottom:40px">
+      ラウンド翌日に自動生成されるシェア画像。<b style="color:#D9B96A">フレームの色はベストスコア帯で決まる</b>ため、
+      フレーム自体が腕前の勲章になり、「次の色が欲しい」がプレー動機とUGCの両方を生みます。
+      生成画像には PREGO のロゴが入り、Instagram・X・アプリ内フィード（実装済み）へワンタップ投稿できます。
+    </p>
+    <div class="frame-grid">
+      <div class="frame-wrap">
+        <div class="pframe pf-round">
+          <div>
+            <div class="eyebrow2">ROUND LOG</div>
+            <div class="course2">大多喜城ゴルフ倶楽部・千葉</div>
+            <div class="date2">2026.07.14 TUE</div>
+          </div>
+          <div class="big">94<small>TOTAL SCORE・OUT 46 / IN 48</small></div>
+          <div class="foot2">
+            <div class="mem">SHU ・ manami</div>
+            <div class="wm2">PREGO</div>
+          </div>
+          <div class="cap2">① ラウンド記録（基本形）</div>
+        </div>
+      </div>
+      <div class="frame-wrap">
+        <div class="pframe pf-best">
+          <div class="laurel">SELF BEST 更新</div>
+          <div class="big">88</div>
+          <div>
+            <div class="delta">前回ベストから −4</div>
+            <div class="foot2">SHU — 2026.07.14 / PREGO</div>
+          </div>
+          <div class="cap2">② ベスト更新（黒×金の祝福）</div>
+        </div>
+      </div>
+      <div class="frame-wrap">
+        <div class="pframe pf-tier">
+          <div class="photo"></div>
+          <div class="panel">
+            <div class="score3">88</div>
+            <div class="k3">BEST SCORE</div>
+            <div class="ave3">AVERAGE<b>100</b></div>
+            <div class="nm3">SHU</div>
+            <div class="tierbar">GOLD</div>
+          </div>
+          <div class="cap2">③ ティアフレーム（森さん案の発展形）</div>
+        </div>
+      </div>
+    </div>
+    <div class="tiers">
+      <div class="tier"><span class="sw2" style="background:#111"></span>BLACK 〜79</div>
+      <div class="tier"><span class="sw2" style="background:linear-gradient(120deg,#F0D48A,#B08A3C)"></span>GOLD 80–89</div>
+      <div class="tier"><span class="sw2" style="background:linear-gradient(120deg,#E8E8E8,#9AA0A6)"></span>SILVER 90–99</div>
+      <div class="tier"><span class="sw2" style="background:#1B7A4E"></span>GREEN 100–109</div>
+      <div class="tier"><span class="sw2" style="background:#3E6DB5"></span>BLUE 110–119</div>
+      <div class="tier"><span class="sw2" style="background:#B4543A"></span>RED 120〜</div>
+      <div class="tier"><span class="sw2" style="background:#FAF8F2"></span>WHITE デビュー</div>
+    </div>
+    <p class="tiers-note">色はベストスコア更新で自動昇格。「あと2打でBLACK」のような次の目標表示が、ラウンド回数＝アプリ利用の動機になります。</p>
+  </section>
+
+  <!-- ================= IMPL ================= -->
+  <section class="impl">
+    <div class="sec-label"><span class="no">05</span><h2>実装メモ — エンジニア向け</h2></div>
+    <div class="impl-grid">
+      <div class="impl-card">
+        <h3>導入はCSS変数の差し替えから</h3>
+        <p>全面改修は不要です。まず既存コンポーネントの配色をこのトークンに寄せるだけで統一感の8割は回収できます。優先順位：</p>
+        <ol>
+          <li>CSSトークン導入＋既存ボタン/バッジの色統一（ピンク・青の廃止）</li>
+          <li>日程マッチ画面のティーシート化（人数表示の廃止）</li>
+          <li>プロフィールのスコアカード先頭化・CTA一本化</li>
+          <li>ラウンド録（新機能・シェア画像は<code>canvas</code>か<code>satori</code>で生成）</li>
+        </ol>
+        <pre>:root {
+  --fairway: #0C4633;   /* primary / CTA */
+  --turf:    #1B7A4E;   /* secondary */
+  --ivory:   #FAF8F2;   /* background */
+  --brass:   #B08A3C;   /* rating / premium */
+  --ink:     #20281F;   /* text */
+  --radius:  14px;
+  --font-brand: 'Marcellus', serif;
+  --font-ui: 'Zen Kaku Gothic New', sans-serif;
+}</pre>
+      </div>
+      <div class="impl-card">
+        <h3>デザインと同時に直したい仕様</h3>
+        <ol>
+          <li><b>オファー課金の内包化</b> — 都度5,500円/22,000円をやめ、サブスク上位プラン（例：プレミアム月9,800円＝オファー月3回込み）へ。都度課金は「送らない理由」を作っている</li>
+          <li><b>公式コンペ機能</b> — 当面は運営が手動でイベント作成できる管理画面だけでよい（マッチング自動化は不要）</li>
+          <li><b>女性→女性の招待コード</b> — 招待成立でコイン付与。ボトルネックは女性登録数</li>
+          <li><b>同性マッチ解禁</b> — 「仲間探し」への看板拡張。女性は同性でも無料のまま</li>
+          <li><b>惜しいマッチ</b> — 中間地点提案は実装済みの拠点設定（市区町村精度）を流用。日程リクエスト通知は実装済みのWebプッシュに載せる</li>
+          <li><b>フォトフレーム生成</b> — <code>canvas</code>か<code>satori</code>でサーバー/クライアント生成。投稿先は実装済みのフィード＋SNS</li>
+        </ol>
+        <p style="margin-top:14px">公開バンドルの調査で確認済みの既存資産：Supabase・Stripe・Webプッシュ・拠点設定（GPS/郵便番号）・AIマッチング提案・フィード投稿・記事・コイン/出金。<b>上記の新機能はいずれも既存部品の組み合わせで実装可能</b>です。</p>
+        <p style="margin-top:10px">この提案書自体がHTML/CSSのみで書かれているため、各画面のマークアップはそのまま実装の参考にできます。</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>PREGO UI RENEWAL PROPOSAL — 2026.07 / FOPC Inc.</footer>
+</main>
+</body>
+</html>
