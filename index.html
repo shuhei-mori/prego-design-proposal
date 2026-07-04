@@ -550,6 +550,31 @@ main{position:relative;z-index:1}
 .tier .sw2{width:13px;height:13px;border-radius:50%;flex:none}
 .tiers-note{font-size:12.5px;color:rgba(250,248,242,.6);margin-top:14px}
 
+/* ---------- rank system ---------- */
+.ranks{padding:72px 0;border-bottom:1px solid rgba(250,248,242,.12)}
+.rank-scroll{overflow-x:auto;border-radius:16px;border:1px solid rgba(250,248,242,.14)}
+.rank-tbl{width:100%;min-width:640px;border-collapse:collapse;font-size:12.5px;background:rgba(250,248,242,.04)}
+.rank-tbl th{
+  font-size:10px;letter-spacing:.18em;color:var(--brass-bright,#D9B96A);font-weight:700;text-align:left;
+  padding:12px 14px;border-bottom:1px solid rgba(250,248,242,.18);white-space:nowrap;
+}
+.rank-tbl td{
+  padding:13px 14px;border-bottom:1px solid rgba(250,248,242,.08);
+  color:rgba(250,248,242,.85);vertical-align:middle;
+}
+.rank-tbl tr:last-child td{border-bottom:none}
+.rank-tbl .rk{display:flex;align-items:center;gap:9px;font-weight:900;letter-spacing:.1em;white-space:nowrap}
+.rank-tbl .dot{width:12px;height:12px;border-radius:50%;flex:none}
+.rank-tbl .money{font-family:var(--font-brand);font-size:15px;color:#fff;white-space:nowrap}
+.rank-tbl .sub-money{font-size:10.5px;color:rgba(250,248,242,.55)}
+.rank-tbl .cond{font-size:11.5px;color:rgba(250,248,242,.7);line-height:1.55}
+.rank-notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:22px}
+.rank-note{
+  background:rgba(250,248,242,.05);border:1px solid rgba(250,248,242,.12);
+  border-radius:14px;padding:16px 18px;font-size:12.5px;color:rgba(250,248,242,.75);line-height:1.7;
+}
+.rank-note b{color:#D9B96A;display:block;margin-bottom:4px;font-size:12px;letter-spacing:.06em}
+
 /* ---------- impl notes ---------- */
 .impl{padding:72px 0 110px}
 .impl-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
@@ -1084,9 +1109,68 @@ footer{
     <p class="tiers-note">色はベストスコア更新で自動昇格。「あと2打でBLACK」のような次の目標表示が、ラウンド回数＝アプリ利用の動機になります。</p>
   </section>
 
+  <!-- ================= RANK SYSTEM ================= -->
+  <section class="ranks">
+    <div class="sec-label"><span class="no">05</span><h2>ランク制度 — 女性ランクと単価の設計</h2></div>
+    <p style="max-width:760px;font-size:14px;color:rgba(250,248,242,.72);margin-bottom:28px">
+      設計原則は3つ。<b style="color:#D9B96A">①入口は審査制</b>（写真審査→ビデオ面談→初回は公式コンペで実地確認）、
+      <b style="color:#D9B96A">②昇格は実績で自動判定</b>（運営の主観を挟まない）、
+      <b style="color:#D9B96A">③単価は女性自身が範囲内で設定</b>（運営は基準額と範囲だけを定義。人気は指名数が証明し、価格は市場が調整する）。
+      現行制度との対応：一般ゴルファー＝WHITE〜SILVER、認定ゴルファー＝GOLD相当。既存データのまま移行できます。
+    </p>
+    <div class="rank-scroll">
+      <table class="rank-tbl">
+        <tr>
+          <th>ランク</th><th>昇格条件（自動判定）</th><th>基準額（男性支払い）</th><th>女性受取（80%）</th><th>自己設定範囲</th>
+        </tr>
+        <tr>
+          <td><span class="rk"><span class="dot" style="background:#FAF8F2"></span>WHITE</span></td>
+          <td class="cond">入口審査の通過（写真・面談・初回コンペ）</td>
+          <td class="money">¥5,500</td>
+          <td class="money">¥4,400</td>
+          <td class="cond">固定（お試し価格）</td>
+        </tr>
+        <tr>
+          <td><span class="rk"><span class="dot" style="background:#A46B39"></span>BRONZE</span></td>
+          <td class="cond">実績3ラウンド＋レビュー平均 ★4.0以上</td>
+          <td class="money">¥8,800</td>
+          <td class="money">¥7,040</td>
+          <td class="cond">基準額の ±20%</td>
+        </tr>
+        <tr>
+          <td><span class="rk"><span class="dot" style="background:linear-gradient(120deg,#E8E8E8,#9AA0A6)"></span>SILVER</span></td>
+          <td class="cond">実績10ラウンド＋★4.3以上＋返信率70%</td>
+          <td class="money">¥14,300</td>
+          <td class="money">¥11,440</td>
+          <td class="cond">基準額の ±20%</td>
+        </tr>
+        <tr>
+          <td><span class="rk"><span class="dot" style="background:linear-gradient(120deg,#F0D48A,#B08A3C)"></span>GOLD</span></td>
+          <td class="cond">実績20ラウンド＋★4.6以上＋返信率80%<br>（＝現行の認定ゴルファー）</td>
+          <td class="money">¥22,000</td>
+          <td class="money">¥17,600</td>
+          <td class="cond">基準額の ±20%</td>
+        </tr>
+        <tr>
+          <td><span class="rk"><span class="dot" style="background:#16130E;border:1px solid rgba(217,185,106,.6)"></span>BLACK</span></td>
+          <td class="cond">実績40ラウンド＋★4.8以上＋リピート指名率30%</td>
+          <td class="money">¥27,500<span class="sub-money">〜</span></td>
+          <td class="money">¥22,000<span class="sub-money">〜</span></td>
+          <td class="cond">自由設定（上限 ¥55,000）</td>
+        </tr>
+      </table>
+    </div>
+    <div class="rank-notes">
+      <div class="rank-note"><b>なぜ女性が自分で決めるのか</b>運営が顔で値付けする制度は炎上リスクそのもの。本人が設定し、高すぎれば指名が減り、安すぎれば埋まる——価格の正しさは市場が決める。運営は範囲だけ守る。</div>
+      <div class="rank-note"><b>「可愛くない問題」への答え</b>入口の審査（写真・ビデオ面談・初回コンペでの実地確認）で品質の下限を担保。その後は指名数とリピート率で自然淘汰。見た目の基準を明文化せずに品質が揃う構造。</div>
+      <div class="rank-note"><b>降格ルール</b>直近90日のレビュー平均が基準を下回る、またはドタキャン2回で1ランク降格。「ランクは資産、雑に扱うと減る」が女性側の品質維持インセンティブになる。</div>
+      <div class="rank-note"><b>フレーム色との連動</b>ランク色＝フォトフレーム色＝プロフィールのリング色。ランクが上がるとアプリ内の見た目が変わる。「BLACKまであと◯ラウンド」の進捗表示が継続の動機になる。</div>
+    </div>
+  </section>
+
   <!-- ================= IMPL ================= -->
   <section class="impl">
-    <div class="sec-label"><span class="no">05</span><h2>実装メモ — エンジニア向け</h2></div>
+    <div class="sec-label"><span class="no">06</span><h2>実装メモ — エンジニア向け</h2></div>
     <div class="impl-grid">
       <div class="impl-card">
         <h3>導入はCSS変数の差し替えから</h3>

@@ -625,17 +625,64 @@ function openChat(id){
 V.chat = id => {
   const c = S.chats.find(x=>x.id===id) || {id, msgs:[]};
   const u = find(id);
-  const msgs = c.msgs.map(m=>`<div class="msg ${m.who==='me'?'me':'them'}">${esc(m.t)}<span class="tm">${m.tm}</span></div>`).join('');
+  const fx = (S.fixed||{})[id];
+  const msgs = c.msgs.map(m=>{
+    if(m.who==='sys') return `<div class="msg sys">${m.t}</div>`;
+    return `<div class="msg ${m.who==='me'?'me':'them'}">${esc(m.t)}<span class="tm">${m.tm}</span></div>`;
+  }).join('');
+  const fixbar = fx ? `
+    <div class="fixbar done">
+      <span class="ic">${I.cal}</span>
+      <span style="flex:1"><b>${fx.date} ラウンド確定</b><small>${esc(fx.course)}・当日は位置共有と到着チェックインが自動でONになります</small></span>
+      <button class="btn sm" style="background:var(--brass)" onclick="go('#/roundlog')">当日へ</button>
+    </div>` : `
+    <div class="fixbar">
+      <span class="ic">${I.cal}</span>
+      <span style="flex:1">ラウンドの約束ができたら記録しましょう<small>確定するとレビュー・安全機能・実績カウントが有効になります</small></span>
+      <button class="btn sm" onclick="openFixSheet('${id}')">ラウンド確定</button>
+    </div>`;
   return `
   ${appbar({title:esc(u.name), back:true, noBell:true})}
   <div class="page nofoot" style="display:flex;flex-direction:column;min-height:calc(100dvh - 60px)">
-    <div class="chat">${msgs || `<div class="empty" style="padding-top:80px"><div class="big">⛳</div>${esc(u.name)}さんに挨拶してみましょう</div>`}</div>
+    ${fixbar}
+    <div class="chat">${msgs || `<div class="empty" style="padding-top:60px"><div class="big">⛳</div>${esc(u.name)}さんに挨拶してみましょう</div>`}</div>
     <div class="chatbar">
       <input class="input" id="chat-in" placeholder="メッセージを入力" onkeydown="if(event.key==='Enter')sendMsg('${id}')">
       <button class="send" onclick="sendMsg('${id}')">${I.send}</button>
     </div>
   </div>`;
 };
+let fixSel = {};
+function openFixSheet(id){
+  const u = find(id);
+  const myDates = me().dates || [];
+  const shared = u.dates.filter(d=>myDates.includes(d));
+  const dates = shared.length ? shared : u.dates;
+  fixSel = { id, date: dates[0], course: COURSES[0] };
+  sheet(`
+    <h3>ラウンド確定</h3>
+    <p class="muted">${esc(u.name)}さんとのラウンドを記録します（あとで変更できます）</p>
+    <div class="label">日程${shared.length?'（お互いの空き日）':''}</div>
+    <div class="opt-grid">${dates.map(d=>`<button class="opt ${fixSel.date===d?'on':''}" onclick="fixSel.date='${d}';this.parentNode.querySelectorAll('.opt').forEach(o=>o.classList.remove('on'));this.classList.add('on')">${d}</button>`).join('')}</div>
+    <div class="label">ゴルフ場</div>
+    <select class="input" onchange="fixSel.course=this.value">${COURSES.map(c=>`<option>${c}</option>`).join('')}</select>
+    <div class="notice" style="margin:16px 0 0">
+      <span class="ic">${I.shield}</span>
+      <span>確定すると当日の位置共有・到着チェックイン・SOSが有効になります</span>
+    </div>
+    <button class="btn" style="margin-top:16px" onclick="fixRound()">この内容で確定する</button>
+  `);
+}
+function fixRound(){
+  const {id, date, course} = fixSel;
+  S.fixed = S.fixed || {};
+  S.fixed[id] = { date, course };
+  let c = S.chats.find(x=>x.id===id);
+  if(!c){ c = {id, msgs:[]}; S.chats.unshift(c); }
+  c.msgs.push({who:'sys', t:`⛳ ${date}・${course} でラウンド確定`});
+  save(); closeSheet(); render();
+  setTimeout(()=>toast('ラウンドを確定しました。当日の安全機能がONになります'), 250);
+}
 function sendMsg(id){
   const inp = document.getElementById('chat-in');
   const t = inp.value.trim(); if(!t) return;

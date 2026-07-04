@@ -427,6 +427,22 @@ a{color:inherit;text-decoration:none}
 .msg.them{align-self:flex-start;background:var(--paper);border:1px solid var(--line);border-bottom-left-radius:5px}
 .msg.me{align-self:flex-end;background:var(--fairway);color:#fff;border-bottom-right-radius:5px}
 .msg .tm{display:block;font-size:9px;opacity:.55;margin-top:3px;text-align:right}
+.fixbar{
+  position:sticky;top:59px;z-index:30;
+  display:flex;align-items:center;gap:10px;
+  margin:10px 14px 0;padding:11px 13px;
+  background:var(--paper);border:1.5px dashed var(--brass);border-radius:14px;
+  font-size:12px;line-height:1.5;animation:cardIn .4s both;
+}
+.fixbar small{display:block;font-size:10px;color:var(--ink-soft)}
+.fixbar .ic{color:var(--brass);flex:none;width:20px;height:20px}
+.fixbar .btn.sm{flex:none}
+.fixbar.done{border-style:solid;border-color:var(--turf);background:var(--turf-soft)}
+.fixbar.done .ic{color:var(--fairway)}
+.msg.sys{
+  align-self:center;background:var(--turf-soft);color:var(--fairway);
+  font-size:11.5px;font-weight:700;border-radius:99px;padding:7px 16px;
+}
 .chatbar{
   position:sticky;bottom:0;display:flex;gap:9px;padding:10px 14px calc(14px + env(safe-area-inset-bottom));
   background:var(--ivory);border-top:1px solid var(--line);
