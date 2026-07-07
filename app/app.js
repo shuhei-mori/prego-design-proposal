@@ -59,9 +59,24 @@ const S = Object.assign({
     { id:'ro1', from:'m3', date:'7/16（木）', meet:'駅集合（五井駅 8:20）', course:'市原京急カントリークラブ', reward:17600, status:'pending' },
     { id:'ro2', from:'m2', date:'7/19（日）', meet:'現地集合', course:'大多喜城ゴルフ倶楽部', reward:17600, status:'pending' },
   ],
-  chats: null, logs: [], seenNotice: false,
+  chats: null, logs: [], seenNotice: false, theme: 'a',
 }, store);
 const save = () => localStorage.setItem('prego-demo', JSON.stringify(S));
+
+/* ---------- color themes (A/B/C) ---------- */
+const THEME_NAMES = { a:'A クラブハウス', b:'B ミント', c:'C オリーブ' };
+const qsTheme = new URLSearchParams(location.search).get('theme');
+if(qsTheme && THEME_NAMES[qsTheme]) S.theme = qsTheme;
+function applyTheme(){
+  document.body.classList.remove('theme-b','theme-c');
+  if(S.theme !== 'a') document.body.classList.add('theme-' + S.theme);
+}
+function setTheme(t){ S.theme = t; save(); applyTheme(); render(); }
+function cycleTheme(){
+  S.theme = S.theme==='a' ? 'b' : S.theme==='b' ? 'c' : 'a';
+  save(); applyTheme(); render();
+  toast('配色パターン ' + THEME_NAMES[S.theme]);
+}
 
 const defaultChats = role => role === 'm' ? [
   { id:'w2', msgs:[ {who:'them', t:'はじめまして！7/14ご一緒できそうですね⛳', tm:'6/28 21:04'}, {who:'me', t:'はじめまして！ぜひお願いします。コースの希望ありますか？', tm:'6/28 21:40'}, {who:'them', t:'大多喜城いいなと思ってました！駅集合で大丈夫です😊', tm:'6/29 08:12'} ] },
@@ -147,7 +162,10 @@ function ringStyle(tk){
 }
 function demoPill(){
   const r = S.role === 'f' ? '女性デモ：みどり' : '男性デモ：SHU';
-  return `<button class="demo-pill" onclick="switchRole()">${r}<span class="sw">⇄ 切替</span></button>`;
+  return `<div class="pill-row">
+    <button class="demo-pill" onclick="switchRole()">${r}<span class="sw">⇄ 切替</span></button>
+    <button class="demo-pill theme" onclick="cycleTheme()">配色 <span class="tletter">${S.theme.toUpperCase()}</span></button>
+  </div>`;
 }
 function switchRole(){
   S.role = S.role === 'f' ? 'm' : 'f';
@@ -185,6 +203,10 @@ V.login = () => `
     <div class="sub">
       <a onclick="demoLogin()">ログイン</a>
       <a href="#/signup">新規登録</a>
+    </div>
+    <div class="theme-row">
+      <span class="lbl2">配色パターン</span>
+      ${['a','b','c'].map(t=>`<button class="tbtn ${S.theme===t?'on':''}" onclick="setTheme('${t}')">${t.toUpperCase()}</button>`).join('')}
     </div>
     <div class="demo-note">DEMO PROTOTYPE — 認証・決済は動作しません</div>
   </div>
@@ -1054,4 +1076,5 @@ function render(){
   if(route==='roundlog'){ document.fonts ? document.fonts.ready.then(drawFrame) : drawFrame(); setTimeout(drawFrame,300); }
 }
 window.addEventListener('hashchange', render);
+applyTheme();
 render();
