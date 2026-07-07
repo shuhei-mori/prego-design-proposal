@@ -181,7 +181,7 @@ const V = {};
 V.login = () => `
 <div class="login">
   <svg class="art" viewBox="0 0 430 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-    <g fill="none" stroke="#D9B96A" stroke-width="1">
+    <g fill="none" stroke="var(--art-stroke,#D9B96A)" stroke-width="1">
       <path d="M-20,700 C90,650 200,740 320,690 S460,620 480,660"/>
       <path d="M-20,750 C90,700 210,790 330,740 S470,670 480,710" opacity=".6"/>
       <circle cx="360" cy="150" r="70" opacity=".5"/><circle cx="360" cy="150" r="50" opacity=".35"/>
