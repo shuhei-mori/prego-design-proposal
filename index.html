@@ -536,8 +536,15 @@ main{position:relative;z-index:1}
 .pf-best .foot2{font-family:var(--font-brand);font-size:11px;letter-spacing:.26em;color:rgba(244,235,216,.55);border-top:1px dashed rgba(217,185,106,.3);padding-top:12px;margin-top:14px}
 /* frame 3: tier (user's layout refined) */
 .pf-tier{display:flex;background:#0E0E0C}
-.pf-tier .photo{flex:1.15;background:radial-gradient(circle at 50% 30%,#F2CEB8 0 18%,transparent 19%),linear-gradient(180deg,#7FA98C 0%,#4E8F68 45%,#2A6B48 100%);position:relative}
+.pf-tier .photo{flex:1.15;background:radial-gradient(circle at 50% 30%,#F2CEB8 0 18%,transparent 19%),linear-gradient(180deg,#7FA98C 0%,#4E8F68 45%,#2A6B48 100%);position:relative;overflow:hidden}
 .pf-tier .photo::after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:72%;height:52%;background:linear-gradient(180deg,#FFFFFF 0 55%,#E8E4D8 56% 100%);border-radius:34px 34px 0 0}
+.pf-tier .photo.real{background:#1A1A16}
+.pf-tier .photo.real::after{content:none}
+.pf-tier .photo.real img{width:100%;height:100%;object-fit:cover;display:block}
+.pf-tier .tierbar.silver{background:linear-gradient(120deg,#ECECEC,#9AA0A6);color:#22262B}
+.pf-tier .tierbar.black{background:#16130E;color:#D9B96A;border:1px solid rgba(217,185,106,.55)}
+.pf-tier .tierbar.bronze{background:linear-gradient(120deg,#C08A50,#8F5F33);color:#fff}
+.pf-tier .tierbar.white{background:#F5F2E9;color:#5F6A64}
 .pf-tier .panel{flex:1;color:#fff;padding:16px 14px;display:flex;flex-direction:column;align-items:center;text-align:center}
 .pf-tier .score3{font-family:var(--font-brand);font-size:52px;line-height:1;margin-top:8px}
 .pf-tier .k3{font-size:8.5px;letter-spacing:.3em;background:#B4231F;padding:3px 10px;border-radius:3px;font-weight:700;margin-top:8px}
@@ -1085,7 +1092,7 @@ footer{
       </div>
       <div class="frame-wrap">
         <div class="pframe pf-tier">
-          <div class="photo"></div>
+          <div class="photo real"><img src="app/img/m1.jpg" alt=""></div>
           <div class="panel">
             <div class="score3">88</div>
             <div class="k3">BEST SCORE</div>
@@ -1093,7 +1100,48 @@ footer{
             <div class="nm3">SHU</div>
             <div class="tierbar">GOLD</div>
           </div>
-          <div class="cap2">③ ティアフレーム（森さん案の発展形）</div>
+          <div class="cap2">③ ティアフレーム（森さん案の発展形・実写）</div>
+        </div>
+      </div>
+    </div>
+    <div class="frame-grid" style="margin-top:48px">
+      <div class="frame-wrap">
+        <div class="pframe pf-tier">
+          <div class="photo real"><img src="app/img/m6.jpg" alt=""></div>
+          <div class="panel">
+            <div class="score3">79</div>
+            <div class="k3">BEST SCORE</div>
+            <div class="ave3">AVERAGE<b>94</b></div>
+            <div class="nm3">BUMA</div>
+            <div class="tierbar black">BLACK</div>
+          </div>
+          <div class="cap2">BLACK（ベスト〜79）</div>
+        </div>
+      </div>
+      <div class="frame-wrap">
+        <div class="pframe pf-tier">
+          <div class="photo real"><img src="app/img/w2.jpg" alt=""></div>
+          <div class="panel">
+            <div class="score3">99</div>
+            <div class="k3">BEST SCORE</div>
+            <div class="ave3">AVERAGE<b>110</b></div>
+            <div class="nm3">SAKI</div>
+            <div class="tierbar silver">SILVER</div>
+          </div>
+          <div class="cap2">SILVER（90〜99）</div>
+        </div>
+      </div>
+      <div class="frame-wrap">
+        <div class="pframe pf-tier">
+          <div class="photo real"><img src="app/img/w4.jpg" alt=""></div>
+          <div class="panel">
+            <div class="score3">104</div>
+            <div class="k3">BEST SCORE</div>
+            <div class="ave3">AVERAGE<b>115</b></div>
+            <div class="nm3">Rina</div>
+            <div class="tierbar bronze">BRONZE</div>
+          </div>
+          <div class="cap2">BRONZE（100〜109）</div>
         </div>
       </div>
     </div>
