@@ -47,6 +47,22 @@ const COMPES = [
   { id:'c2', title:'サンセットハーフコンペ', course:'市原京急カントリークラブ', pref:'千葉', date:'7/26（日）', fmt:'3:3 グループ', fee:8000, left:4, avs:['img/w6.jpg','img/m3.jpg','img/w9.jpg'], note:'午後スルー・ハーフ9H・お茶会つき' },
 ];
 const COURSES = ['大多喜城ゴルフ倶楽部','市原京急カントリークラブ','太平洋クラブ市原','千葉夷隅ゴルフクラブ','紫カントリークラブ すみれ'];
+const COURSE_DATA = [
+  { n:'大多喜城ゴルフ倶楽部', k:'オオタキジョウゴルフクラブ', p:'千葉県', img:'img/c3.jpg' },
+  { n:'市原京急カントリークラブ', k:'イチハラケイキュウカントリークラブ', p:'千葉県', img:'img/c6.jpg' },
+  { n:'太平洋クラブ市原', k:'タイヘイヨウクラブイチハラ', p:'千葉県', img:'img/c1.jpg' },
+  { n:'千葉夷隅ゴルフクラブ', k:'チバイスミゴルフクラブ', p:'千葉県', img:'img/c8.jpg' },
+  { n:'紫カントリークラブ すみれ', k:'ムラサキカントリークラブ スミレ', p:'千葉県', img:'img/c5.jpg' },
+  { n:'JGM宇都宮ゴルフクラブ', k:'ジェージーエムウツノミヤゴルフクラブ', p:'栃木県', img:'img/c2.jpg' },
+  { n:'25那須ゴルフガーデン', k:'ニジュウゴナスゴルフガーデン', p:'栃木県', img:'img/c4.jpg' },
+  { n:'G7カントリー倶楽部', k:'ジーセブンカントリークラブ', p:'栃木県', img:'img/c7.jpg' },
+];
+const ARTICLES = [
+  { id:'a1', title:'もっと気軽にラウンドできる仲間がいれば…', date:'2026年4月21日', img:'img/c6.jpg',
+    body:['「ゴルフに行きたいのに、誘える相手がいない」。社会人ゴルファーの一番の悩みは、実はスコアよりも“同伴者”です。','会社のコンペは年に数回。友人とは予定が合わない。一人予約は気を使う——。PreGoは、プレー希望日から相手を探せる「日程マッチング」でこの悩みを解決するために生まれました。','この記事では、日程マッチングの使い方と、初めてのラウンドを安心して迎えるためのポイントを紹介します。'] },
+  { id:'a2', title:'ゴルフ友達がなかなかできない…33歳独身男子の切実な悩みと解決策', date:'2026年4月2日', img:'img/c5.jpg',
+    body:['30代になると、ゴルフを始める友人は増える一方で「一緒に回る仲間」を作るのは意外と難しいもの。','練習場には通っているのに、コースデビューのきっかけがない。そんな声をよく聞きます。','大切なのは「同じ日に行ける人」と出会うこと。腕前よりもまず日程です。PreGoのティーシートで、あなたの行ける日に行ける仲間を見つけてください。'] },
+];
 
 /* ---------- state ---------- */
 const store = JSON.parse(localStorage.getItem('prego-demo') || '{}');
@@ -60,6 +76,8 @@ const S = Object.assign({
     { id:'ro2', from:'m2', date:'7/19（日）', meet:'現地集合', course:'大多喜城ゴルフ倶楽部', reward:17600, status:'pending' },
   ],
   chats: null, logs: [], seenNotice: false, theme: 'a',
+  subActive: false, favs: {}, verified: true,
+  ntf: { email:true, line:false, news:true, foot:true, like:true, msg:true },
 }, store);
 const save = () => localStorage.setItem('prego-demo', JSON.stringify(S));
 
@@ -203,6 +221,11 @@ V.login = () => `
     <div class="sub">
       <a onclick="demoLogin()">ログイン</a>
       <a href="#/signup">新規登録</a>
+      <a href="#/forgot">パスワードを忘れた</a>
+    </div>
+    <div class="sub" style="margin-top:8px">
+      <a href="#/articles" style="text-decoration:underline">PreGo記事はこちら</a>
+      <a href="#/contact">運営へのお問い合わせ</a>
     </div>
     <div class="theme-row">
       <span class="lbl2">配色パターン</span>
@@ -225,8 +248,8 @@ function pickRole(r){
   setTimeout(()=>toast(r==='m'?'ようこそ、SHUさん':'ようこそ、みどりさん'), 300);
 }
 
-/* ---- signup (demo wizard) ---- */
-let su = { step:1, sex:null, opts:{} };
+/* ---- signup (demo wizard / 実アプリ準拠) ---- */
+let su = { step:1, opts:{}, photo:false, areas:[] };
 V.signup = () => {
   const s = su.step;
   const opt = (g,v)=>`<button class="opt ${su.opts[g]===v?'on':''}" onclick="suOpt('${g}','${v}')">${v}</button>`;
@@ -234,47 +257,102 @@ V.signup = () => {
   if(s===1) body = `
     <div class="label">性別</div>
     <div class="opt-grid">${opt('sex','男性')}${opt('sex','女性')}</div>
-    <div class="label">ニックネーム</div>
-    <input class="input" placeholder="例：SHU" id="su-name">
-    <div class="label">お住まいの都道府県</div>
-    <div class="opt-grid">${['東京','千葉','埼玉','神奈川','茨城','その他'].map(v=>opt('pref',v)).join('')}</div>`;
+    <div class="label">メールアドレス</div>
+    <input class="input" type="email" placeholder="example@email.com" value="demo@prego.golf">
+    <div class="label">電話番号（SMSで認証コードが送られます）</div>
+    <input class="input" type="tel" placeholder="ハイフンなし" value="09000000000">
+    <div class="label">任意のパスワード（英数字6桁以上）</div>
+    <input class="input" type="password" placeholder="パスワードを入力" value="demo123">
+    <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px">
+      <button class="opt ${su.opts.terms?'on':''}" style="border-radius:12px;text-align:left" onclick="su.opts.terms=!su.opts.terms;render()">${su.opts.terms?'☑':'☐'} 利用規約・プライバシーポリシーに同意します</button>
+      <button class="opt ${su.opts.adult?'on':''}" style="border-radius:12px;text-align:left" onclick="su.opts.adult=!su.opts.adult;render()">${su.opts.adult?'☑':'☐'} 18歳以上です</button>
+    </div>`;
   if(s===2) body = `
-    <div class="label">ゴルフ歴</div>
-    <div class="opt-grid">${['1年未満','1〜3年','3〜5年','5〜10年','10年以上'].map(v=>opt('hist',v)).join('')}</div>
-    <div class="label">ベストスコア</div>
-    <div class="opt-grid">${['〜89','90〜99','100〜109','110〜119','120以上','未計測'].map(v=>opt('best',v)).join('')}</div>
-    <div class="label">合流方法</div>
-    <div class="opt-grid">${['駅集合OK','現地集合','車送迎OK'].map(v=>opt('meet',v)).join('')}</div>`;
+    <p style="text-align:center;margin-top:20px;font-size:13.5px">090-0000-0000 宛に送信された<br><b>4桁の認証コード</b>を入力してください</p>
+    <div class="code-in">
+      ${[0,1,2,3].map(i=>`<input maxlength="1" inputmode="numeric" value="${'1234'[i]}">`).join('')}
+    </div>
+    <p class="muted" style="text-align:center;font-size:11px">コードが届かない場合は <a style="color:var(--turf);font-weight:700" onclick="toast('認証コードを再送しました（デモ）')">再送する</a></p>`;
   if(s===3) body = `
     <div class="label">プロフィール写真</div>
-    <button class="card" style="width:100%;padding:30px;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--ink-soft)" onclick="toast('デモのため写真アップはスキップされます')">
-      ${I.camera}<span style="font-size:12px">タップして写真を選択（デモ）</span>
+    <button class="photo-pick" onclick="photoTips()">
+      ${su.photo?`<img src="${su.opts.sex==='女性'?'img/w5.jpg':'img/m2.jpg'}">`:`${I.camera}<span>タップして写真を選択</span><span style="font-size:10px">選ばれる写真のポイントを見る</span>`}
     </button>
-    <div class="label">ひとこと</div>
-    <textarea class="input" rows="3" placeholder="例：月2ラウンド目標です。楽しく回りましょう！"></textarea>
-    <p class="muted" style="margin-top:14px">※実サービスでは本人確認書類の提出後に利用開始となります（デモでは省略）</p>`;
+    <div class="label">ニックネーム</div>
+    <input class="input" placeholder="ニックネームを入力" value="${su.opts.sex==='女性'?'もも':'タケ'}">
+    <div class="label">自己紹介（200文字まで）</div>
+    <textarea class="input" rows="3" placeholder="よろしくお願いします！">よろしく</textarea>
+    <div style="display:flex;gap:10px;margin-top:4px">
+      <div style="flex:1"><div class="label">ベストスコア</div><input class="input" type="number" value="100"></div>
+      <div style="flex:1"><div class="label">アベレージ</div><input class="input" type="number" value="95"></div>
+    </div>
+    <div class="label">生年月日（非公開・後から変更できません）</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input class="input" style="flex:2" type="number" value="1985"><span>年</span>
+      <input class="input" style="flex:1" type="number" value="12"><span>月</span>
+      <input class="input" style="flex:1" type="number" value="10"><span>日</span>
+    </div>
+    <div class="label">プレー代の負担について *</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${['お相手の分も払います','お互い自分の分を払う','お相手に出してもらいたい','話し合って決めたい'].map(v=>`<button class="opt ${su.opts.pay===v?'on':''}" style="border-radius:12px" onclick="suOpt('pay','${v}')">${v}</button>`).join('')}
+    </div>
+    <div class="label">プレーエリア *</div>
+    <button class="input" style="text-align:left;color:${su.areas.length?'var(--ink)':'var(--ink-soft)'}" onclick="areaSheet()">
+      ${su.areas.length?su.areas.join('・'):'プレーエリアを選択してください'}
+    </button>
+    <div class="label">郵便番号（市区町村レベルで管理されます）</div>
+    <input class="input" placeholder="1234567" value="1510051" style="max-width:180px">
+    <p class="muted" style="margin-top:14px;font-size:11px">プロフィール情報は条件にマッチしたお相手を検索する際に反映されます。生年月日は非公開です（年齢・都道府県・市区郡は公開）。</p>`;
   return `
   ${appbar({title:'新規登録', back:true, noBell:true})}
   <div class="page nofoot wrap">
     <div class="steps">${[1,2,3].map(i=>`<i class="${i<=s?'on':''}"></i>`).join('')}</div>
-    <p class="muted">STEP ${s} / 3 ${['基本情報','ゴルフ情報','プロフィール'][s-1]}</p>
+    <p class="muted">STEP ${s} / 3 ${['アカウント作成','SMS認証','プロフィール登録'][s-1]}</p>
     ${body}
     <div style="margin-top:26px;display:flex;gap:10px">
       ${s>1?`<button class="btn ghost" style="flex:1" onclick="su.step--;render()">戻る</button>`:''}
-      <button class="btn" style="flex:2" onclick="suNext()">${s<3?'次へ':'登録する（デモ）'}</button>
+      <button class="btn" style="flex:2" onclick="suNext()" ${s===1&&(!su.opts.terms||!su.opts.adult)?'disabled':''}>${['認証コード送信','認証する','プロフィール登録'][s-1]}</button>
     </div>
   </div>`;
 };
 function suOpt(g,v){ su.opts[g]=v; render(); }
 function suNext(){
-  if(su.step<3){ su.step++; render(); }
+  if(su.step<3){ su.step++; render(); window.scrollTo(0,0); }
   else {
-    su = {step:1, opts:{}};
     const r = (su.opts.sex==='女性')?'f':'m';
-    S.role = S.role || r; S.chats = S.chats || defaultChats(S.role); save();
+    su = {step:1, opts:{}, photo:false, areas:[]};
+    S.role = r; S.chats = defaultChats(r); save();
     go('#/home'); render();
-    setTimeout(()=>toast('登録が完了しました（デモ）'),300);
+    setTimeout(()=>toast('登録が完了しました。ようこそPreGoへ！'),300);
   }
+}
+function photoTips(){
+  su.photo = true;
+  const g = su.opts.sex==='女性' ? ['w2','w5','w6','w8'] : ['m1','m2','m4','m5'];
+  const sc = [['108','122'],['78','90'],['87','95'],['70','90']];
+  sheet(`<h3>プロフィール写真のポイント</h3>
+    <div class="tip-grid">${g.map((p,i)=>`<div class="tg"><img src="img/${p}.jpg"><div class="ts">Best ${sc[i][0]}・Ave ${sc[i][1]}</div></div>`).join('')}</div>
+    <p style="font-size:12.5px;line-height:1.8">1枚目はあなたの人柄が伝わる<b>笑顔の写真</b>がおすすめです。2枚目以降にラウンドの様子がわかる写真を載せると、お相手へイメージがより伝わります。</p>
+    <p class="muted" style="font-size:11px;margin-top:8px">NG：顔がまったくわからないもの・風景のみ・動物やイラストなど。不快感を与える写真は差し戻されることがあります。</p>
+    <button class="btn" style="margin-top:14px" onclick="closeSheet();render()">OK（デモ写真を設定）</button>`);
+}
+function areaSheet(){
+  const kanto = ['茨城県','栃木県','群馬県','埼玉県','千葉県','東京都','神奈川県'];
+  const html = () => `<h3>プレーエリア選択</h3>
+    <p class="muted">主にプレーするエリアを選択してください</p>
+    <div class="opt-grid" style="margin-top:12px">
+      ${kanto.map(p=>`<button class="opt ${su.areas.includes(p)?'on':''}" onclick="toggleArea('${p}')">${p}</button>`).join('')}
+    </div>
+    <div class="hr"></div>
+    <p class="muted" style="font-size:11px">選択済み：${su.areas.length?su.areas.join(', '):'未選択'}</p>
+    <button class="btn" style="margin-top:12px" onclick="closeSheet();render()">OK</button>`;
+  sheet(html());
+  window._areaHtml = html;
+}
+function toggleArea(p){
+  const i = su.areas.indexOf(p);
+  i>=0 ? su.areas.splice(i,1) : su.areas.push(p);
+  sheet(window._areaHtml());
 }
 
 /* ---- home ---- */
@@ -528,7 +606,8 @@ V.offer = id => {
     <div>
       <div class="label">ゴルフ場（候補から選択）</div>
       <div class="osel">${courses}</div>
-      <p class="muted" style="margin-top:6px;font-size:11px">${I.pin} お二人の拠点の中間地点から自動で候補を出しています</p>
+      <button class="btn ghost sm" style="margin-top:10px" onclick="coursePick='offer';go('#/courses')">ゴルフ場一覧から選ぶ</button>
+      <p class="muted" style="margin-top:8px;font-size:11px">${I.pin} お二人の拠点の中間地点から自動で候補を出しています</p>
     </div>
     <div class="price-box">
       <div class="row"><span>オファー料金（${t.name}ランク）</span><span class="money">${yen(t.price)}</span></div>
@@ -540,8 +619,33 @@ V.offer = id => {
     <button class="btn brass" ${ready?'':'disabled'} onclick="sendOffer('${u.id}')">オファーを送信する（残 ${S.points.toLocaleString()} pt）</button>
   </div>${demoPill()}`;
 };
+function paywall(){
+  sheet(`<div class="paywall">
+    <div class="pw-h">14日間の無料トライアル</div>
+    <ul class="pw-list">
+      <li>メッセージ機能が利用可能</li>
+      <li>気になる相手に直接ゴルフのお誘いが可能</li>
+      <li>マッチング時の金額が30%OFF</li>
+    </ul>
+    <button class="pw-plan reco" onclick="subscribe('12ヶ月プラン')">
+      <span class="pm">12ヶ月プラン<small>¥1,500お得</small></span><span class="pp">¥980<small>/月</small></span>
+    </button>
+    <button class="pw-plan" onclick="subscribe('3ヶ月プラン')">
+      <span class="pm">3ヶ月プラン<small>¥500お得</small></span><span class="pp">¥1,980<small>/月</small></span>
+    </button>
+    <button class="pw-plan" onclick="subscribe('1ヶ月プラン')">
+      <span class="pm">1ヶ月プラン</span><span class="pp">¥2,480<small>/月</small></span>
+    </button>
+    <p class="muted" style="font-size:10.5px;margin-top:10px">上記は税込価格です。サブスクリプションは選択されたプラン毎の月で自動更新され、解約はいつでも可能です。登録すると当社の利用規約とプライバシーポリシーに同意されたものとします。</p>
+  </div>`);
+}
+function subscribe(plan){
+  S.subActive = true; save(); closeSheet(); render();
+  setTimeout(()=>toast(`${plan}で登録しました。14日間無料です（デモ）`),200);
+}
 function sendOffer(id){
   const u = find(id); const t = TIERS[u.tier];
+  if(S.role==='m' && !S.subActive){ paywall(); return; }
   if(S.points < t.price){ toast('ポイントが不足しています（デモ）'); return; }
   S.points -= t.price;
   S.sentOffers.push({ id:'so'+Date.now(), to:id, date:of_.date, meet:of_.meet, course:of_.course, price:t.price, status:'pending' });
@@ -708,6 +812,7 @@ function fixRound(){
 function sendMsg(id){
   const inp = document.getElementById('chat-in');
   const t = inp.value.trim(); if(!t) return;
+  if(S.role==='m' && !S.subActive){ toast('メッセージの送信にはサブスク登録が必要です'); setTimeout(paywall, 700); return; }
   let c = S.chats.find(x=>x.id===id);
   if(!c){ c={id,msgs:[]}; S.chats.unshift(c); }
   c.msgs.push({who:'me', t, tm:'いま'});
@@ -788,11 +893,14 @@ V.mypage = () => {
   const tier = TIERS[m.tier||'GOLD'];
   const foot = (isF?MEN:WOMEN).slice(0,4);
   const menu = [
-    ['プロフィール', I.user, ()=>`go('#/profile/${isF?'w1':'m1'}')`],
+    ['プロフィール', I.user, ()=>`go('#/me')`],
     [isF?'コイン':'ポイント', I.coin, ()=>`go('#/points')`],
     [isF?'受信オファー':'オファー状況', I.invite, ()=>`go('#/offers')`, isF?'2':''],
     ['ラウンド録', I.camera, ()=>`go('#/roundlog')`],
     ['フレーム', I.trophy, ()=>`go('#/frames')`],
+    ['ゴルフ場', I.pin, ()=>`coursePick=null;go('#/courses')`],
+    ['ヘルプ', I.bell, ()=>`go('#/help')`],
+    ['記事', I.flag.replace('viewBox','width="23" height="23" viewBox'), ()=>`go('#/articles')`],
     ['設定', I.gear, ()=>`go('#/settings')`],
   ].map(x=>`<button class="mi" onclick="${x[2]()}">${x[1]}${x[0]}${x[3]?`<span class="bd">${x[3]}件</span>`:''}</button>`).join('');
   return `
@@ -801,7 +909,7 @@ V.mypage = () => {
       <span class="avatar-ring" style="${isF?ringStyle(m.tier):'background:rgba(250,248,242,.3)'};display:block">
         <img src="${m.img}">
       </span>
-      <div class="nm">${esc(m.name)} ${isF?tierBadge(m.tier):'<span class="chip brass" style="font-size:9px">PREMIUM会員</span>'}</div>
+      <div class="nm">${esc(m.name)} ${isF?tierBadge(m.tier):(S.subActive?'<span class="chip brass" style="font-size:9px">サブスク会員</span>':'<span class="chip line" style="font-size:9px">無料会員</span>')}</div>
       <div class="meta">
         <div class="m"><div class="v">${m.best}</div><div class="k">BEST</div></div>
         <div class="m"><div class="v">${m.rounds}</div><div class="k">ROUNDS</div></div>
@@ -1004,36 +1112,76 @@ V.settings = () => `
   ${appbar({title:'設定', back:true})}
   <div class="page">
     <div class="slist">
-      <button class="srow" onclick="toast('拠点：市区町村レベルで保存されます（デモ）')"><span class="ic">${I.pin}</span>拠点設定<span class="tag2">千葉市</span></button>
-      <button class="srow" onclick="toast('通知設定（デモ）')"><span class="ic">${I.bell}</span>通知設定<span class="arw">›</span></button>
-      ${S.role==='m'?`<button class="srow" onclick="go('#/subscription')"><span class="ic">${I.coin}</span>サブスクリプション<span class="tag2">PREMIUM</span></button>`:''}
+      <button class="srow" onclick="go('#/base')"><span class="ic">${I.pin}</span>拠点設定<span class="tag2">千葉市</span></button>
+      <button class="srow" onclick="go('#/notif-settings')"><span class="ic">${I.bell}</span>通知設定<span class="arw">›</span></button>
+      <button class="srow" onclick="go('#/blocked')"><span class="ic">${I.shield}</span>ブロック中<span class="arw">›</span></button>
+      ${S.role==='m'?`<button class="srow" onclick="go('#/subscription')"><span class="ic">${I.coin}</span>サブスクリプション<span class="tag2">${S.subActive?'利用中':'未加入'}</span></button>`:''}
+      <button class="srow" onclick="go('#/card')"><span class="ic">${I.coin}</span>クレジットカード情報の更新<span class="arw">›</span></button>
+      <button class="srow" onclick="go('#/password')"><span class="ic">${I.gear}</span>パスワード更新<span class="arw">›</span></button>
+      <button class="srow" onclick="go('#/verify')"><span class="ic">${I.shield}</span>本人確認<span class="tag2">${S.verified?'認証済':'要登録'}</span></button>
       <button class="srow" onclick="toast('ドライバー認証：免許証・任意保険を確認します（デモ）')"><span class="ic">${I.car}</span>ドライバー認証<span class="tag2">${S.role==='m'?'認証済':'—'}</span></button>
-      <button class="srow" onclick="toast('ブロック中のユーザーはいません')"><span class="ic">${I.shield}</span>ブロック中<span class="arw">›</span></button>
+      <button class="srow" onclick="taikai()" style="color:var(--danger)"><span class="ic" style="color:var(--danger)">${I.back}</span>退会<span class="arw">›</span></button>
       <button class="srow" onclick="logout()"><span class="ic">${I.back}</span>ログアウト<span class="arw">›</span></button>
     </div>
     <p class="muted wrap" style="font-size:11px;margin-top:14px">DEMO PROTOTYPE — 本人確認・決済連携・LINE連携は実装されません</p>
   </div>
   ${tabbar('my')}${demoPill()}`;
+function taikai(){
+  sheet(`<h3>退会</h3>
+    <p style="font-size:13px;line-height:1.8">退会すると、プロフィール・マッチング履歴・保有ポイントはすべて削除され、復元できません。本当に退会しますか？</p>
+    <button class="btn" style="margin-top:16px;background:var(--danger)" onclick="closeSheet();toast('退会処理はデモのため実行されません')">退会する</button>
+    <button class="btn ghost" style="margin-top:10px" onclick="closeSheet()">キャンセル</button>`);
+}
 function logout(){ S.role=null; save(); go('#/login'); render(); }
 
-V.subscription = () => `
+V.subscription = () => {
+  if(!S.subActive) return `
+  ${appbar({title:'サブスクリプション', back:true})}
+  <div class="page wrap paywall">
+    <div style="height:10px"></div>
+    <p class="muted" style="text-align:center">お客様のサブスクご利用状況：<b>未加入</b></p>
+    <div class="pw-h" style="margin-top:14px">14日間の無料トライアル</div>
+    <ul class="pw-list">
+      <li>メッセージ機能が利用可能</li>
+      <li>気になる相手に直接ゴルフのお誘いが可能</li>
+      <li>マッチング時の金額が30%OFF</li>
+    </ul>
+    <button class="pw-plan reco" onclick="subscribe('12ヶ月プラン')">
+      <span class="pm">12ヶ月プラン<small>¥1,500お得</small></span><span class="pp">¥980<small>/月</small></span>
+    </button>
+    <button class="pw-plan" onclick="subscribe('3ヶ月プラン')">
+      <span class="pm">3ヶ月プラン<small>¥500お得</small></span><span class="pp">¥1,980<small>/月</small></span>
+    </button>
+    <button class="pw-plan" onclick="subscribe('1ヶ月プラン')">
+      <span class="pm">1ヶ月プラン</span><span class="pp">¥2,480<small>/月</small></span>
+    </button>
+    <p class="muted" style="font-size:10.5px">自動更新・いつでも解約可（デモのため決済は動作しません）</p>
+  </div>
+  ${tabbar('my')}${demoPill()}`;
+  return `
   ${appbar({title:'サブスクリプション', back:true})}
   <div class="page wrap">
     <div style="height:14px"></div>
-    <div class="plan">
-      <div class="nm">スタンダード</div>
-      <div class="pr">¥2,480<small> /月</small></div>
-      <ul><li>メッセージ送受信</li><li>日程マッチ（ティーシート）</li><li>公式コンペへの参加</li></ul>
+    <div class="card" style="padding:16px">
+      <div class="spec" style="grid-template-columns:1fr">
+        <div class="row"><span class="k">ステータス</span><span class="v">利用中</span></div>
+        <div class="row"><span class="k">プラン名</span><span class="v">12ヶ月プラン（トライアル中）</span></div>
+        <div class="row"><span class="k">金額</span><span class="v">¥980／月</span></div>
+        <div class="row"><span class="k">次回更新日</span><span class="v">2026/8/11（Stripe自動更新）</span></div>
+      </div>
     </div>
+    <div style="height:18px"></div>
     <div class="plan reco">
-      <span class="reco-tag">現在のプラン</span>
+      <span class="reco-tag">アップグレード案</span>
       <div class="nm">プレミアム</div>
       <div class="pr">¥9,800<small> /月</small></div>
-      <ul><li>スタンダードの全機能</li><li>オファーのサービス利用料 0円</li><li>惜しいマッチの優先提案</li><li>コンペ先行エントリー</li><li>検索結果で優先表示</li></ul>
+      <ul><li>オファーのサービス利用料 0円</li><li>惜しいマッチの優先提案</li><li>コンペ先行エントリー</li><li>検索結果で優先表示</li></ul>
     </div>
-    <p class="muted" style="font-size:11px">12ヶ月一括は20%OFF。いつでも解約できます（デモのため決済は動作しません）。</p>
+    <button class="btn ghost" style="margin-top:8px" onclick="S.subActive=false;save();render();toast('サブスクを解約しました（デモ）')">サブスクの解約</button>
+    <p class="muted" style="font-size:10.5px;margin-top:8px">サブスクは即時解約となり、返金はありません（デモ）</p>
   </div>
   ${tabbar('my')}${demoPill()}`;
+};
 
 /* ---- notifications ---- */
 V.notifications = () => {
@@ -1056,19 +1204,258 @@ V.notifications = () => {
   ${tabbar('')}${demoPill()}`;
 };
 
+/* ---- v6: 追加ページ群 ---- */
+let coursePick = null, courseQ = '', coursePref = 'すべて';
+
+V.forgot = () => `
+  ${appbar({title:'パスワードを忘れた場合', back:true, noBell:true})}
+  <div class="page nofoot wrap">
+    <p class="muted" style="margin-top:24px;text-align:center">登録済みのメールアドレスを入力してください。<br>パスワードリセット用のメールを送信します。</p>
+    <div class="label">メールアドレス</div>
+    <input class="input" type="email" placeholder="example@email.com">
+    <button class="btn" style="margin-top:18px" onclick="toast('リセットメールを送信しました（デモ）');history.back()">送信</button>
+    <p style="text-align:center;margin-top:16px"><a class="muted" onclick="history.back()">ログインページに戻る</a></p>
+  </div>`;
+
+V.contact = () => `
+  ${appbar({title:'お問い合わせ', back:true, noBell:true})}
+  <div class="page nofoot wrap">
+    <p class="muted" style="margin-top:14px">ご質問・ご要望などございましたら、以下のフォームよりお問い合わせください。</p>
+    <div class="label">お名前 *</div>
+    <input class="input" placeholder="山田太郎">
+    <div class="label">メールアドレス *</div>
+    <input class="input" type="email" placeholder="example@email.com">
+    <div class="label">お問い合わせ種別 *</div>
+    <select class="input"><option>選択してください</option><option>アカウントについて</option><option>お支払いについて</option><option>マッチングについて</option><option>不具合の報告</option><option>その他</option></select>
+    <div class="label">お問い合わせ内容 *</div>
+    <textarea class="input" rows="5" placeholder="お問い合わせ内容を入力してください"></textarea>
+    <button class="btn" style="margin-top:18px" onclick="toast('お問い合わせを送信しました（デモ）');history.back()">送信</button>
+  </div>`;
+
+V.help = () => `
+  ${appbar({title:'ヘルプ', back:true})}
+  <div class="page">
+    <div class="slist">
+      <button class="srow" onclick="toast('利用方法ガイドを開きます（デモ）')">利用方法<span class="arw">›</span></button>
+      <button class="srow" onclick="toast('利用規約を開きます（デモ）')">利用規約<span class="arw">›</span></button>
+      <button class="srow" onclick="toast('プライバシーポリシーを開きます（デモ）')">プライバシーポリシー<span class="arw">›</span></button>
+      <button class="srow" onclick="toast('特定商取引法に基づく表記を開きます（デモ）')">特定商取引法に基づく表記<span class="arw">›</span></button>
+      <button class="srow" onclick="go('#/contact')">お問い合わせ<span class="arw">›</span></button>
+    </div>
+  </div>
+  ${tabbar('my')}${demoPill()}`;
+
+V.courses = () => {
+  const prefs = ['すべて','千葉県','栃木県','お気に入り'];
+  let list = COURSE_DATA.filter(c =>
+    (coursePref==='すべて' || (coursePref==='お気に入り' ? S.favs[c.n] : c.p===coursePref)) &&
+    (!courseQ || c.n.includes(courseQ) || c.k.includes(courseQ)));
+  return `
+  ${appbar({title:'ゴルフ場選択', back:true})}
+  <div class="page">
+    <div class="filters">
+      ${prefs.map(p=>`<button class="chip ${coursePref===p?'':'line'}" onclick="coursePref='${p}';render()">${p==='お気に入り'?'★ ':''}${p}</button>`).join('')}
+    </div>
+    <div class="wrap" style="margin-top:8px">
+      <input class="input" placeholder="ゴルフ場名で検索" value="${esc(courseQ)}" onchange="courseQ=this.value;render()">
+    </div>
+    <div class="tee-body">
+      ${list.map(c=>`
+        <div class="card course-row" onclick="${coursePick?`pickCourse('${c.n}')`:`toast('${c.n}（デモ）')`}">
+          <img class="cimg" src="${c.img}">
+          <div><div class="cn">${c.n}</div><div class="ck">${c.k}・${c.p}</div></div>
+          <button class="fav ${S.favs[c.n]?'on':''}" onclick="event.stopPropagation();S.favs['${c.n}']=!S.favs['${c.n}'];save();render()">${I.star.replace('width="14" height="14"','width="20" height="20"')}</button>
+        </div>`).join('') || '<div class="empty"><div class="big">—</div>該当するゴルフ場がありません</div>'}
+      ${coursePick?'<p class="muted" style="font-size:11px;text-align:center">タップして選択すると前の画面に戻ります</p>':''}
+    </div>
+  </div>
+  ${tabbar('my')}${demoPill()}`;
+};
+function pickCourse(n){
+  if(coursePick==='offer') of_.course = n;
+  coursePick = null;
+  history.back();
+  setTimeout(()=>toast(`${n} を選択しました`), 300);
+}
+
+V.base = () => `
+  ${appbar({title:'拠点設定', back:true})}
+  <div class="page wrap">
+    <p class="muted" style="margin-top:12px">拠点を設定すると、近くのユーザーを優先して表示できます。正確な住所は保存されず、市区町村レベルの精度で管理されます。</p>
+    <div class="card" style="padding:16px;margin-top:14px">
+      <b style="font-size:14px">${I.pin} 現在地を使う（推奨）</b>
+      <p class="muted" style="font-size:11.5px;margin-top:4px">ボタンを押すと、ブラウザが位置情報の許可を求めます。</p>
+      <button class="btn sm" style="margin-top:10px" onclick="toast('拠点を「千葉市」付近に設定しました（デモ）')">現在地で設定する</button>
+    </div>
+    <div class="card" style="padding:16px;margin-top:12px">
+      <b style="font-size:14px">郵便番号で設定</b>
+      <div style="display:flex;gap:10px;margin-top:10px">
+        <input class="input" placeholder="1234567" style="flex:1">
+        <button class="btn sm" onclick="toast('拠点を設定しました（デモ）')">設定</button>
+      </div>
+    </div>
+  </div>
+  ${tabbar('my')}${demoPill()}`;
+
+V.notifSettings = () => {
+  const row = (k, t, s, dis) => `
+    <div class="srow" style="cursor:default">
+      <div style="flex:1"><div>${t}</div><div class="muted" style="font-size:10.5px">${s}</div></div>
+      <button class="sw ${S.ntf[k]?'on':''}" ${dis?'disabled style="opacity:.4"':''} onclick="S.ntf['${k}']=!S.ntf['${k}'];save();render()"></button>
+    </div>`;
+  return `
+  ${appbar({title:'通知設定', back:true})}
+  <div class="page">
+    <div class="sec wrap"><div class="sec-h"><span class="t">基本設定</span></div></div>
+    <div class="slist" style="margin-top:0">
+      ${row('email','Email通知','Emailでの通知を有効にする')}
+      ${row('line','LINE通知','LINE連携が必要です', true)}
+    </div>
+    <div class="sec wrap"><div class="sec-h"><span class="t">通知項目</span></div></div>
+    <div class="slist" style="margin-top:0">
+      ${row('news','お知らせ通知','システムからのお知らせ')}
+      ${row('foot','足あと通知','プロフィールを見られた時')}
+      ${row('like','スタンプ/いいね','スタンプやいいねを貰った時')}
+      ${row('msg','メッセージ通知','新しいメッセージ')}
+    </div>
+  </div>
+  ${tabbar('my')}${demoPill()}`;
+};
+
+V.blocked = () => `
+  ${appbar({title:'ブロック中', back:true})}
+  <div class="page">
+    <div class="empty"><div class="big">—</div>ブロック中のユーザーはいません</div>
+  </div>
+  ${tabbar('my')}${demoPill()}`;
+
+V.card = () => `
+  ${appbar({title:'クレジットカード情報', back:true})}
+  <div class="page wrap">
+    <p class="muted" style="margin:14px 0">クレジットカード情報を登録・更新できます。</p>
+    <div class="ccard">
+      <div style="display:flex;justify-content:space-between"><span class="cc-k">CREDIT CARD</span><span class="cc-k">${S.subActive?'登録済み':'未登録'}</span></div>
+      <div class="cc-no">${S.subActive?'**** **** **** 6011':'カード未登録'}</div>
+      <div class="cc-k">有効期限 ${S.subActive?'12/29':'--/--'}</div>
+    </div>
+    <button class="btn ghost" style="margin-top:18px" onclick="toast('カード登録画面を開きます（デモ・Stripe連携）')">カード情報を${S.subActive?'更新':'登録'}</button>
+    <p class="muted" style="font-size:11px;margin-top:12px">・カード情報はStripeによって安全に暗号化・処理されます<br>・更新されたカード情報は今後の決済に使用されます</p>
+  </div>
+  ${tabbar('my')}${demoPill()}`;
+
+V.password = () => `
+  ${appbar({title:'パスワード更新', back:true})}
+  <div class="page wrap">
+    <div class="label">新しいパスワード</div>
+    <input class="input" type="password">
+    <div class="label">新しいパスワード（確認）</div>
+    <input class="input" type="password">
+    <button class="btn" style="margin-top:18px" onclick="toast('パスワードを更新しました（デモ）');history.back()">パスワードを更新</button>
+  </div>
+  ${tabbar('my')}${demoPill()}`;
+
+V.verify = () => `
+  ${appbar({title:'本人確認', back:true})}
+  <div class="page wrap">
+    ${S.verified?`
+    <div class="notice" style="margin:14px 0 0"><span class="ic">${I.shield}</span><span>本人確認は完了しています</span></div>
+    <p class="muted" style="margin-top:14px;font-size:12px">書類を再提出する場合は以下から行えます。</p>`:`
+    <div class="warn-banner" style="margin:14px 0 0">本人確認書類の登録が必要です</div>`}
+    <div class="label" style="margin-top:20px">書類の種類</div>
+    <div class="opt-grid">
+      <button class="opt on">運転免許証</button><button class="opt">マイナンバーカード</button><button class="opt">パスポート</button>
+    </div>
+    <div class="card" style="padding:18px;margin-top:16px;text-align:center">
+      <p style="font-size:12.5px;line-height:1.8"><b>eKYC（電子本人確認）</b><br>書類のICチップ読み取りと顔照合で、なりすましを防止します。</p>
+      <button class="btn" style="margin-top:12px" onclick="S.verified=true;save();render();toast('本人確認が完了しました（デモ）')">${I.camera} 撮影して照合する（デモ）</button>
+    </div>
+    <p class="muted" style="font-size:11px;margin-top:12px">審査は通常10分〜24時間以内に完了します。確認完了までオファー・メッセージの送信はできません。</p>
+  </div>
+  ${tabbar('my')}${demoPill()}`;
+
+V.articles = () => `
+  ${appbar({title:'記事', back:true, noBell:true})}
+  <div class="page ${S.role?'':'nofoot'}">
+    ${ARTICLES.map(a=>`
+      <button class="card article-card" style="width:100%;text-align:left" onclick="go('#/article/${a.id}')">
+        <img src="${a.img}"><div class="ab"><div class="at">${a.title}</div><div class="am">PreGo しゅうへい ／ ${a.date}</div></div>
+      </button>`).join('')}
+  </div>
+  ${S.role?tabbar('')+demoPill():''}`;
+
+V.article = id => {
+  const a = ARTICLES.find(x=>x.id===id) || ARTICLES[0];
+  return `
+  ${appbar({title:'記事', back:true, noBell:true})}
+  <div class="page ${S.role?'':'nofoot'} article-body">
+    <h2>${a.title}</h2>
+    <div class="meta">PreGo しゅうへい ／ ${a.date}</div>
+    <img src="${a.img}">
+    ${a.body.map(p=>`<p>${p}</p>`).join('')}
+    ${S.role?'':'<button class="btn" style="margin:14px 0" onclick="go(\'#/login\')">PreGoをはじめる</button>'}
+  </div>
+  ${S.role?tabbar('')+demoPill():''}`;
+};
+
+V.me = () => {
+  const m = me();
+  const inner = V.profile(S.role==='f'?'w1':'m1');
+  const banner = `
+    <div class="warn-banner" style="position:relative;z-index:5">
+      未入力の項目があります。プロフィールを充実させてマッチング率を上げましょう
+      <button class="go" onclick="go('#/edit-profile')">編集 →</button>
+    </div>`;
+  return inner.replace('<div class="page" style="padding-bottom:0">', `<div class="page" style="padding-bottom:0">${banner}`)
+    .replace(/<div class="prof-cta">[\s\S]*?<\/div>\s*<\/div>/, `
+    <div class="prof-cta">
+      <button class="btn" onclick="go('#/edit-profile')">プロフィールを編集する</button>
+    </div></div>`);
+};
+
+V.editProfile = () => {
+  const m = me();
+  return `
+  ${appbar({title:'プロフィール編集', back:true, noBell:true})}
+  <div class="page nofoot wrap">
+    <div class="label">プロフィール写真（タップで変更）</div>
+    <div style="display:flex;gap:10px">
+      ${photosOf(m).map(p=>`<img src="${p}" style="width:74px;height:74px;border-radius:12px;object-fit:cover" onclick="toast('写真の変更（デモ）')">`).join('')}
+      <button class="photo-pick" style="width:74px;height:74px;aspect-ratio:auto" onclick="toast('写真を追加（デモ）')">＋</button>
+    </div>
+    <div class="label">ニックネーム</div>
+    <input class="input" value="${esc(m.name)}">
+    <div class="label">自己紹介</div>
+    <textarea class="input" rows="4">${esc(m.bio)}</textarea>
+    <div style="display:flex;gap:10px">
+      <div style="flex:1"><div class="label">ベストスコア</div><input class="input" type="number" value="${m.best}"></div>
+      <div style="flex:1"><div class="label">アベレージ</div><input class="input" type="number" value="${m.ave}"></div>
+    </div>
+    <div class="label">プレー代の負担について</div>
+    <select class="input"><option>お相手の分も払います</option><option selected>話し合って決めたい</option><option>お互い自分の分を払う</option><option>お相手に出してもらいたい</option></select>
+    <div class="label">プレーエリア</div>
+    <div class="psec"><div class="chips">${m.area.map(a=>`<span class="chip">${a}</span>`).join('')}<button class="chip line" onclick="toast('エリア編集（デモ）')">＋ 編集</button></div></div>
+    <button class="btn" style="margin-top:22px" onclick="toast('プロフィールを保存しました（デモ）');history.back()">保存する</button>
+  </div>`;
+};
+
 /* ---------- router ---------- */
 function render(){
   const h = location.hash || '#/login';
   const [_, route, arg] = h.split('/');
-  if(!S.role && !['login','signup'].includes(route)){ location.hash = '#/login'; return; }
+  if(!S.role && !['login','signup','forgot','contact','articles','article','help'].includes(route)){ location.hash = '#/login'; return; }
   const map = {
-    '': V.login, 'login': V.login, 'signup': V.signup,
+    '': V.login, 'login': V.login, 'signup': V.signup, 'forgot': V.forgot,
     'home': V.home, 'tee': V.tee, 'miss': V.miss, 'feed': V.feed,
     'messages': V.messages, 'chat': ()=>V.chat(arg),
     'profile': ()=>V.profile(arg), 'offer': ()=>V.offer(arg), 'offers': V.offers,
     'compe': ()=>V.compe(arg), 'mypage': V.mypage, 'points': V.points,
     'roundlog': V.roundlog, 'frames': V.frames,
     'settings': V.settings, 'subscription': V.subscription, 'notifications': V.notifications,
+    'contact': V.contact, 'help': V.help, 'courses': V.courses, 'base': V.base,
+    'notif-settings': V.notifSettings, 'blocked': V.blocked, 'card': V.card,
+    'password': V.password, 'verify': V.verify,
+    'articles': V.articles, 'article': ()=>V.article(arg),
+    'me': V.me, 'edit-profile': V.editProfile,
   };
   $app.innerHTML = (map[route] || V.login)();
   window.scrollTo(0,0);
