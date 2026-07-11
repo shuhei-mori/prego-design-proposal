@@ -1008,10 +1008,12 @@ V.roundlog = () => {
   <div class="page">
     <p class="muted wrap" style="margin-top:12px">昨日のラウンド、おつかれさまでした。スコアカードを作ってシェアしましょう。</p>
     <div class="framebox"><canvas id="frame-cv" width="860" height="860" style="width:100%;display:block"></canvas></div>
-    <div class="wrap" style="margin-top:14px;display:flex;gap:10px">
-      <div style="flex:1"><div class="label" style="margin-top:0">TOTAL</div><input class="input" type="number" value="${rl.score}" onchange="rl.score=+this.value;rl.tier=null;render()"></div>
-      <div style="flex:1"><div class="label" style="margin-top:0">OUT</div><input class="input" type="number" value="${rl.out}" onchange="rl.out=+this.value;render()"></div>
-      <div style="flex:1"><div class="label" style="margin-top:0">IN</div><input class="input" type="number" value="${rl.inn}" onchange="rl.inn=+this.value;render()"></div>
+    <div class="wrap" style="margin-top:14px;display:flex;gap:10px;align-items:flex-end">
+      <div style="flex:1"><div class="label" style="margin-top:0">OUT</div><input class="input" type="number" value="${rl.out}" onchange="rl.out=+this.value;rl.score=rl.out+rl.inn;rl.tier=null;render()"></div>
+      <div style="flex:1"><div class="label" style="margin-top:0">IN</div><input class="input" type="number" value="${rl.inn}" onchange="rl.inn=+this.value;rl.score=rl.out+rl.inn;rl.tier=null;render()"></div>
+      <div style="flex:1.2"><div class="label" style="margin-top:0">TOTAL（自動計算）</div>
+        <div class="input" style="text-align:center;font-family:var(--font-brand);font-size:19px;background:var(--turf-soft);border-color:transparent;color:var(--fairway)">${rl.out + rl.inn}</div>
+      </div>
     </div>
     <div class="wrap"><div class="label">ゴルフ場</div>
       <select class="input" onchange="rl.course=this.value;render()">
