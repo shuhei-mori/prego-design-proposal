@@ -1301,7 +1301,7 @@ V.notifSettings = () => {
   const row = (k, t, s, dis) => `
     <div class="srow" style="cursor:default">
       <div style="flex:1"><div>${t}</div><div class="muted" style="font-size:10.5px">${s}</div></div>
-      <button class="sw ${S.ntf[k]?'on':''}" ${dis?'disabled style="opacity:.4"':''} onclick="S.ntf['${k}']=!S.ntf['${k}'];save();render()"></button>
+      <button class="swt ${S.ntf[k]?'on':''}" ${dis?'disabled style="opacity:.4"':''} onclick="S.ntf['${k}']=!S.ntf['${k}'];save();render()"></button>
     </div>`;
   return `
   ${appbar({title:'通知設定', back:true})}
@@ -1377,7 +1377,7 @@ V.articles = () => `
   ${appbar({title:'記事', back:true, noBell:true})}
   <div class="page ${S.role?'':'nofoot'}">
     ${ARTICLES.map(a=>`
-      <button class="card article-card" style="width:100%;text-align:left" onclick="go('#/article/${a.id}')">
+      <button class="card article-card" onclick="go('#/article/${a.id}')">
         <img src="${a.img}"><div class="ab"><div class="at">${a.title}</div><div class="am">PreGo しゅうへい ／ ${a.date}</div></div>
       </button>`).join('')}
   </div>
