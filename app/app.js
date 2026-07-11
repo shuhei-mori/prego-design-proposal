@@ -752,9 +752,16 @@ V.chat = id => {
   const c = S.chats.find(x=>x.id===id) || {id, msgs:[]};
   const u = find(id);
   const fx = (S.fixed||{})[id];
-  const msgs = c.msgs.map(m=>{
+  const msgs = c.msgs.map((m,i)=>{
     if(m.who==='sys') return `<div class="msg sys">${m.t}</div>`;
-    return `<div class="msg ${m.who==='me'?'me':'them'}">${esc(m.t)}<span class="tm">${m.tm}</span></div>`;
+    if(m.who==='me'){
+      const read = c.msgs.slice(i+1).some(x=>x.who==='them');
+      return `<div class="mrow me">
+        <span class="mmeta">${read?'既読<br>':''}${m.tm}</span>
+        <div class="msg me">${esc(m.t)}</div>
+      </div>`;
+    }
+    return `<div class="mrow"><div class="msg them">${esc(m.t)}<span class="tm">${m.tm}</span></div></div>`;
   }).join('');
   const fixbar = fx ? `
     <div class="fixbar done">
