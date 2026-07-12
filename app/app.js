@@ -641,17 +641,24 @@ function inviteSheet(id){
   const shared = u.dates.filter(d=>myDates.includes(d));
   const dates = shared.length ? shared : u.dates;
   inv = { id, date: dates[0], mode: 'ラウンド', pay: 'プレー代はこちらで持ちます' };
-  const MODES = [['ラウンド','1日・コース'],['シミュゴルフ','1〜2h・駅近・雨OK'],['打ちっぱなし','1h・手ぶらOK']];
+  const iSim = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12.5" rx="2"/><path d="M9 20.5h6M12 16.5v4"/><path d="M8 12.5l2.5-3.5 2 2 3-4"/></svg>';
+  const iRange = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20.5c2-1 3-2.6 3-5V5l8-1.8"/><circle cx="17" cy="14" r="2.6"/><path d="M4.5 20.5h8"/></svg>';
+  const MODES = [
+    ['ラウンド','ゴルフ場で18ホール・1日', I.flag.replace('<svg ','<svg width="21" height="21" '), ''],
+    ['シミュゴルフ','1〜2時間・駅近・雨でもOK', iSim, 'はじめまして向き'],
+    ['打ちっぱなし','1時間・手ぶらOK・気軽', iRange, 'はじめまして向き'],
+  ];
   const html = () => `
     <h3>${esc(u.name)}さんを誘う</h3>
     <p class="muted">仲間探しスタイルの方には、サブスクだけで誘えます（謝礼不要）</p>
     ${isD()?`
     <div class="label">会う形式 *</div>
-    <div class="opt-grid" style="grid-template-columns:1fr 1fr 1fr">${MODES.map(([m,s])=>`
-      <button class="opt ${inv.mode===m?'on':''}" style="padding:10px 4px" onclick="inv.mode='${m}';inv.pay=inv.pay.replace(/^(プレー代|費用)/,'${m}'==='ラウンド'?'プレー代':'費用');window._invR()">
-        <div style="font-size:12px">${m}</div><div style="font-size:8.5px;opacity:.65;margin-top:2px">${s}</div>
+    <div class="mode-list">${MODES.map(([m,s,ic,tag])=>`
+      <button class="mode-row ${inv.mode===m?'on':''}" onclick="inv.mode='${m}';inv.pay=inv.pay.replace(/^(プレー代|費用)/,'${m}'==='ラウンド'?'プレー代':'費用');window._invR()">
+        <span class="mic">${ic}</span>
+        <span class="mtx"><span class="mt">${m}${tag?`<span class="mtag">${tag}</span>`:''}</span><span class="ms">${s}</span></span>
+        <span class="mck">${inv.mode===m?I.check.replace('width="40" height="40"','width="15" height="15"'):''}</span>
       </button>`).join('')}</div>
-    ${inv.mode!=='ラウンド'?`<div class="notice" style="margin:2px 0 10px"><span class="ic">${I.shield}</span><span>はじめましてにおすすめ。短時間・明るい室内で、お互いの雰囲気とスイングがわかります</span></div>`:''}
     `:''}
     <div class="label">日程${shared.length?'（お互いの空き日）':''}</div>
     <div class="opt-grid">${dates.map(d=>`<button class="opt ${inv.date===d?'on':''}" onclick="inv.date='${d}';window._invR()">${d}</button>`).join('')}</div>
