@@ -82,16 +82,17 @@ const S = Object.assign({
 const save = () => localStorage.setItem('prego-demo', JSON.stringify(S));
 
 /* ---------- color themes (A/B/C) ---------- */
-const THEME_NAMES = { a:'A クラブハウス', b:'B ミント', c:'C オリーブ' };
+const THEME_NAMES = { a:'A クラブハウス', b:'B ミント', c:'C オリーブ', d:'D 新プラン（チケット制）' };
+const isD = () => S.theme === 'd';
 const qsTheme = new URLSearchParams(location.search).get('theme');
 if(qsTheme && THEME_NAMES[qsTheme]) S.theme = qsTheme;
 function applyTheme(){
   document.body.classList.remove('theme-b','theme-c');
-  if(S.theme !== 'a') document.body.classList.add('theme-' + S.theme);
+  if(S.theme==='b'||S.theme==='c') document.body.classList.add('theme-' + S.theme);
 }
 function setTheme(t){ S.theme = t; save(); applyTheme(); render(); }
 function cycleTheme(){
-  S.theme = S.theme==='a' ? 'b' : S.theme==='b' ? 'c' : 'a';
+  S.theme = S.theme==='a' ? 'b' : S.theme==='b' ? 'c' : S.theme==='c' ? 'd' : 'a';
   save(); applyTheme(); render();
   toast('配色パターン ' + THEME_NAMES[S.theme]);
 }
@@ -236,7 +237,7 @@ V.login = () => `
     </div>
     <div class="theme-row">
       <span class="lbl2">配色パターン</span>
-      ${['a','b','c'].map(t=>`<button class="tbtn ${S.theme===t?'on':''}" onclick="setTheme('${t}')">${t.toUpperCase()}</button>`).join('')}
+      ${['a','b','c','d'].map(t=>`<button class="tbtn ${S.theme===t?'on':''}" onclick="setTheme('${t}')">${t.toUpperCase()}</button>`).join('')}
     </div>
     <div class="demo-note">DEMO PROTOTYPE — 認証・決済は動作しません</div>
   </div>
@@ -639,15 +640,24 @@ function inviteSheet(id){
   const myDates = me().dates || [];
   const shared = u.dates.filter(d=>myDates.includes(d));
   const dates = shared.length ? shared : u.dates;
-  inv = { id, date: dates[0], pay: 'プレー代はこちらで持ちます' };
+  inv = { id, date: dates[0], mode: 'ラウンド', pay: 'プレー代はこちらで持ちます' };
+  const MODES = [['ラウンド','1日・コース'],['シミュゴルフ','1〜2h・駅近・雨OK'],['打ちっぱなし','1h・手ぶらOK']];
   const html = () => `
-    <h3>${esc(u.name)}さんをラウンドに誘う</h3>
+    <h3>${esc(u.name)}さんを誘う</h3>
     <p class="muted">仲間探しスタイルの方には、サブスクだけで誘えます（謝礼不要）</p>
+    ${isD()?`
+    <div class="label">会う形式 *</div>
+    <div class="opt-grid" style="grid-template-columns:1fr 1fr 1fr">${MODES.map(([m,s])=>`
+      <button class="opt ${inv.mode===m?'on':''}" style="padding:10px 4px" onclick="inv.mode='${m}';inv.pay=inv.pay.replace(/^(プレー代|費用)/,'${m}'==='ラウンド'?'プレー代':'費用');window._invR()">
+        <div style="font-size:12px">${m}</div><div style="font-size:8.5px;opacity:.65;margin-top:2px">${s}</div>
+      </button>`).join('')}</div>
+    ${inv.mode!=='ラウンド'?`<div class="notice" style="margin:2px 0 10px"><span class="ic">${I.shield}</span><span>はじめましてにおすすめ。短時間・明るい室内で、お互いの雰囲気とスイングがわかります</span></div>`:''}
+    `:''}
     <div class="label">日程${shared.length?'（お互いの空き日）':''}</div>
     <div class="opt-grid">${dates.map(d=>`<button class="opt ${inv.date===d?'on':''}" onclick="inv.date='${d}';window._invR()">${d}</button>`).join('')}</div>
-    <div class="label">プレー代の宣言 *</div>
+    <div class="label">${isD()&&inv.mode!=='ラウンド'?'費用':'プレー代'}の宣言 *</div>
     <div style="display:flex;flex-direction:column;gap:8px">
-      ${['プレー代はこちらで持ちます','割り勘でお願いします','相談して決めたい'].map((p,i)=>`
+      ${[(isD()&&inv.mode!=='ラウンド'?'費用':'プレー代')+'はこちらで持ちます','割り勘でお願いします','相談して決めたい'].map((p,i)=>`
         <button class="opt ${inv.pay===p?'on':''}" style="border-radius:12px;text-align:left" onclick="inv.pay='${p}';window._invR()">${i===0?'★ ':''}${p}${i===0?'（返信率が上がります）':''}</button>`).join('')}
     </div>
     <div class="notice" style="margin:14px 0 0">
@@ -662,13 +672,34 @@ function sendInvite(){
   const u = find(inv.id);
   let c = S.chats.find(x=>x.id===inv.id);
   if(!c){ c = {id:inv.id, msgs:[]}; S.chats.unshift(c); }
-  c.msgs.push({who:'sys', t:`⛳ ${inv.date} のラウンドにお誘い（${inv.pay}）`});
-  c.msgs.push({who:'me', t:`はじめまして！${inv.date}にご一緒できたら嬉しいです。${inv.pay}。`, tm:'いま'});
+  c.msgs.push({who:'sys', t:`⛳ ${inv.date} の${inv.mode||'ラウンド'}にお誘い（${inv.pay}）`});
+  c.msgs.push({who:'me', t:`はじめまして！${inv.date}に${inv.mode&&inv.mode!=='ラウンド'?inv.mode:'ラウンド'}をご一緒できたら嬉しいです。${inv.pay}。`, tm:'いま'});
   save(); closeSheet();
   go('#/chat/'+inv.id); render();
   setTimeout(()=>toast('誘いを送りました。謝礼は発生しません'),300);
 }
 function paywall(){
+  if(isD()){
+    sheet(`<div class="paywall">
+    <div class="pw-h">サブスクプラン（チケット制）</div>
+    <ul class="pw-list">
+      <li>メッセージ・ラウンド誘い（プレー代宣言）が使い放題</li>
+      <li>プレミアムは謝礼オファーチケットが毎月1枚届く</li>
+      <li>チケットは当月限り有効。使わないと失効します</li>
+    </ul>
+    <button class="pw-plan reco" onclick="subscribe('プレミアム')">
+      <span class="pm">プレミアム<small>オファーチケット 月1枚つき</small></span><span class="pp">¥9,800<small>/月</small></span>
+    </button>
+    <button class="pw-plan" onclick="subscribe('スタンダード')">
+      <span class="pm">スタンダード<small>メッセージ＋ラウンド誘い</small></span><span class="pp">¥2,480<small>/月</small></span>
+    </button>
+    <button class="pw-plan" onclick="subscribe('年間プラン')">
+      <span class="pm">年間プラン<small>チケット3枚つき・月あたり¥1,980</small></span><span class="pp">¥23,760<small>/年</small></span>
+    </button>
+    <p class="muted" style="font-size:10.5px;margin-top:10px">チケット1枚＝デビューオファー1回（お相手には謝礼¥4,400が届きます）。上位ランクの方への指名は差額のみ追加。税込・自動更新・いつでも解約可（デモ）</p>
+  </div>`);
+    return;
+  }
   sheet(`<div class="paywall">
     <div class="pw-h">14日間の無料トライアル</div>
     <ul class="pw-list">
@@ -1202,6 +1233,29 @@ function taikai(){
 function logout(){ S.role=null; save(); go('#/login'); render(); }
 
 V.subscription = () => {
+  if(!S.subActive && isD()) return `
+  ${appbar({title:'サブスクリプション', back:true})}
+  <div class="page wrap paywall">
+    <div style="height:10px"></div>
+    <p class="muted" style="text-align:center">お客様のサブスクご利用状況：<b>未加入</b></p>
+    <div class="pw-h" style="margin-top:14px">サブスクプラン（チケット制）</div>
+    <ul class="pw-list">
+      <li>メッセージ・ラウンド誘い（プレー代宣言）が使い放題</li>
+      <li>プレミアムは謝礼オファーチケットが毎月1枚届く</li>
+      <li>年間プランは割引ではなくチケット3枚を付与</li>
+    </ul>
+    <button class="pw-plan reco" onclick="subscribe('プレミアム')">
+      <span class="pm">プレミアム<small>オファーチケット 月1枚つき</small></span><span class="pp">¥9,800<small>/月</small></span>
+    </button>
+    <button class="pw-plan" onclick="subscribe('スタンダード')">
+      <span class="pm">スタンダード<small>メッセージ＋ラウンド誘い</small></span><span class="pp">¥2,480<small>/月</small></span>
+    </button>
+    <button class="pw-plan" onclick="subscribe('年間プラン')">
+      <span class="pm">年間プラン<small>チケット3枚つき・月あたり¥1,980</small></span><span class="pp">¥23,760<small>/年</small></span>
+    </button>
+    <p class="muted" style="font-size:10.5px">チケット1枚＝デビューオファー1回（お相手に謝礼¥4,400）。当月限り有効。税込・自動更新・いつでも解約可（デモ）</p>
+  </div>
+  ${tabbar('my')}${demoPill()}`;
   if(!S.subActive) return `
   ${appbar({title:'サブスクリプション', back:true})}
   <div class="page wrap paywall">
@@ -1232,8 +1286,9 @@ V.subscription = () => {
     <div class="card" style="padding:16px">
       <div class="spec" style="grid-template-columns:1fr">
         <div class="row"><span class="k">ステータス</span><span class="v">利用中</span></div>
-        <div class="row"><span class="k">プラン名</span><span class="v">12ヶ月プラン（トライアル中）</span></div>
-        <div class="row"><span class="k">金額</span><span class="v">¥980／月</span></div>
+        <div class="row"><span class="k">プラン名</span><span class="v">${isD()?'プレミアム（チケット制）':'12ヶ月プラン（トライアル中）'}</span></div>
+        <div class="row"><span class="k">金額</span><span class="v">${isD()?'¥9,800／月':'¥980／月'}</span></div>
+        ${isD()?`<div class="row"><span class="k">オファーチケット</span><span class="v">残り1枚（7/31失効）</span></div>`:''}
         <div class="row"><span class="k">次回更新日</span><span class="v">2026/8/11（Stripe自動更新）</span></div>
       </div>
     </div>
