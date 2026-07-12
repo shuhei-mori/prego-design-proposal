@@ -1045,7 +1045,7 @@ V.points = () => {
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         ${[5500,11000,22000,33000].map(v=>`
           <button class="card" style="padding:15px;text-align:center" onclick="S.points+=${v};save();render();toast('${v.toLocaleString()}ptチャージしました（デモ）')">
-            <div style="font-family:var(--font-brand);font-size:19px;color:var(--fairway)">${v.toLocaleString()}<small style="font-size:10px"> pt</small></div>
+            <div style="font-family:var(--font-num);font-size:19px;color:var(--fairway)">${v.toLocaleString()}<small style="font-size:10px"> pt</small></div>
             <div class="muted" style="font-size:10.5px">${yen(v)}</div>
           </button>`).join('')}
       </div>
@@ -1069,7 +1069,7 @@ V.roundlog = () => {
       <div style="flex:1"><div class="label" style="margin-top:0">OUT</div><input class="input" type="number" value="${rl.out}" onchange="rl.out=+this.value;rl.score=rl.out+rl.inn;rl.tier=null;render()"></div>
       <div style="flex:1"><div class="label" style="margin-top:0">IN</div><input class="input" type="number" value="${rl.inn}" onchange="rl.inn=+this.value;rl.score=rl.out+rl.inn;rl.tier=null;render()"></div>
       <div style="flex:1.2"><div class="label" style="margin-top:0">TOTAL（自動計算）</div>
-        <div class="input" style="text-align:center;font-family:var(--font-brand);font-size:19px;background:var(--turf-soft);border-color:transparent;color:var(--fairway)">${rl.out + rl.inn}</div>
+        <div class="input" style="text-align:center;font-family:var(--font-num);font-size:19px;background:var(--turf-soft);border-color:transparent;color:var(--fairway)">${rl.out + rl.inn}</div>
       </div>
     </div>
     <div class="wrap"><div class="label">ゴルフ場</div>
@@ -1130,11 +1130,11 @@ function drawFrame(){
   x.fillStyle = 'rgba(250,248,242,.75)';
   x.font = '600 26px "Zen Kaku Gothic New", sans-serif';
   x.fillText(rl.course, 64, 120);
-  x.font = '22px Marcellus, serif'; x.fillStyle = '#D9B96A';
+  x.font = '22px Outfit, sans-serif'; x.fillStyle = '#D9B96A';
   x.fillText('2026.07.14  TUE', 64, 158);
-  x.font = '300px Marcellus, serif'; x.fillStyle = '#FFFFFF';
+  x.font = '300 290px Outfit, sans-serif'; x.fillStyle = '#FFFFFF';
   x.fillText(String(rl.score), 56, 520);
-  x.font = '24px Marcellus, serif'; x.fillStyle = 'rgba(250,248,242,.8)';
+  x.font = '24px Outfit, sans-serif'; x.fillStyle = 'rgba(250,248,242,.8)';
   x.fillText(`OUT ${rl.out}   /   IN ${rl.inn}`, 64, 580);
   x.strokeStyle = 'rgba(250,248,242,.3)'; x.setLineDash([4,8]);
   x.beginPath(); x.moveTo(64,660); x.lineTo(W-64,660); x.stroke(); x.setLineDash([]);
