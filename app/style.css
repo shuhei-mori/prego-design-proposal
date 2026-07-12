@@ -571,7 +571,7 @@ a{color:inherit;text-decoration:none}
 .post .score-strip{
   position:absolute;top:14px;right:14px;text-align:right;
 }
-.post .score-strip .s{font-family:var(--font-brand);font-size:40px;line-height:1;text-shadow:0 2px 14px rgba(0,0,0,.3)}
+.post .score-strip .s{font-family:var(--font-num);font-weight:300;font-size:40px;line-height:1;text-shadow:0 2px 14px rgba(0,0,0,.3)}
 .post .score-strip .k{font-size:8.5px;letter-spacing:.24em;opacity:.85}
 .post .acts{display:flex;align-items:center;gap:16px;padding:10px 14px}
 .post .acts .a{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--ink-soft);font-weight:700}
