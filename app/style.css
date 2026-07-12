@@ -127,6 +127,11 @@ a{color:inherit;text-decoration:none}
   border-bottom:1px solid var(--line);
 }
 .appbar .brand{font-family:var(--font-brand);font-size:21px;letter-spacing:.18em;color:var(--fairway)}
+.brand-logo{
+  display:block;width:96px;height:24px;background:var(--fairway);
+  -webkit-mask:url(img/logo.png) center/contain no-repeat;
+  mask:url(img/logo.png) center/contain no-repeat;
+}
 .appbar .ttl{font-weight:900;font-size:16.5px;letter-spacing:.05em;flex:1;text-align:center}
 .appbar .side{width:34px;height:34px;display:flex;align-items:center;justify-content:center;flex:none}
 .appbar .back{color:var(--ink);border-radius:50%}
@@ -268,7 +273,10 @@ a{color:inherit;text-decoration:none}
   animation:pgIn 1.15s .2s both, pgOut .55s 2.1s both;
 }
 .login .logo{
-  position:absolute;font-family:var(--font-brand);font-size:46px;letter-spacing:.22em;color:var(--login-logo);padding-left:.22em;
+  position:absolute;width:238px;height:59px;
+  background:var(--login-logo);
+  -webkit-mask:url(img/logo.png) center/contain no-repeat;
+  mask:url(img/logo.png) center/contain no-repeat;
   animation:logoIn .8s 2.35s cubic-bezier(.2,.8,.3,1) both;
 }
 @keyframes pgIn{from{opacity:0;letter-spacing:.12em;filter:blur(8px)}to{opacity:1;letter-spacing:.5em;filter:blur(0)}}

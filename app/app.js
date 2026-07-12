@@ -15,16 +15,16 @@ const yen = n => '¥' + n.toLocaleString();
 
 /* ---------- demo users ---------- */
 const WOMEN = [
-  { id:'w1', name:'MIKA',   age:29, img:'img/w1.jpg', best:92,  ave:104, tier:'GOLD',   rounds:38, rating:4.9, rc:41, hist:'5年',   area:['千葉','東京','埼玉'], dates:['7/8','7/14','7/17','7/21'], meet:'現地集合', drink:'少し飲む', style:'楽しくエンジョイ・マナー重視', reply:true,  bio:'休日はほぼゴルフ場にいます。ベスト更新が今年の目標。ラウンド後のビールまでがゴルフです🍺' },
-  { id:'w2', name:'SAKI',   age:28, img:'img/w2.jpg', best:99,  ave:110, tier:'SILVER', rounds:21, rating:4.8, rc:18, hist:'3〜5年', area:['千葉','茨城'], dates:['7/14','7/19','7/26'], meet:'駅集合OK', drink:'飲む', style:'わいわい・コンペ好き', reply:true,  bio:'最近100切りしました！月2でラウンドしています。駅集合で大丈夫です。' },
-  { id:'w3', name:'Emi',    age:31, img:'img/w3.jpg', best:96,  ave:108, tier:'SILVER', rounds:17, rating:4.7, rc:12, hist:'3〜5年', area:['東京','神奈川'], dates:['7/9','7/17','7/30'], meet:'現地集合', drink:'飲まない', style:'しっとり・丁寧なゴルフ', reply:false, bio:'フォームを大事にしています。レッスン週1。ご一緒する方のプレーの邪魔はしません◎' },
-  { id:'w4', name:'Rina',   age:26, img:'img/w4.jpg', best:118, ave:126, tier:'BRONZE', rounds:6,  rating:4.6, rc:5,  hist:'1〜3年', area:['埼玉','群馬'], dates:['7/12','7/21'], meet:'駅集合OK', drink:'少し飲む', style:'初心者歓迎でお願いします', reply:true,  bio:'ゴルフ歴2年目です。まだまだ下手ですが、一生懸命がんばります！' },
-  { id:'w5', name:'manami', age:31, img:'img/w5.jpg', best:104, ave:115, tier:'SILVER', rounds:14, rating:4.8, rc:11, hist:'3〜5年', area:['千葉','埼玉','東京'], dates:['7/14','7/17','7/30'], meet:'現地集合', drink:'飲む', style:'コンペ・わいわい・楽しくゴルフ', reply:true,  bio:'平日ゴルファーです。明るく穏やかな性格。ニコニコよく笑います。' },
-  { id:'w6', name:'yuka',   age:33, img:'img/w6.jpg', best:91,  ave:100, tier:'GOLD',   rounds:44, rating:5.0, rc:37, hist:'10年以上', area:['東京','千葉','神奈川'], dates:['7/10','7/19','7/27'], meet:'現地集合', drink:'少し飲む', style:'スコア重視・淡々と回りたい', reply:true,  bio:'シングル目指して練習中。ストイックに回りたい方、ぜひ。' },
-  { id:'w7', name:'Coco',   age:27, img:'img/w7.jpg', best:112, ave:121, tier:'BRONZE', rounds:9,  rating:4.5, rc:7,  hist:'1〜3年', area:['神奈川','静岡'], dates:['7/13','7/20'], meet:'駅集合OK', drink:'飲む', style:'エンジョイ・写真もたくさん撮りたい', reply:false, bio:'ゴルフウェア集めが趣味です。楽しく回れたら最高です🌸' },
-  { id:'w8', name:'Karin',  age:24, img:'img/w8.jpg', best:124, ave:132, tier:'WHITE',  rounds:2,  rating:4.4, rc:2,  hist:'1年未満', area:['東京','埼玉'], dates:['7/15','7/22'], meet:'駅集合OK', drink:'少し飲む', style:'デビューしたてです', reply:true,  bio:'先月コースデビューしました！優しく教えてくれる方だと嬉しいです。' },
-  { id:'w9', name:'あんな', age:34, img:'img/w9.jpg', best:97,  ave:107, tier:'SILVER', rounds:19, rating:4.7, rc:15, hist:'5年',   area:['茨城','千葉'], dates:['7/16','7/23','7/30'], meet:'現地集合', drink:'飲む', style:'早朝スルー好き', reply:true,  bio:'朝イチスタート好きです。午後は温泉に寄って帰るのが定番コース。' },
-  { id:'w10',name:'Rio',    age:30, img:'img/w10.jpg',best:101, ave:113, tier:'SILVER', rounds:16, rating:4.6, rc:13, hist:'3〜5年', area:['千葉','東京'], dates:['7/11','7/18','7/25'], meet:'駅集合OK', drink:'飲む', style:'わいわい・コンペ好き', reply:false, bio:'夏ゴルフに向けて体力づくり中。カート乗りっぱなしにはしません(笑)' },
+  { id:'w1', st:'o', name:'MIKA',   age:29, img:'img/w1.jpg', best:92,  ave:104, tier:'GOLD',   rounds:38, rating:4.9, rc:41, hist:'5年',   area:['千葉','東京','埼玉'], dates:['7/8','7/14','7/17','7/21'], meet:'現地集合', drink:'少し飲む', style:'楽しくエンジョイ・マナー重視', reply:true,  bio:'休日はほぼゴルフ場にいます。ベスト更新が今年の目標。ラウンド後のビールまでがゴルフです🍺' },
+  { id:'w2', st:'n', name:'SAKI',   age:28, img:'img/w2.jpg', best:99,  ave:110, tier:'SILVER', rounds:21, rating:4.8, rc:18, hist:'3〜5年', area:['千葉','茨城'], dates:['7/14','7/19','7/26'], meet:'駅集合OK', drink:'飲む', style:'わいわい・コンペ好き', reply:true,  bio:'最近100切りしました！月2でラウンドしています。駅集合で大丈夫です。' },
+  { id:'w3', st:'n', name:'Emi',    age:31, img:'img/w3.jpg', best:96,  ave:108, tier:'SILVER', rounds:17, rating:4.7, rc:12, hist:'3〜5年', area:['東京','神奈川'], dates:['7/9','7/17','7/30'], meet:'現地集合', drink:'飲まない', style:'しっとり・丁寧なゴルフ', reply:false, bio:'フォームを大事にしています。レッスン週1。ご一緒する方のプレーの邪魔はしません◎' },
+  { id:'w4', st:'o', name:'Rina',   age:26, img:'img/w4.jpg', best:118, ave:126, tier:'BRONZE', rounds:6,  rating:4.6, rc:5,  hist:'1〜3年', area:['埼玉','群馬'], dates:['7/12','7/21'], meet:'駅集合OK', drink:'少し飲む', style:'初心者歓迎でお願いします', reply:true,  bio:'ゴルフ歴2年目です。まだまだ下手ですが、一生懸命がんばります！' },
+  { id:'w5', st:'n', name:'manami', age:31, img:'img/w5.jpg', best:104, ave:115, tier:'SILVER', rounds:14, rating:4.8, rc:11, hist:'3〜5年', area:['千葉','埼玉','東京'], dates:['7/14','7/17','7/30'], meet:'現地集合', drink:'飲む', style:'コンペ・わいわい・楽しくゴルフ', reply:true,  bio:'平日ゴルファーです。明るく穏やかな性格。ニコニコよく笑います。' },
+  { id:'w6', st:'o', name:'yuka',   age:33, img:'img/w6.jpg', best:91,  ave:100, tier:'GOLD',   rounds:44, rating:5.0, rc:37, hist:'10年以上', area:['東京','千葉','神奈川'], dates:['7/10','7/19','7/27'], meet:'現地集合', drink:'少し飲む', style:'スコア重視・淡々と回りたい', reply:true,  bio:'シングル目指して練習中。ストイックに回りたい方、ぜひ。' },
+  { id:'w7', st:'o', name:'Coco',   age:27, img:'img/w7.jpg', best:112, ave:121, tier:'BRONZE', rounds:9,  rating:4.5, rc:7,  hist:'1〜3年', area:['神奈川','静岡'], dates:['7/13','7/20'], meet:'駅集合OK', drink:'飲む', style:'エンジョイ・写真もたくさん撮りたい', reply:false, bio:'ゴルフウェア集めが趣味です。楽しく回れたら最高です🌸' },
+  { id:'w8', st:'n', name:'Karin',  age:24, img:'img/w8.jpg', best:124, ave:132, tier:'WHITE',  rounds:2,  rating:4.4, rc:2,  hist:'1年未満', area:['東京','埼玉'], dates:['7/15','7/22'], meet:'駅集合OK', drink:'少し飲む', style:'デビューしたてです', reply:true,  bio:'先月コースデビューしました！優しく教えてくれる方だと嬉しいです。' },
+  { id:'w9', st:'o', name:'あんな', age:34, img:'img/w9.jpg', best:97,  ave:107, tier:'SILVER', rounds:19, rating:4.7, rc:15, hist:'5年',   area:['茨城','千葉'], dates:['7/16','7/23','7/30'], meet:'現地集合', drink:'飲む', style:'早朝スルー好き', reply:true,  bio:'朝イチスタート好きです。午後は温泉に寄って帰るのが定番コース。' },
+  { id:'w10', st:'n',name:'Rio',    age:30, img:'img/w10.jpg',best:101, ave:113, tier:'SILVER', rounds:16, rating:4.6, rc:13, hist:'3〜5年', area:['千葉','東京'], dates:['7/11','7/18','7/25'], meet:'駅集合OK', drink:'飲む', style:'わいわい・コンペ好き', reply:false, bio:'夏ゴルフに向けて体力づくり中。カート乗りっぱなしにはしません(笑)' },
 ];
 const MEN = [
   { id:'m1', name:'SHU',     age:44, img:'img/m1.jpg', best:88,  ave:100, plan:'PREMIUM',  rounds:52, rating:5.0, rc:24, hist:'10年以上', area:['千葉','茨城','埼玉'], dates:['7/14','7/17','7/26','7/30'], meet:'車送迎OK', drink:'飲む', style:'楽しく・たまに真剣', bio:'月3ラウンド。車出せます（駅集合ももちろんOK）。楽しく回りましょう。' },
@@ -154,7 +154,7 @@ const I = {
 function appbar(o = {}){
   const back = o.back ? `<button class="side back" onclick="history.back()">${I.back}</button>` : `<span class="side"></span>`;
   const bell = o.noBell ? `<span class="side"></span>` : `<button class="side bell" onclick="go('#/notifications')">${I.bell}<span class="dot"></span></button>`;
-  const mid = o.brand ? `<span class="ttl brand" style="flex:1;text-align:center">PreGo</span>` : `<span class="ttl">${o.title||''}</span>`;
+  const mid = o.brand ? `<span class="ttl" style="display:flex;justify-content:center;align-items:center"><span class="brand-logo" role="img" aria-label="PreGo"></span></span>` : `<span class="ttl">${o.title||''}</span>`;
   return `<header class="appbar ${o.green?'green':''}">${back}${mid}${bell}</header>`;
 }
 function tabbar(cur){
@@ -172,6 +172,13 @@ function tierBadge(tk, small){
   const t = TIERS[tk];
   const bg = tk === 'GOLD' ? 'linear-gradient(120deg,#D9B96A,#B08A3C)' : t.color;
   return `<span class="tier-badge" style="background:${bg};color:${t.text};${small?'font-size:8px;padding:2px 8px;':''}">${t.name}</span>`;
+}
+function styleBadge(u, small){
+  if(!u.st) return '';
+  const s = small?'font-size:8.5px;padding:2px 8px;':'';
+  return u.st==='n'
+    ? `<span class="chip" style="${s}">仲間探し</span>`
+    : `<span class="chip brass" style="${s}">おもてなし</span>`;
 }
 function ringStyle(tk){
   const t = TIERS[tk];
@@ -208,7 +215,7 @@ V.login = () => `
   <div class="brandmark">
     <div class="morph">
       <div class="premium">PREMIUM&nbsp;GOLF</div>
-      <div class="logo">PreGo</div>
+      <div class="logo" role="img" aria-label="PreGo"></div>
     </div>
     <div class="under"></div>
     <div class="pg-cap">PREMIUM GOLF</div>
@@ -357,8 +364,10 @@ function toggleArea(p){
 
 /* ---- home ---- */
 V.home = () => {
-  const list = pool();
   const isM = S.role === 'm';
+  let list = pool();
+  if(isM && S.hf==='n') list = list.filter(u=>u.st==='n');
+  if(isM && S.hf==='o') list = list.filter(u=>u.st==='o');
   const cards = list.map((u, ci) => {
     const liked = S.likes[u.id];
     return `
@@ -369,7 +378,7 @@ V.home = () => {
         <button class="like ${liked?'on':''}" onclick="event.stopPropagation();toggleLike('${u.id}')">${I.heart}</button>
         <div class="id">
           <div class="nm">${esc(u.name)} <span class="ag">${u.age}</span></div>
-          ${isM?tierBadge(u.tier,true):''}
+          ${isM?`<div style="display:flex;gap:4px">${styleBadge(u,true)}${u.st==='o'?tierBadge(u.tier,true):''}</div>`:''}
         </div>
       </div>
       <div class="stats" onclick="go('#/profile/${u.id}')">
@@ -386,11 +395,12 @@ V.home = () => {
       <span>プレー希望日を登録するとマッチ率が3倍になります</span>
     </div>
     <div class="filters">
-      <span class="chip">すべて</span>
+      <button class="chip ${!S.hf?'':'line'}" onclick="S.hf=null;save();render()">すべて</button>
+      ${isM?`
+      <button class="chip ${S.hf==='n'?'':'line'}" onclick="S.hf='n';save();render()">仲間探し（謝礼不要）</button>
+      <button class="chip ${S.hf==='o'?'':'line'}" onclick="S.hf='o';save();render()">おもてなし</button>`:''}
       <span class="chip line">日程が合う</span>
       <span class="chip line">エリア：千葉</span>
-      <span class="chip line">駅集合OK</span>
-      <span class="chip line">${isM?'ランク':'プラン'}</span>
     </div>
     <div class="grid">${cards}</div>
   </div>
@@ -527,8 +537,9 @@ V.profile = id => {
         <button class="cbtn" onclick="toggleLike('${u.id}')" style="${S.likes[u.id]?'color:#FF7A93':''}">${I.heart}</button>
       </div>
       <div class="idbox">
-        <div class="nm">${esc(u.name)} <span class="ag">${u.age}</span> ${isWoman?tierBadge(u.tier):''}</div>
+        <div class="nm">${esc(u.name)} <span class="ag">${u.age}</span> ${isWoman?(u.st==='o'?tierBadge(u.tier):''):''}</div>
         <div class="bd">
+          ${isWoman&&S.role==='m'?styleBadge(u):''}
           <span class="chip" style="background:rgba(250,248,242,.9)">${I.shield} 本人確認済</span>
           ${u.meet.includes('駅')?`<span class="chip" style="background:rgba(250,248,242,.9)">${I.train} 駅集合OK</span>`:''}
           ${u.meet.includes('車')?`<span class="chip" style="background:rgba(250,248,242,.9)">${I.car} 送迎OK</span>`:''}
@@ -561,7 +572,9 @@ V.profile = id => {
     <div class="prof-cta">
       <button class="sq" onclick="openChat('${u.id}')">${I.msg.replace('viewBox','width="20" height="20" viewBox')}</button>
       ${S.role==='m' && isWoman
-        ? `<button class="btn" onclick="go('#/offer/${u.id}')">${I.invite} ラウンドに誘う</button>`
+        ? (u.st==='n'
+          ? `<button class="btn" onclick="inviteSheet('${u.id}')">${I.invite} ラウンドに誘う（謝礼不要）</button>`
+          : `<button class="btn" onclick="go('#/offer/${u.id}')">${I.invite} オファーで誘う</button>`)
         : `<button class="btn" onclick="openChat('${u.id}')">メッセージを送る</button>`}
     </div>
   </div>${demoPill()}`;
@@ -619,6 +632,42 @@ V.offer = id => {
     <button class="btn brass" ${ready?'':'disabled'} onclick="sendOffer('${u.id}')">オファーを送信する（残 ${S.points.toLocaleString()} pt）</button>
   </div>${demoPill()}`;
 };
+let inv = {};
+function inviteSheet(id){
+  if(S.role==='m' && !S.subActive){ paywall(); return; }
+  const u = find(id);
+  const myDates = me().dates || [];
+  const shared = u.dates.filter(d=>myDates.includes(d));
+  const dates = shared.length ? shared : u.dates;
+  inv = { id, date: dates[0], pay: 'プレー代はこちらで持ちます' };
+  const html = () => `
+    <h3>${esc(u.name)}さんをラウンドに誘う</h3>
+    <p class="muted">仲間探しスタイルの方には、サブスクだけで誘えます（謝礼不要）</p>
+    <div class="label">日程${shared.length?'（お互いの空き日）':''}</div>
+    <div class="opt-grid">${dates.map(d=>`<button class="opt ${inv.date===d?'on':''}" onclick="inv.date='${d}';window._invR()">${d}</button>`).join('')}</div>
+    <div class="label">プレー代の宣言 *</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${['プレー代はこちらで持ちます','割り勘でお願いします','相談して決めたい'].map((p,i)=>`
+        <button class="opt ${inv.pay===p?'on':''}" style="border-radius:12px;text-align:left" onclick="inv.pay='${p}';window._invR()">${i===0?'★ ':''}${p}${i===0?'（返信率が上がります）':''}</button>`).join('')}
+    </div>
+    <div class="notice" style="margin:14px 0 0">
+      <span class="ic">${I.shield}</span>
+      <span>宣言した内容はお相手に表示され、あとから変更できません</span>
+    </div>
+    <button class="btn" style="margin-top:14px" onclick="sendInvite()">この内容で誘いを送る</button>`;
+  window._invR = () => sheet(html());
+  sheet(html());
+}
+function sendInvite(){
+  const u = find(inv.id);
+  let c = S.chats.find(x=>x.id===inv.id);
+  if(!c){ c = {id:inv.id, msgs:[]}; S.chats.unshift(c); }
+  c.msgs.push({who:'sys', t:`⛳ ${inv.date} のラウンドにお誘い（${inv.pay}）`});
+  c.msgs.push({who:'me', t:`はじめまして！${inv.date}にご一緒できたら嬉しいです。${inv.pay}。`, tm:'いま'});
+  save(); closeSheet();
+  go('#/chat/'+inv.id); render();
+  setTimeout(()=>toast('誘いを送りました。謝礼は発生しません'),300);
+}
 function paywall(){
   sheet(`<div class="paywall">
     <div class="pw-h">14日間の無料トライアル</div>
@@ -1060,6 +1109,9 @@ function countUp(){
   });
 }
 function frameTier(s){ return s<80?'BLACK':s<90?'GOLD':s<100?'SILVER':s<110?'BRONZE':'WHITE'; }
+const LOGOIMG = new Image();
+LOGOIMG.src = 'img/logo.png';
+LOGOIMG.onload = () => { if(location.hash.includes('roundlog')) drawFrame(); };
 function drawFrame(){
   const cv = document.getElementById('frame-cv'); if(!cv) return;
   const x = cv.getContext('2d'); const W = 860;
@@ -1088,8 +1140,13 @@ function drawFrame(){
   x.beginPath(); x.moveTo(64,660); x.lineTo(W-64,660); x.stroke(); x.setLineDash([]);
   x.font = '600 25px "Zen Kaku Gothic New", sans-serif'; x.fillStyle = 'rgba(250,248,242,.85)';
   x.fillText(`${me().name} ・ ${S.role==='m'?'manami':'SHU'} のラウンド`, 64, 716);
-  x.font = '26px Marcellus, serif'; x.fillStyle = '#D9B96A';
-  x.textAlign = 'right'; x.fillText('P R E G O', W-64, 780);
+  if(LOGOIMG.complete && LOGOIMG.naturalWidth){
+    const lw = 168, lh = lw*461/1871;
+    x.globalAlpha = .95; x.drawImage(LOGOIMG, W-64-lw, 782-lh, lw, lh); x.globalAlpha = 1;
+  } else {
+    x.font = '26px Marcellus, serif'; x.fillStyle = '#D9B96A';
+    x.textAlign = 'right'; x.fillText('P R E G O', W-64, 780); x.textAlign = 'left';
+  }
   x.font = '18px Marcellus, serif'; x.fillStyle = 'rgba(217,185,106,.8)';
   x.fillText(tk + ' FRAME', W-64, 120); x.textAlign = 'left';
 }
