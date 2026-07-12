@@ -832,9 +832,9 @@ function sendMsg(id){
 
 /* ---- feed ---- */
 const FEED = [
-  { u:'w6', course:'紫カントリークラブ すみれ', score:91, cap:'自己ベストまであと1打…！グリーンが難しすぎました🥲 #100切り達成済', likes:24, grad:'linear-gradient(150deg,#2E8B5E,#0E4A34)' },
-  { u:'m3', course:'大多喜城ゴルフ倶楽部', score:84, cap:'風強めでしたがパット好調。ご一緒したお二人ありがとうございました！', likes:18, grad:'linear-gradient(150deg,#17603F,#082E21)' },
-  { u:'w2', course:'市原京急カントリークラブ', score:99, cap:'ついに100切り！！PreGoで会ったメンバーで回れて楽しかった〜🎉', likes:47, grad:'linear-gradient(150deg,#B08A3C,#6B5222)' },
+  { u:'w6', course:'紫カントリークラブ すみれ', score:91, img:'img/c5.jpg', cap:'自己ベストまであと1打…！グリーンが難しすぎました🥲 #100切り達成済', likes:24, grad:'linear-gradient(150deg,#2E8B5E,#0E4A34)' },
+  { u:'m3', course:'大多喜城ゴルフ倶楽部', score:84, img:'img/c13.jpg', cap:'風強めでしたがパット好調。ご一緒したお二人ありがとうございました！', likes:18, grad:'linear-gradient(150deg,#17603F,#082E21)' },
+  { u:'w2', course:'市原京急カントリークラブ', score:99, img:'img/c8.jpg', cap:'ついに100切り！！PreGoで会ったメンバーで回れて楽しかった〜🎉', likes:47, grad:'linear-gradient(150deg,#B08A3C,#6B5222)' },
 ];
 V.feed = () => {
   const posts = FEED.map((p,i)=>{
@@ -845,6 +845,7 @@ V.feed = () => {
         <div><div class="nm">${esc(u.name)}</div><div class="sub">2026/07/0${3-i>0?3-i:1}</div></div>
       </div>
       <div class="visual" style="background:${p.grad}">
+        ${p.img?`<img class="vimg" src="${p.img}" alt="" loading="lazy">`:''}
         <span class="course-tag">${I.pin} ${p.course}</span>
         <div class="score-strip"><div class="s">${p.score}</div><div class="k">TOTAL</div></div>
       </div>
