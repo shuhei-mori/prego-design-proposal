@@ -82,18 +82,18 @@ const S = Object.assign({
 const save = () => localStorage.setItem('prego-demo', JSON.stringify(S));
 
 /* ---------- color themes (A/B/C) ---------- */
-const THEME_NAMES = { a:'A クラブハウス', b:'B ミント', c:'C オリーブ', d:'D セージ', e:'E エメラルド', f:'F ダークティール', '1':'1 新プラン（チケット制）' };
+const THEME_NAMES = { a:'A クラブハウス', b:'B ミント', c:'C オリーブ', d:'D セージ', e:'E エメラルド', f:'F ダークティール', g:'G ミント×エメラルド', '1':'1 新プラン（チケット制）' };
 const isD = () => S.theme === '1';
 const qsTheme = new URLSearchParams(location.search).get('theme');
 if(S.theme==='d' && !localStorage.getItem('prego-mig-d1')){ S.theme='1'; localStorage.setItem('prego-mig-d1','1'); }
 if(qsTheme && THEME_NAMES[qsTheme]) S.theme = qsTheme;
 function applyTheme(){
-  document.body.classList.remove('theme-b','theme-c','theme-d','theme-e','theme-f');
-  if(['b','c','d','e','f'].includes(S.theme)) document.body.classList.add('theme-' + S.theme);
+  document.body.classList.remove('theme-b','theme-c','theme-d','theme-e','theme-f','theme-g');
+  if(['b','c','d','e','f','g'].includes(S.theme)) document.body.classList.add('theme-' + S.theme);
 }
 function setTheme(t){ S.theme = t; save(); applyTheme(); render(); }
 function cycleTheme(){
-  const _tc=['a','b','c','d','e','f','1']; S.theme = _tc[(_tc.indexOf(S.theme)+1) % _tc.length];
+  const _tc=['a','b','c','d','e','f','g','1']; S.theme = _tc[(_tc.indexOf(S.theme)+1) % _tc.length];
   save(); applyTheme(); render();
   toast('配色パターン ' + THEME_NAMES[S.theme]);
 }
@@ -238,7 +238,7 @@ V.login = () => `
     </div>
     <div class="theme-row">
       <span class="lbl2">配色パターン</span>
-      ${['a','b','c','d','e','f','1'].map(t=>`<button class="tbtn ${S.theme===t?'on':''}" onclick="setTheme('${t}')">${t.toUpperCase()}</button>`).join('')}
+      ${['a','b','c','d','e','f','g','1'].map(t=>`<button class="tbtn ${S.theme===t?'on':''}" onclick="setTheme('${t}')">${t.toUpperCase()}</button>`).join('')}
     </div>
     <div class="demo-note">DEMO PROTOTYPE — 認証・決済は動作しません</div>
   </div>
