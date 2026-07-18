@@ -503,7 +503,7 @@ function toggleMyDate(d){
 }
 V.tee = () => {
   const cand = pool().filter(u => u.dates.includes(teeSel));
-  const HOSTED = { id:'ch1', date:'7/21（火）18:30', title:'MIKA & SAKI 主催 シミュ練習会', course:'提携インドアA（新橋）', fmt:'2h貸切・4名', note:'初参加歓迎・レッスン強めの会', avs:['img/w1.jpg','img/w2.jpg'], left:2, host:true };
+  const HOSTED = { id:'ch1', date:'7/21（火）18:30', title:'MIKA & SAKI 主催 インドア練習会', course:'提携インドアA（新橋）', fmt:'2h貸切・4名', note:'初参加歓迎・レッスン強めの会', avs:['img/w1.jpg','img/w2.jpg'], left:2, host:true };
   const compe = COMPES.concat(isD()?[HOSTED]:[]).filter(c => c.date.startsWith(teeSel));
   const dayBtns = TEE_DAYS.days.map(x => {
     const has = pool().some(u => u.dates.includes(x.d)) || COMPES.some(c=>c.date.startsWith(x.d));
@@ -686,9 +686,9 @@ V.offer = id => {
   const t = TIERS[u.tier];
   if(of_.id !== id) of_ = { id, date:null, meet:null, course:null, mode:'ラウンド' };
   if(!of_.mode) of_.mode = 'ラウンド';
-  const feeOf = m => m==='シミュゴルフ' ? (u.sim?.fee||8800) : m==='打ちっぱなし' ? (u.rng?.fee||5500) : t.reward;
+  const feeOf = m => m==='インドアゴルフ' ? (u.sim?.fee||8800) : m==='打ちっぱなし' ? (u.rng?.fee||5500) : t.reward;
   const priceOf = m => m==='ラウンド' ? t.price : Math.round(feeOf(m)/0.8/100)*100;
-  const okOf = m => m==='ラウンド' ? true : m==='シミュゴルフ' ? (u.sim?.ok!==false) : (u.rng?.ok!==false);
+  const okOf = m => m==='ラウンド' ? true : m==='インドアゴルフ' ? (u.sim?.ok!==false) : (u.rng?.ok!==false);
   const oPrice = priceOf(of_.mode), oReward = feeOf(of_.mode);
   const myDates = me().dates || [];
   const shared = u.dates.filter(d=>myDates.includes(d));
@@ -714,7 +714,7 @@ V.offer = id => {
     ${isD()?`
     <div>
       <div class="label">会う形式</div>
-      <div class="osel" style="flex-wrap:nowrap;overflow-x:auto">${['ラウンド','シミュゴルフ','打ちっぱなし'].map(m=>`
+      <div class="osel" style="flex-wrap:nowrap;overflow-x:auto">${['ラウンド','インドアゴルフ','打ちっぱなし'].map(m=>`
         <button class="opt ${of_.mode===m?'on':''}" ${okOf(m)?'':'disabled style="opacity:.4"'} onclick="of_.mode='${m}';render()" style="display:flex;flex-direction:column;align-items:flex-start;border-radius:14px;flex:1;min-width:104px">
           <span style="font-weight:700">${m}</span>
           <span style="font-size:9.5px;color:var(--ink-soft)">${okOf(m) ? (m==='ラウンド'?'ランク料金':'謝礼 ¥'+feeOf(m).toLocaleString()+'・本人設定') : '受付停止中'}</span>
@@ -731,7 +731,7 @@ V.offer = id => {
     ${isD()&&of_.mode!=='ラウンド'?`
     <div>
       <div class="label">場所</div>
-      <div class="card" style="padding:12px 14px;font-size:12px">${I.pin} お二人の中間エリアの提携${of_.mode==='シミュゴルフ'?'インドアゴルフ':'練習場'}から候補を提案します<br><span class="muted" style="font-size:10.5px">確定時に3候補から選べます（駅近・雨天OK）</span></div>
+      <div class="card" style="padding:12px 14px;font-size:12px">${I.pin} お二人の中間エリアの提携${of_.mode==='インドアゴルフ'?'インドアゴルフ':'練習場'}から候補を提案します<br><span class="muted" style="font-size:10.5px">確定時に3候補から選べます（駅近・雨天OK）</span></div>
     </div>`:`
     <div>
       <div class="label">ゴルフ場（候補から選択）</div>
@@ -763,7 +763,7 @@ function inviteSheet(id){
   const iRange = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20.5c2-1 3-2.6 3-5V5l8-1.8"/><circle cx="17" cy="14" r="2.6"/><path d="M4.5 20.5h8"/></svg>';
   const MODES = [
     ['ラウンド','ゴルフ場で18ホール・1日', I.flag.replace('<svg ','<svg width="21" height="21" '), ''],
-    ['シミュゴルフ','1〜2時間・駅近・雨でもOK', iSim, 'はじめまして向き'],
+    ['インドアゴルフ','シミュレーションゴルフ・1〜2時間・駅近・雨でもOK', iSim, 'はじめまして向き'],
     ['打ちっぱなし','1時間・手ぶらOK・気軽', iRange, 'はじめまして向き'],
   ];
   const html = () => `
@@ -874,7 +874,7 @@ function sendOffer(id){
   const u = find(id); const t = TIERS[u.tier];
   if(S.role==='m' && !S.subActive && !isD()){ paywall(); return; }
   const _mode = (isD() && of_.mode) ? of_.mode : 'ラウンド';
-  const _reward = _mode==='シミュゴルフ' ? (u.sim?.fee||8800) : _mode==='打ちっぱなし' ? (u.rng?.fee||5500) : t.reward;
+  const _reward = _mode==='インドアゴルフ' ? (u.sim?.fee||8800) : _mode==='打ちっぱなし' ? (u.rng?.fee||5500) : t.reward;
   const _price = _mode==='ラウンド' ? t.price : Math.round(_reward/0.8/100)*100;
   if(S.points < _price){ toast('ポイントが不足しています（デモ）'); return; }
   S.points -= _price;
@@ -1089,7 +1089,7 @@ function openPlanSheet(id){
     <p class="muted">${esc(u.name)}さんに集合の段取りを送ります。OKなら当日そのまま合流できます</p>
     <div class="label">集合時間</div>
     <div class="opt-grid">${times.map(t=>`<button class="opt ${planSel.time===t?'on':''}" onclick="planSel.time='${t}';window._planR()">${t}</button>`).join('')}</div>
-    ${isFac?`<p class="muted" style="font-size:10.5px;margin-top:6px">シミュゴルフ・打ちっぱなしは仕事帰りの夜集合もOK</p>`:''}
+    ${isFac?`<p class="muted" style="font-size:10.5px;margin-top:6px">インドアゴルフ・打ちっぱなしは仕事帰りの夜集合もOK</p>`:''}
     <div class="label">集合場所</div>
     <div class="opt-grid">${spots.map(s=>`<button class="opt ${planSel.spot===s?'on':''}" onclick="planSel.spot='${s}';window._planR()">${s}</button>`).join('')}</div>
     <div class="notice" style="margin:14px 0 0">
@@ -1274,7 +1274,7 @@ V.mypage = () => {
         <span class="chip brass" style="font-size:9px">認定まであと1条件</span>
       </div>
       ${[
-        ['アプリでマッチしてラウンド1回以上（打ちっぱなし・シミュ含む）', true],
+        ['アプリでマッチしてラウンド1回以上（打ちっぱなし・インドア含む）', true],
         ['相互評価済み ＆ お相手からの評価 ★4以上（現在 ★4.9）', true],
         ['プロフィール充実（写真3枚以上・自己紹介200字・全項目入力）', false],
       ].map(([t,ok])=>`
@@ -1865,8 +1865,8 @@ V.inviteSet = () => {
   return `
   ${appbar({title:'お誘い設定', back:true})}
   <div class="page wrap">
-    <p class="muted" style="margin:12px 0 14px;font-size:12px">ラウンド以外のお誘い（シミュゴルフ・打ちっぱなし）を受け付けるか、金額とあわせて設定できます。OFFにするとお相手のオファー画面で選択できなくなります。</p>
-    ${row('sim','シミュゴルフのお誘い','1〜2時間・駅近・雨でもOK','simFee')}
+    <p class="muted" style="margin:12px 0 14px;font-size:12px">ラウンド以外のお誘い（インドアゴルフ・打ちっぱなし）を受け付けるか、金額とあわせて設定できます。OFFにするとお相手のオファー画面で選択できなくなります。</p>
+    ${row('sim','インドアゴルフのお誘い','1〜2時間・駅近・雨でもOK','simFee')}
     ${row('range','打ちっぱなしのお誘い','1時間前後・手ぶらOK','rangeFee')}
     <div class="notice"><span class="ic">${I.shield}</span><span>ラウンドの謝礼はランク制（現在GOLD）のため、ここでは変更できません</span></div>
   </div>
@@ -1874,11 +1874,11 @@ V.inviteSet = () => {
 };
 
 /* ---- コンペ開催（女性ホスト・機能1） ---- */
-let hc = { fmt:'シミュ練習会', date:'7/21', venue:null, cohost:true, slots:4, fee:8000 };
+let hc = { fmt:'インドア練習会', date:'7/21', venue:null, cohost:true, slots:4, fee:8000 };
 V.hostCompe = () => {
   const VENUES = {
     'ラウンド': ['大多喜城ゴルフ倶楽部','市原京急カントリークラブ','千葉市民ゴルフ場（9H）'],
-    'シミュ練習会': ['提携インドアA（新橋・貸切2h）','提携インドアB（渋谷・貸切2h）'],
+    'インドア練習会': ['提携インドアA（新橋・貸切2h）','提携インドアB（渋谷・貸切2h）'],
     '打ちっぱなし会': ['ロッテ葛西ゴルフ（2打席）','提携練習場（千葉・2打席）'],
   };
   const venues = VENUES[hc.fmt];
