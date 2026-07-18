@@ -976,3 +976,16 @@ body.no-page-anim .page,body.no-page-anim .pcard,body.no-page-anim .card,body.no
 .oselcard .s{font-size:9.5px;color:var(--ink-soft);white-space:nowrap}
 .osel{scrollbar-width:none}
 .osel::-webkit-scrollbar{display:none}
+
+/* v37: プレー希望日カレンダー */
+.cal{margin:2px 0 4px}
+.cal-week{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px;text-align:center;font-size:9.5px;letter-spacing:.08em;color:var(--ink-soft)}
+.cal-week .sun{color:#C96A6A}.cal-week .sat{color:#5E86B8}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-day{position:relative;aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:50%;font-family:var(--font-num);font-weight:500;font-size:13px;color:var(--ink);border:1.5px solid transparent;transition:background .15s var(--ease),border-color .15s var(--ease)}
+.cal-day:not(.dim):not(.sel):active{background:var(--turf-soft)}
+.cal-day.sel{background:var(--fairway);color:#fff;font-weight:700}
+.cal-day.dim{pointer-events:none}
+.cal-day .cd{position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--brass)}
+.cal-day.sel .cd{background:#fff}
+.cal-foot{display:flex;align-items:center;gap:10px;margin-top:8px}

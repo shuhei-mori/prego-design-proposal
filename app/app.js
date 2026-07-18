@@ -507,6 +507,28 @@ function toggleMyArea(p){
   i>=0 ? S.myArea.splice(i,1) : S.myArea.push(p);
   save(); window._areaR();
 }
+function calHtml(){
+  const y = 2026, m = teeMonth;
+  const first = new Date(y, m-1, 1).getDay();
+  const days = new Date(y, m, 0).getDate();
+  const candDays = new Set();
+  pool().forEach(u => (u.dates||[]).forEach(d => candDays.add(d)));
+  COMPES.forEach(c => candDays.add(c.date.split('（')[0]));
+  let cells = '';
+  for(let i=0;i<first;i++) cells += `<span class="cal-day dim"></span>`;
+  for(let d=1;d<=days;d++){
+    const key = m + '/' + d;
+    const sel = S.myDates.includes(key);
+    const has = candDays.has(key);
+    cells += `<button class="cal-day ${sel?'sel':''}" onclick="toggleMyDate('${key}')">${d}${has?'<i class="cd"></i>':''}</button>`;
+  }
+  return `
+  <div class="cal">
+    <div class="cal-week">${['日','月','火','水','木','金','土'].map((w,i)=>`<span class="${i===0?'sun':i===6?'sat':''}">${w}</span>`).join('')}</div>
+    <div class="cal-grid">${cells}</div>
+    <div class="cal-foot"><span class="chip line" style="font-size:9.5px">選択中 ${S.myDates.length}日</span><span class="muted" style="font-size:10px">● はお相手やコンペがある日</span></div>
+  </div>`;
+}
 function toggleMyDate(d){
   const i = S.myDates.indexOf(d);
   i>=0 ? S.myDates.splice(i,1) : S.myDates.push(d);
@@ -554,7 +576,7 @@ V.tee = () => {
           <b style="font-size:12.5px">あなたのプレー希望日</b>
           <span class="muted" style="font-size:10px">登録するとお相手が表示されます</span>
         </div>
-        <div class="opt-grid">${TEE_MONTHS[teeMonth].days.map(x=>`<button class="opt ${S.myDates.includes(x.d)?'on':''}" style="padding:7px 12px;font-size:11.5px" onclick="toggleMyDate('${x.d}')">${x.d}</button>`).join('')}</div>
+        ${calHtml()}
         <div style="display:flex;align-items:center;gap:8px;margin-top:10px">
           <b style="font-size:12.5px">エリア</b>
           ${S.myArea.map(p=>`<span class="chip" style="font-size:10px">${p}</span>`).join('')}
