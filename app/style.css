@@ -1012,3 +1012,16 @@ body.no-page-anim :is(.page,.pcard,.card,.mi,.thread,.chatcard,.compe,.article-c
 .cal-nav b{font-size:14px;letter-spacing:.06em}
 .cal-arw{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--fairway);font-weight:700}
 .cal-day.off{color:var(--line);pointer-events:none;display:flex;align-items:center;justify-content:center}
+
+/* v47: カレンダー矢印の中央合わせ・ゴースト・惜しいマッチ強調 */
+.cal-arw{line-height:1;padding:0 0 2px}
+.cal-arw.ghost{border:none;pointer-events:none}
+.miss-cta{padding:14px;display:flex;align-items:center;gap:12px;width:100%;border:1.5px solid var(--brass)!important;background:linear-gradient(120deg,var(--brass-soft),var(--paper))!important}
+.miss-cta .mic2{width:38px;height:38px;border-radius:50%;background:var(--brass);color:#fff;display:flex;align-items:center;justify-content:center;flex:none}
+
+/* v47: カード送信者ラベル・左右寄せ・セレクト矢印位置 */
+.chatcard.from-me{margin-right:14px;margin-left:auto;border-left:none}
+.chatcard.from-them{margin-left:14px;margin-right:auto}
+.cc-from{font-size:9.5px;font-weight:700;letter-spacing:.06em;color:var(--ink-soft);margin-bottom:4px}
+.cc-from.mine{color:var(--fairway);text-align:right}
+select.input{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236F7F76' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px}

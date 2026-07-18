@@ -15,16 +15,16 @@ const yen = n => '¥' + n.toLocaleString();
 
 /* ---------- demo users ---------- */
 const WOMEN = [
-  { id:'w1', st:'o', mob:'f2', wish:'need', pay:'相手に出してもらいたい', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, name:'MIKA',   age:29, img:'img/w1.jpg', best:92,  ave:104, tier:'GOLD',   rounds:38, rating:4.9, rc:41, hist:'5年',   area:['千葉','東京','埼玉'], dates:['7/8','7/14','7/17','7/21'], meet:'現地集合', drink:'少し飲む', style:'楽しくエンジョイ・マナー重視', reply:true,  bio:'休日はほぼゴルフ場にいます。ベスト更新が今年の目標。ラウンド後のビールまでがゴルフです🍺' },
-  { id:'w2', st:'n', mob:'f3', wish:'nice', pay:'話し合って決めたい', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, name:'SAKI',   age:28, img:'img/w2.jpg', best:99,  ave:110, tier:'SILVER', rounds:21, rating:4.8, rc:18, hist:'3〜5年', area:['千葉','茨城'], dates:['7/14','7/19','7/26','8/2','8/9'], meet:'現地集合OK', drink:'飲む', style:'わいわい・コンペ好き', reply:true,  bio:'最近100切りしました！月2でラウンドしています。よろしくお願いします。' },
-  { id:'w3', st:'n', mob:'f1', wish:'no', pay:'自分の分は払います', cert:false, sim:{ok:false,fee:8800}, rng:{ok:true,fee:5500}, name:'Emi',    age:31, img:'img/w3.jpg', best:96,  ave:108, tier:'SILVER', rounds:17, rating:4.7, rc:12, hist:'3〜5年', area:['東京','神奈川'], dates:['7/9','7/17','7/30'], meet:'現地集合', drink:'飲まない', style:'しっとり・丁寧なゴルフ', reply:false, bio:'フォームを大事にしています。レッスン週1。ご一緒する方のプレーの邪魔はしません◎' },
-  { id:'w4', st:'o', mob:'f2', wish:'need', pay:'相手に出してもらいたい', cert:false, sim:{ok:false,fee:8800}, rng:{ok:true,fee:5500}, name:'Rina',   age:26, img:'img/w4.jpg', best:118, ave:126, tier:'BRONZE', rounds:6,  rating:4.6, rc:5,  hist:'1〜3年', area:['埼玉','群馬'], dates:['7/12','7/21'], meet:'現地集合OK', drink:'少し飲む', style:'初心者歓迎でお願いします', reply:true,  bio:'ゴルフ歴2年目です。まだまだ下手ですが、一生懸命がんばります！' },
-  { id:'w5', st:'n', mob:'f3', wish:'nice', pay:'相手に出してもらいたい', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, name:'manami', age:31, img:'img/w5.jpg', best:104, ave:115, tier:'SILVER', rounds:14, rating:4.8, rc:11, hist:'3〜5年', area:['千葉','埼玉','東京'], dates:['7/14','7/17','7/30'], meet:'現地集合', drink:'飲む', style:'コンペ・わいわい・楽しくゴルフ', reply:true,  bio:'平日ゴルファーです。明るく穏やかな性格。ニコニコよく笑います。' },
-  { id:'w6', st:'o', mob:'f1', wish:'no', pay:'話し合って決めたい', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, name:'yuka',   age:33, img:'img/w6.jpg', best:91,  ave:100, tier:'GOLD',   rounds:44, rating:5.0, rc:37, hist:'10年以上', area:['東京','千葉','神奈川'], dates:['7/10','7/19','7/27'], meet:'現地集合', drink:'少し飲む', style:'スコア重視・淡々と回りたい', reply:true,  bio:'シングル目指して練習中。ストイックに回りたい方、ぜひ。' },
-  { id:'w7', st:'o', mob:'f2', wish:'nice', pay:'相手に出してもらいたい', cert:false, sim:{ok:false,fee:8800}, rng:{ok:true,fee:5500}, name:'Coco',   age:27, img:'img/w7.jpg', best:112, ave:121, tier:'BRONZE', rounds:9,  rating:4.5, rc:7,  hist:'1〜3年', area:['神奈川','静岡'], dates:['7/13','7/20'], meet:'現地集合OK', drink:'飲む', style:'エンジョイ・写真もたくさん撮りたい', reply:false, bio:'ゴルフウェア集めが趣味です。楽しく回れたら最高です🌸' },
-  { id:'w8', st:'n', mob:'f3', wish:'no', pay:'自分の分は払います', cert:false, sim:{ok:false,fee:8800}, rng:{ok:true,fee:5500}, name:'Karin',  age:24, img:'img/w8.jpg', best:124, ave:132, tier:'WHITE',  rounds:2,  rating:4.4, rc:2,  hist:'1年未満', area:['東京','埼玉'], dates:['7/15','7/22'], meet:'現地集合OK', drink:'少し飲む', style:'デビューしたてです', reply:true,  bio:'先月コースデビューしました！優しく教えてくれる方だと嬉しいです。' },
-  { id:'w9', st:'o', mob:'f2', wish:'need', pay:'相手に出してもらいたい', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, name:'あんな', age:34, img:'img/w9.jpg', best:97,  ave:107, tier:'SILVER', rounds:19, rating:4.7, rc:15, hist:'5年',   area:['茨城','千葉'], dates:['7/16','7/23','7/30'], meet:'現地集合', drink:'飲む', style:'早朝スルー好き', reply:true,  bio:'朝イチスタート好きです。午後は温泉に寄って帰るのが定番コース。' },
-  { id:'w10', st:'n', mob:'f1', wish:'no', pay:'話し合って決めたい', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500},name:'Rio',    age:30, img:'img/w10.jpg',best:101, ave:113, tier:'SILVER', rounds:16, rating:4.6, rc:13, hist:'3〜5年', area:['千葉','東京'], dates:['7/11','7/18','7/25','8/9','8/23'], meet:'現地集合OK', drink:'飲む', style:'わいわい・コンペ好き', reply:false, bio:'夏ゴルフに向けて体力づくり中。カート乗りっぱなしにはしません(笑)' },
+  { id:'w1', st:'o', mob:'f2', wish:'need', pay:'相手に出してもらいたい', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, rnd:{ok:true}, name:'MIKA',   age:29, img:'img/w1.jpg', best:92,  ave:104, tier:'GOLD',   rounds:38, rating:4.9, rc:41, hist:'5年',   area:['千葉','東京','埼玉'], dates:['7/8','7/14','7/17','7/21'], meet:'現地集合', drink:'少し飲む', style:'楽しくエンジョイ・マナー重視', reply:true,  bio:'休日はほぼゴルフ場にいます。ベスト更新が今年の目標。ラウンド後のビールまでがゴルフです🍺' },
+  { id:'w2', st:'n', mob:'f3', wish:'nice', pay:'話し合って決めたい', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, rnd:{ok:true}, name:'SAKI',   age:28, img:'img/w2.jpg', best:99,  ave:110, tier:'SILVER', rounds:21, rating:4.8, rc:18, hist:'3〜5年', area:['千葉','茨城'], dates:['7/14','7/19','7/26','8/2','8/9'], meet:'現地集合OK', drink:'飲む', style:'わいわい・コンペ好き', reply:true,  bio:'最近100切りしました！月2でラウンドしています。よろしくお願いします。' },
+  { id:'w3', st:'n', mob:'f1', wish:'no', pay:'自分の分は払います', cert:false, sim:{ok:false,fee:8800}, rng:{ok:true,fee:5500}, rnd:{ok:true}, name:'Emi',    age:31, img:'img/w3.jpg', best:96,  ave:108, tier:'SILVER', rounds:17, rating:4.7, rc:12, hist:'3〜5年', area:['東京','神奈川'], dates:['7/9','7/17','7/30'], meet:'現地集合', drink:'飲まない', style:'しっとり・丁寧なゴルフ', reply:false, bio:'フォームを大事にしています。レッスン週1。ご一緒する方のプレーの邪魔はしません◎' },
+  { id:'w4', st:'o', mob:'f2', wish:'need', pay:'相手に出してもらいたい', cert:false, sim:{ok:false,fee:8800}, rng:{ok:true,fee:5500}, rnd:{ok:false}, name:'Rina',   age:26, img:'img/w4.jpg', best:118, ave:126, tier:'BRONZE', rounds:6,  rating:4.6, rc:5,  hist:'1〜3年', area:['埼玉','群馬'], dates:['7/12','7/21'], meet:'現地集合OK', drink:'少し飲む', style:'初心者歓迎でお願いします', reply:true,  bio:'ゴルフ歴2年目です。まだまだ下手ですが、一生懸命がんばります！' },
+  { id:'w5', st:'n', mob:'f3', wish:'nice', pay:'相手に出してもらいたい', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, rnd:{ok:true}, name:'manami', age:31, img:'img/w5.jpg', best:104, ave:115, tier:'SILVER', rounds:14, rating:4.8, rc:11, hist:'3〜5年', area:['千葉','埼玉','東京'], dates:['7/14','7/17','7/30'], meet:'現地集合', drink:'飲む', style:'コンペ・わいわい・楽しくゴルフ', reply:true,  bio:'平日ゴルファーです。明るく穏やかな性格。ニコニコよく笑います。' },
+  { id:'w6', st:'o', mob:'f1', wish:'no', pay:'話し合って決めたい', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, rnd:{ok:true}, name:'yuka',   age:33, img:'img/w6.jpg', best:91,  ave:100, tier:'GOLD',   rounds:44, rating:5.0, rc:37, hist:'10年以上', area:['東京','千葉','神奈川'], dates:['7/10','7/19','7/27'], meet:'現地集合', drink:'少し飲む', style:'スコア重視・淡々と回りたい', reply:true,  bio:'シングル目指して練習中。ストイックに回りたい方、ぜひ。' },
+  { id:'w7', st:'o', mob:'f2', wish:'nice', pay:'相手に出してもらいたい', cert:false, sim:{ok:false,fee:8800}, rng:{ok:true,fee:5500}, rnd:{ok:true}, name:'Coco',   age:27, img:'img/w7.jpg', best:112, ave:121, tier:'BRONZE', rounds:9,  rating:4.5, rc:7,  hist:'1〜3年', area:['神奈川','静岡'], dates:['7/13','7/20'], meet:'現地集合OK', drink:'飲む', style:'エンジョイ・写真もたくさん撮りたい', reply:false, bio:'ゴルフウェア集めが趣味です。楽しく回れたら最高です🌸' },
+  { id:'w8', st:'n', mob:'f3', wish:'no', pay:'自分の分は払います', cert:false, sim:{ok:false,fee:8800}, rng:{ok:true,fee:5500}, rnd:{ok:true}, name:'Karin',  age:24, img:'img/w8.jpg', best:124, ave:132, tier:'WHITE',  rounds:2,  rating:4.4, rc:2,  hist:'1年未満', area:['東京','埼玉'], dates:['7/15','7/22'], meet:'現地集合OK', drink:'少し飲む', style:'デビューしたてです', reply:true,  bio:'先月コースデビューしました！優しく教えてくれる方だと嬉しいです。' },
+  { id:'w9', st:'o', mob:'f2', wish:'need', pay:'相手に出してもらいたい', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, rnd:{ok:true}, name:'あんな', age:34, img:'img/w9.jpg', best:97,  ave:107, tier:'SILVER', rounds:19, rating:4.7, rc:15, hist:'5年',   area:['茨城','千葉'], dates:['7/16','7/23','7/30'], meet:'現地集合', drink:'飲む', style:'早朝スルー好き', reply:true,  bio:'朝イチスタート好きです。午後は温泉に寄って帰るのが定番コース。' },
+  { id:'w10', st:'n', mob:'f1', wish:'no', pay:'話し合って決めたい', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, rnd:{ok:true},name:'Rio',    age:30, img:'img/w10.jpg',best:101, ave:113, tier:'SILVER', rounds:16, rating:4.6, rc:13, hist:'3〜5年', area:['千葉','東京'], dates:['7/11','7/18','7/25','8/9','8/23'], meet:'現地集合OK', drink:'飲む', style:'わいわい・コンペ好き', reply:false, bio:'夏ゴルフに向けて体力づくり中。カート乗りっぱなしにはしません(笑)' },
 ];
 const MEN = [
   { id:'m1', name:'SHU', mob:'M1', pay:'お相手の分も払います',     age:44, img:'img/m1.jpg', best:88,  ave:100, plan:'PREMIUM',  rounds:52, rating:5.0, rc:24, hist:'10年以上', area:['千葉','茨城','埼玉'], dates:['7/14','7/17','7/26','7/30','8/2','8/9','8/23'], meet:'車送迎OK', drink:'飲む', style:'楽しく・たまに真剣', bio:'月3ラウンド。車出せます。楽しく回りましょう。' },
@@ -79,7 +79,7 @@ const S = Object.assign({
   myDates: ['7/14','7/26'], myArea: ['千葉','東京'], homeArea: '',
   fset: { sim:true, simFee:8800, range:true, rangeFee:5500 },
   bridge: { msgs: [], note: null }, fixed: {},
-  myMob: null, myWish: 'nice', limitMin: 120,
+  myMob: null, myWish: 'nice', limitMin: 120, calOpen: true,
   reviewDue: null, reviews: {},
   subActive: false, favs: {}, verified: true,
   ntf: { email:true, line:false, news:true, foot:true, like:true, msg:true },
@@ -239,7 +239,9 @@ function switchRole(){
     S.bridgeM.msgs.forEach(m=>{
       let c = S.chats.find(x=>x.id===m.to);
       if(!c){ c = {id:m.to, msgs:[]}; S.chats.unshift(c); }
-      c.msgs.push({who:'card', ...m.card});
+      const ri = c.msgs.findIndex(x=>x.kind==='review');
+      if(m.card.kind!=='review' && ri>=0) c.msgs.splice(ri, 0, {who:'card', ...m.card});
+      else c.msgs.push({who:'card', ...m.card});
     });
     S.bridgeM.msgs = [];
   }
@@ -249,7 +251,13 @@ function switchRole(){
     if(S.bridge.to) c.msgs.push({who:'sys', t:`（デモ）男性デモで${S.bridge.to}さん宛てに行った操作を、あなた（みどり）宛てとして再現しています`});
     S.bridge.msgs.forEach(m=>{
       if(m.reviewDue) S.reviewDue = { id:'m1' };
-      if(m.card){ const cc = {who:'card', ...m.card}; if(m.card.to){ cc.bridgedTo = m.card.to; delete cc.to; } c.msgs.push(cc); return; }
+      if(m.card){
+        const cc = {who:'card', ...m.card};
+        if(m.card.to){ cc.bridgedTo = m.card.to; delete cc.to; }
+        const ri = c.msgs.findIndex(x=>x.kind==='review');
+        if(cc.kind!=='review' && ri>=0) c.msgs.splice(ri, 0, cc); else c.msgs.push(cc);
+        return;
+      }
       if(m.sys) c.msgs.push({who:'sys', t:m.sys});
       if(m.t) c.msgs.push({who:'them', t:m.t, tm:m.tm});
     });
@@ -540,9 +548,9 @@ function calHtml(){
   return `
   <div class="cal">
     <div class="cal-nav">
-      <button class="cal-arw" onclick="teeMonthShift(-1)">‹</button>
+      ${m>7?`<button class="cal-arw" onclick="teeMonthShift(-1)">‹</button>`:`<span class="cal-arw ghost"></span>`}
       <b>${y}年${m}月</b>
-      <button class="cal-arw" onclick="teeMonthShift(1)">›</button>
+      ${m<8?`<button class="cal-arw" onclick="teeMonthShift(1)">›</button>`:`<span class="cal-arw ghost"></span>`}
     </div>
     <div class="cal-week">${['日','月','火','水','木','金','土'].map((w,i)=>`<span class="${i===0?'sun':i===6?'sat':''}">${w}</span>`).join('')}</div>
     <div class="cal-grid">${cells}</div>
@@ -551,7 +559,12 @@ function calHtml(){
 }
 function toggleMyDate(d){
   const i = S.myDates.indexOf(d);
-  i>=0 ? S.myDates.splice(i,1) : S.myDates.push(d);
+  if(i>=0){ S.myDates.splice(i,1); save(); render(); return; }
+  if(isD() && S.role==='m' && !S.subActive && S.myDates.length>=5){
+    toast('無料会員の希望日登録は5日までです。サブスクで無制限になります');
+    setTimeout(paywall, 600); return;
+  }
+  S.myDates.push(d);
   save(); render();
 }
 V.tee = () => {
@@ -592,16 +605,17 @@ V.tee = () => {
   return `
   <div class="page">
     <div class="tee-head">
-      ${appbar({green:true, title:'', noBell:true}).replace('<span class="ttl"></span>','<span class="ttl" style="text-align:left;font-size:18px">日程マッチ</span><span class="mon" style="margin-left:auto;display:flex;align-items:center;gap:10px"><button onclick="teeMonthShift(-1)" style="color:inherit;padding:4px">‹</button>' + TEE_MONTHS[teeMonth].label + '<button onclick="teeMonthShift(1)" style="color:inherit;padding:4px">›</button></span>')}
+      ${appbar({green:true, title:'', noBell:true}).replace('<span class="ttl"></span>','<span class="ttl" style="text-align:left;font-size:18px">日程マッチ</span>')}
       <div class="strip">${dayBtns}</div>
     </div>
     <div class="tee-body">
       <div class="mywish card" style="padding:13px 15px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:${S.calOpen?'8px':'0'}">
           <b style="font-size:12.5px">あなたのプレー希望日</b>
-          <span class="muted" style="font-size:10px">登録するとお相手が表示されます</span>
+          <span class="muted" style="font-size:10px;flex:1">登録するとお相手が表示されます</span>
+          <button class="chip line" style="font-size:10px" onclick="S.calOpen=!S.calOpen;save();render()">${S.calOpen?'たたむ':`カレンダーを開く（${S.myDates.length}日選択中）`}</button>
         </div>
-        ${calHtml()}
+        ${S.calOpen?calHtml():''}
         <div style="display:flex;align-items:center;gap:8px;margin-top:10px">
           <b style="font-size:12.5px">エリア</b>
           ${S.myArea.map(p=>`<span class="chip" style="font-size:10px">${p}</span>`).join('')}
@@ -613,13 +627,13 @@ V.tee = () => {
       ${S.myDates.length ? compeCards : ''}
       ${S.myDates.length ? (rows || '') : ''}
       ${(S.myDates.length && !rows && !compeCards) ? `<div class="empty"><div class="big">—</div>この日はまだ候補がいません</div>` : ''}
-      <button class="card" style="padding:14px;display:flex;align-items:center;gap:12px;width:100%" onclick="go('#/miss')">
-        <span style="width:38px;height:38px;border-radius:50%;background:var(--brass-soft);color:#8A6B25;display:flex;align-items:center;justify-content:center;flex:none">${I.pin}</span>
+      <button class="card miss-cta" onclick="go('#/miss')">
+        <span class="mic2">${I.pin.replace('width="13" height="13"','width="17" height="17"')}</span>
         <span style="flex:1;text-align:left">
-          <b style="font-size:13.5px">惜しいマッチ　<span class="chip brass" style="font-size:9px">3件</span></b>
-          <span class="muted" style="display:block;font-size:11px">あと一歩で成立する候補を見る</span>
+          <b style="font-size:13.5px">あなたの空き日に惜しいマッチ　<span class="chip brass" style="font-size:9px">3件</span></b>
+          <span class="muted" style="display:block;font-size:11px">日程か距離があと一歩。橋渡しの提案で成立させましょう</span>
         </span>
-        <span class="arw" style="color:var(--fairway)">${I.back.replace('M15 5l-7 7 7 7','M9 5l7 7-7 7')}</span>
+        <span class="arw" style="color:var(--brass-ink)">${I.back.replace('M15 5l-7 7 7 7','M9 5l7 7-7 7')}</span>
       </button>
     </div>
   </div>
@@ -747,15 +761,17 @@ V.offer = id => {
   if(!of_.mode) of_.mode = 'ラウンド';
   const feeOf = m => m==='インドアゴルフ' ? (u.sim?.fee||8800) : m==='打ちっぱなし' ? (u.rng?.fee||5500) : t.reward;
   const priceOf = m => m==='ラウンド' ? t.price : Math.round(feeOf(m)/0.8/100)*100;
-  const okOf = m => m==='ラウンド' ? true : m==='インドアゴルフ' ? (u.sim?.ok!==false) : (u.rng?.ok!==false);
+  const okOf = m => m==='ラウンド' ? (u.rnd?.ok!==false) : m==='インドアゴルフ' ? (u.sim?.ok!==false) : (u.rng?.ok!==false);
   const oPrice = priceOf(of_.mode), oReward = feeOf(of_.mode);
   const myDates = me().dates || [];
   const shared = u.dates.filter(d=>myDates.includes(d));
   const dateOpts = (shared.length?shared:u.dates).map(d =>
     `<button class="opt ${of_.date===d?'on':''}" onclick="of_.date='${d}';render()">${d}（${TEE_DAYS.find(x=>x.d===d)?.w||'-'}）</button>`).join('');
+  const _wantPickup = isD() && wishOf(u)!=='no' && myMobV()==='M1';
+  if(isD() && !of_.meet) of_.meet = _wantPickup ? 'car' : 'onsite';
   const meets = [
-    {k:'onsite', l:`${I.pin} 現地集合（推奨）`, d:'各自でコースへ・バッグは宅急便OK'},
-    {k:'car', l:`${I.car} 車送迎`, d:'認証ドライバーのみ'},
+    {k:'onsite', l:`${I.pin} 現地集合${!_wantPickup?'（推奨）':''}`, d:'各自でコースへ・バッグは宅急便OK'},
+    {k:'car', l:`${I.car} 車送迎${_wantPickup?'（推奨・お相手の希望）':''}`, d:'認証ドライバーのみ'},
   ].map(m=>`<button class="opt oselcard ${of_.meet===m.k?'on':''}" onclick="of_.meet='${m.k}';render()">
      <span class="t" style="display:flex;gap:5px;align-items:center">${m.l}</span><span class="s">${m.d}</span></button>`).join('');
   const courses = COURSES.slice(0,3).map(c=>`<button class="opt ${of_.course===c?'on':''}" onclick="of_.course='${c}';render()">${c}</button>`).join('');
@@ -770,15 +786,25 @@ V.offer = id => {
         <div class="muted" style="font-size:11px">Best ${u.best}・${u.area.slice(0,2).join('・')}</div>
       </div>
     </div>
-    ${isD()?`
+    ${isD()?(()=>{
+      const MICONS = {
+        'ラウンド': I.flag.replace('<svg ','<svg width="21" height="21" '),
+        'インドアゴルフ': '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12.5" rx="2"/><path d="M9 20.5h6M12 16.5v4"/><path d="M8 12.5l2.5-3.5 2 2 3-4"/></svg>',
+        '打ちっぱなし': '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20.5c2-1 3-2.6 3-5V5l8-1.8"/><circle cx="17" cy="14" r="2.6"/><path d="M4.5 20.5h8"/></svg>',
+      };
+      return `
     <div>
       <div class="label">会う形式</div>
-      <div class="osel" style="flex-wrap:nowrap;overflow-x:auto">${['ラウンド','インドアゴルフ','打ちっぱなし'].map(m=>`
-        <button class="opt oselcard ${of_.mode===m?'on':''}" ${okOf(m)?'':'disabled style="opacity:.4"'} onclick="of_.mode='${m}';render()">
-          <span class="t">${m}</span>
-          <span class="s">${okOf(m) ? (m==='ラウンド'?'ランク料金':'謝礼 ¥'+feeOf(m).toLocaleString()+'（本人設定）') : '受付停止中'}</span>
-        </button>`).join('')}</div>
-    </div>`:''}
+      <div class="mode-list">${['ラウンド','インドアゴルフ','打ちっぱなし'].map(m=>{
+        const ok = okOf(m);
+        return `
+        <button class="mode-row ${of_.mode===m?'on':''}" style="${ok?'':'opacity:.5'}" onclick="${ok?`of_.mode='${m}';render()`:''}">
+          <span class="mic">${MICONS[m]}</span>
+          <span class="mtx"><span class="mt">${m}${ok?'':'<span class="mtag" style="background:var(--danger-soft);color:var(--danger)">受付停止中</span>'}</span>
+          <span class="ms">${ok ? (m==='ラウンド'?'ランク料金 '+yen(t.price):'謝礼 ¥'+feeOf(m).toLocaleString()+'（本人設定）') : 'お相手が受付を停止しています'}</span></span>
+          <span class="mck">${of_.mode===m?I.check.replace('width="40" height="40"','width="15" height="15"'):''}</span>
+        </button>`;}).join('')}</div>
+    </div>`;})():''}
     <div>
       <div class="label">${isD()&&of_.mode!=='ラウンド'?'日程':'ラウンド日'}${shared.length?'（ハイライト＝お互い空いている日）':''}</div>
       <div class="osel">${dateOpts}</div>
@@ -788,8 +814,7 @@ V.offer = id => {
       <div class="osel" style="flex-wrap:nowrap;overflow-x:auto">${meets}</div>
     </div>
     ${isD()?(()=>{
-      const vp = venuePlan(u, of_.mode||'ラウンド');
-      if(!of_.course || !vp.list.some(v=>v.n===of_.course)){}
+      const vp = venuePlan(u, of_.mode||'ラウンド', of_.meet);
       return `
     <div>
       <div class="label">${of_.mode!=='ラウンド'?'場所（候補から選択）':'ゴルフ場（候補から選択）'} <span class="chip line" style="font-size:9px;margin-left:4px">${vp.meet}</span></div>
@@ -803,7 +828,12 @@ V.offer = id => {
           ${v.safety?`<span class="vt safety">${I.shield} 初めての方との長時間の同乗になります</span>`:''}
         </button>`).join('')}
       </div>
+      <button class="venue-row ${of_.course==='相談して決める'?'on':''}" style="margin-top:8px" onclick="of_.course='相談して決める';render()">
+        <span class="vn">相談して決める</span>
+        <span class="vt">マッチ後にチャットで話し合って確定します</span>
+      </button>
       ${of_.mode==='ラウンド'?`<button class="btn ghost sm" style="margin-top:10px" onclick="coursePick='offer';go('#/courses')">ゴルフ場一覧から選ぶ</button>`:''}
+      ${of_.course && of_.course!=='相談して決める' ? (()=>{ const sv=vp.list.find(v=>v.n===of_.course); return sv?`<p class="muted" style="font-size:10.5px;margin-top:8px">${I.pin} 選択中：${sv.n}　${sv.at}　${sv.bt}</p>`:''; })() : ''}
     </div>`;
     })():`
     <div>
@@ -892,8 +922,33 @@ function inviteSheet(id){
       <span class="ic">${I.shield}</span>
       <span>宣言した内容はお相手に表示され、あとから変更できません</span>
     </div>
-    <button class="btn" style="margin-top:14px" onclick="sendInvite()">この内容で誘いを送る</button>`;
+    <button class="btn" style="margin-top:14px" onclick="openInviteConfirm()">内容を確認する</button>`;
   window._invR = () => sheet(html());
+  sheet(html());
+}
+let invAgree = false;
+function openInviteConfirm(){
+  const u = find(inv.id);
+  invAgree = false;
+  const rows = [
+    ['会う形式', inv.mode||'ラウンド'],
+    ['日程', inv.date],
+    ['会場', inv.venue||'相談して決める'],
+    ['集合', inv.meet||'現地集合'],
+    ['宣言', inv.pay],
+  ];
+  const html = () => `
+    <h3>この内容で${esc(u.name)}さんに送ります</h3>
+    ${rows.map(([k,v])=>`<div class="cc-row"><span>${k}</span><b>${esc(v)}</b></div>`).join('')}
+    <button class="card" style="margin-top:14px;padding:12px 14px;width:100%;display:flex;gap:10px;align-items:center;text-align:left;border:1.5px solid ${invAgree?'var(--fairway)':'var(--line)'}" onclick="invAgree=!invAgree;window._icR()">
+      <span class="ckb ${invAgree?'on':''}">${invAgree?I.check.replace('width="40" height="40"','width="12" height="12"'):''}</span>
+      <span style="flex:1;font-size:11.5px">注意事項に同意します<span class="muted" style="display:block;font-size:10px">宣言した内容はあとから変更できません。無断キャンセル・迷惑行為はアカウント停止の対象です</span></span>
+    </button>
+    <div style="display:flex;gap:9px;margin-top:14px">
+      <button class="btn ghost sm" style="flex:1" onclick="window._invR()">修正する</button>
+      <button class="btn sm" style="flex:2" ${invAgree?'':'disabled'} onclick="sendInvite()">送信する</button>
+    </div>`;
+  window._icR = () => sheet(html());
   sheet(html());
 }
 function sendInvite(){
@@ -915,6 +970,7 @@ function sendInvite(){
     if(inv.venue) c.msgs.push({who:'sys', t:`📍 会場候補：${inv.venue}（${inv.meet||'現地集合'}）`});
   }
   if(S.role==='m') S.bridge.to = u.name;
+  if(isTBD(inv.pay)) c.msgs.push({who:'sys', t:'💬 費用は「相談して決める」設定です。このチャットで話し合って決めましょう'});
   const _invMsg = `はじめまして！${inv.date}に${inv.mode&&inv.mode!=='ラウンド'?inv.mode:'ラウンド'}をご一緒できたら嬉しいです。${inv.pay}。`;
   c.msgs.push({who:'me', t:_invMsg, tm:'いま'});
   if(S.role==='m') S.bridge.msgs.push({sys:`⛳ ${inv.date} の${inv.mode||'ラウンド'}にお誘い（${inv.pay}）`+(inv.venue?`\n📍 会場候補：${inv.venue}（${inv.meet||'現地集合'}）`:''), t:_invMsg, tm:'いま'});
@@ -960,7 +1016,7 @@ function mobLabel(u){
 function mobOf(u){ return u.mob || (WOMEN.includes(u) ? 'f1' : 'M2'); }
 function myMobV(){ return S.myMob || me().mob || (S.role==='m' ? 'M2' : 'f3'); }
 function limMin(){ return S.limitMin || 120; }
-function venuePlan(u, mode){
+function venuePlan(u, mode, meetPref){
   const male = S.role==='m';
   const mm = male ? myMobV() : mobOf(u);
   const fm = male ? mobOf(u) : myMobV();
@@ -973,15 +1029,17 @@ function venuePlan(u, mode){
       list: src.map(([n,x,y]) => mk(n, `あなた 約${x}分`, `お相手 約${y}分`, x>limMin(), y>120)) };
   }
   const fw = male ? wishOf(u) : (S.myWish || 'nice');
-  const pickup = (mm==='M1' && (fw==='need' || fw==='nice'));
-  const dead = (mm!=='M1' && fw==='need');
+  let pickup = (mm==='M1' && (fw==='need' || fw==='nice'));
+  if(meetPref==='onsite') pickup = false;
+  if(meetPref==='car') pickup = (mm==='M1');
+  const dead = (mm!=='M1' && fw==='need' && meetPref!=='onsite');
   if(dead) return { meet:'不成立', note:'お相手は送迎を希望しています', list:[] };
   if(pickup){
     const src = [['姉ヶ崎カントリー倶楽部（お相手の生活圏）',80,35],['千葉カントリークラブ（お相手の生活圏）',95,25],['市原京急カントリークラブ（中間）',70,55]];
     return { meet:'送迎', note:'送迎のため、会場はお相手の生活圏を優先しています',
       list: src.map(([n,d,r]) => mk(n,
         male ? `あなた（送迎）：総運転 約${d}分` : `お相手（送迎）：総運転 約${d}分`,
-        male ? `お相手：負担なし（同乗 約${r}分）` : `あなた：負担なし（同乗 約${r}分）`,
+        male ? `お相手：送迎のため移動負担なし（同乗 約${r}分）` : `あなた：送迎のため移動負担なし（同乗 約${r}分）`,
         male && d>limMin(), false, r>60)) };
   }
   const src = [['市原京急カントリークラブ（中間）',55,65],['大多喜城ゴルフ倶楽部',70,80],['成田ヒルズカントリークラブ',95,130]];
@@ -991,9 +1049,12 @@ function venuePlan(u, mode){
 function freeMsgOK(id){
   const fx = (S.fixed||{})[id];
   if(fx){
-    if(!fx.matchedAt) return true;
-    const d = new Date(fx.matchedAt), n = new Date();
-    return d.getFullYear()===n.getFullYear() && d.getMonth()===n.getMonth() && d.getDate()===n.getDate();
+    const dm = /^(\d+)\/(\d+)/.exec(fx.date||'');
+    if(dm){
+      const end = new Date(2026, Number(dm[1])-1, Number(dm[2]), 23, 59, 59);
+      return new Date() <= end;   // ラウンド当日まで無料・翌日からサブスク
+    }
+    return true;  // 日程相談中は無料のまま（確定するまで調整が必要なため）
   }
   if(S.sentOffers.some(o=>o.to===id)) return true;
   const c = (S.chats||[]).find(x=>x.id===id);
@@ -1130,9 +1191,11 @@ function answerOffer(id, ok, fin){
   const o = S.recvOffers.find(x=>x.id===id);
   o.status = ok?'ok':'ng';
   if(ok){
-    S.coins += o.reward; celebrate();
+    const paidReward = (fin && fin.mode && fin.mode!==(o.mode||'ラウンド') && o.newReward!=null) ? o.newReward : o.reward;
+    o.reward = paidReward;
+    S.coins += paidReward; celebrate();
     S.fixed = S.fixed || {};
-    const fx = { date:(fin&&fin.date)||o.date, course:(fin&&fin.venue)||o.course, mode:o.mode||'ラウンド', meet:(fin&&fin.meet)||o.meet, offer:true, reward:o.reward, matchedAt:Date.now() };
+    const fx = { date:(fin&&fin.date)||o.date, course:(fin&&fin.venue)||o.course, mode:(fin&&fin.mode)||o.mode||'ラウンド', meet:(fin&&fin.meet)||o.meet, offer:true, reward:o.reward, matchedAt:Date.now() };
     fx.tbd = tbdOf({date:fx.date, venue:fx.course, meet:fx.meet});
     S.fixed[o.from] = fx;
     let mc = S.chats.find(x=>x.id===o.from);
@@ -1201,18 +1264,23 @@ V.chat = id => {
       ${!tbd.length && isD() && !S.reviews[id] ? `<button class="btn ghost sm" style="width:100%;margin-top:8px" onclick="simulateAfterRound('${id}')">（デモ）ラウンド当日終了後の流れを見る</button>`:''}
     </div>`;
   };
+  const cardFrom = (m) => m.mine
+    ? `<div class="cc-from mine">あなたから</div>`
+    : `<div class="cc-from">${esc(u.name)}さんから</div>`;
   const msgs = c.msgs.map((m,i)=>{
     if(m.who==='card' && m.kind==='match') return matchCardHtml(m);
     if(m.who==='card' && m.kind==='invite'){
       const ITEM_LABELS = {mode:'形式', date:'日程', venue:'会場', meet:'集合', pay:S.role==='f'?'プレー代':'費用の宣言'};
       if(m.mine || m.st==='ok') return `
-      <div class="chatcard ${m.st==='ok'?'match':''}">
-        <div class="cc-h">${m.st==='ok'?`<span class="cc-ck">${I.check.replace('width="40" height="40"','width="13" height="13"')}</span> 内容合意・マッチ成立`:`${I.invite} お誘いを送信しました`}</div>
+      <div class="chatcard ${m.st==='ok'?'match':''} ${m.mine?'from-me':'from-them'}">
+        ${cardFrom(m)}
+        <div class="cc-h">${m.st==='ok'?`<span class="cc-ck">${I.check.replace('width="40" height="40"','width="13" height="13"')}</span> 内容合意・マッチ成立`:`${I.invite} お誘い`}</div>
         ${Object.keys(m.items).map(k=>`<div class="cc-row"><span>${ITEM_LABELS[k]}</span><b>${esc(m.items[k].alt||m.items[k].v)}${m.items[k].alt?' <span style="color:var(--brass-ink);font-size:10px">（変更）</span>':''}</b></div>`).join('')}
         ${m.st==='wait'?`<div class="cc-st">お相手の返答待ち</div>`:''}
       </div>`;
       return `
-      <div class="chatcard invite">
+      <div class="chatcard invite from-them">
+        ${cardFrom(m)}
         <div class="cc-h">${I.invite} お誘いが届きました</div>
         <p style="font-size:10.5px;color:var(--ink-soft);margin:0 0 8px">OKな項目はそのまま、変えたい項目はチェックを外して希望を選んでください</p>
         ${Object.keys(m.items).map(k=>{
@@ -1255,7 +1323,8 @@ V.chat = id => {
     if(m.who==='card' && m.kind==='offer'){
       const ro = m.oid ? S.recvOffers.find(x=>x.id===m.oid) : null;
       if(!m.mine && S.role==='f' && ro && isD()) return `
-      <div class="chatcard offer">
+      <div class="chatcard offer from-them">
+        ${cardFrom(m)}
         <div class="cc-h">${I.invite} ${ro.status==='ok'?'オファー承諾済み・マッチ成立':'オファーが届いています'}</div>
         ${ro.status==='pending' ? offerChecklistHtml(ro) : `
         <div class="cc-row"><span>形式</span><b>${esc(m.mode||'ラウンド')}</b></div>
@@ -1265,8 +1334,9 @@ V.chat = id => {
         ${offerChecklistHtml(ro)}`}
       </div>`;
       return `
-      <div class="chatcard offer">
-        <div class="cc-h">${I.invite} ${m.mine?'オファーを送信しました':'オファーが届いています'}</div>
+      <div class="chatcard offer ${m.mine?'from-me':'from-them'}">
+        ${cardFrom(m)}
+        <div class="cc-h">${I.invite} ${m.mine?'オファー':'オファーが届いています'}</div>
         <div class="cc-row"><span>形式</span><b>${esc(m.mode||'ラウンド')}</b></div>
         <div class="cc-row"><span>日程</span><b>${esc(m.date)}</b></div>
         <div class="cc-row"><span>場所</span><b>${esc(m.course)}</b></div>
@@ -1279,7 +1349,7 @@ V.chat = id => {
         <div class="cc-h">${I.cal.replace('<svg ','<svg width="15" height="15" ')} 当日の段取り提案</div>
         <div class="cc-row"><span>日程</span><b>${esc(m.date||'')}</b></div>
         <div class="cc-row"><span>集合時間</span><b>${esc(m.time)}</b></div>
-        <div class="cc-row"><span>集合場所</span><b>${esc(m.spot)}</b></div>
+        <div class="cc-row"><span>集合場所</span><b>${esc(m.spot)}${m.spot&&m.spot.includes('地図ピン')?` <a href="https://maps.google.com/?q=35.7219,139.9847" target="_blank" rel="noopener" style="color:var(--fairway);text-decoration:underline">Googleマップで開く</a>`:''}</b></div>
         ${m.ok
           ? `<div class="cc-st ok">${I.check.replace('width="40" height="40"','width="12" height="12"')} ${m.mine?'お相手がOKしました・スケジュール登録済み':'OK済み・スケジュール登録済み（前日にリマインドが届きます）'}</div>`
           : m.mine
@@ -1366,10 +1436,10 @@ function openPlanSheet(id){
   const mmP = S.role==='m' ? myMobV() : mobOf(u);
   const fmP = S.role==='m' ? mobOf(u) : myMobV();
   const isPickup = isD() && !isFac && mmP==='M1' && fmP==='f2';
-  planSel = { id, time: isFac ? '19:00' : '7:40', spot: isFac ? '施設受付前' : (isPickup ? '駅（改札前）' : 'クラブハウス前') };
-  const times = isFac
-    ? ['10:00','12:00','14:00','16:00','18:00','19:00','20:00','21:00']
-    : ['6:40','7:00','7:20','7:40','8:00','8:30','9:00'];
+  planSel = { id, time: isFac ? '19:00' : '7:30', spot: isFac ? '施設受付前' : (isPickup ? '駅（改札前）' : 'クラブハウス前') };
+  const times = [];
+  if(isFac){ for(let h=10;h<=21;h++){ times.push(h+':00'); times.push(h+':30'); } times.push('22:00'); }
+  else { for(let h=5;h<=9;h++){ ['00','15','30','45'].forEach(mm=>times.push(h+':'+mm)); } times.push('10:00'); }
   const spots = isFac
     ? ['施設受付前','駅改札（施設最寄）','施設ビル1F入口']
     : isPickup
@@ -1379,7 +1449,7 @@ function openPlanSheet(id){
     <h3>当日の段取りを提案</h3>
     <p class="muted">${esc(u.name)}さんに集合の段取りを送ります。OKなら当日そのまま合流できます</p>
     <div class="label">集合時間</div>
-    <div class="opt-grid">${times.map(t=>`<button class="opt ${planSel.time===t?'on':''}" onclick="planSel.time='${t}';window._planR()">${t}</button>`).join('')}</div>
+    <select class="input" onchange="planSel.time=this.value">${times.map(t=>`<option ${planSel.time===t?'selected':''}>${t}</option>`).join('')}</select>
     ${isFac?`<p class="muted" style="font-size:10.5px;margin-top:6px">インドアゴルフ・打ちっぱなしは仕事帰りの夜集合もOK</p>`:''}
     ${isPickup?`<p class="muted" style="font-size:10.5px;margin-top:6px">${I.shield} ピックアップは送迎の待ち合わせ場所です。※自宅前は指定できません</p>`:''}
     <div class="label">${isPickup?'ピックアップ地点':'集合場所'}</div>
@@ -1419,7 +1489,7 @@ function okPlan(chatId, idx){
 function offerItems(o){
   if(!o.items){
     o.items = {
-      mode: {v: o.mode||'ラウンド', ok:true, alt:null, lock:true},
+      mode: {v: o.mode||'ラウンド', ok:true, alt:null},
       date: {v: o.date, ok:true, alt:null},
       venue:{v: o.course, ok:true, alt:null},
       meet: {v: o.meet||'現地集合', ok:true, alt:null},
@@ -1431,6 +1501,10 @@ function offerItems(o){
 function offerAlts(o, k){
   const u = find(o.from);
   const it = offerItems(o)[k];
+  if(k==='mode'){
+    const me_ = find('w1') || {};
+    return ['ラウンド','インドアゴルフ','打ちっぱなし'].filter(x=>x!==it.v);
+  }
   if(k==='date') return [...(u.dates||[]).filter(d=>!it.v.startsWith(d)), '別日を相談したい'];
   if(k==='venue') return [...venuePlan(u, o.mode||'ラウンド').list.map(v=>v.n).filter(n=>n!==it.v), '相談して決めたい'];
   if(k==='meet') return ['現地集合','送迎を希望','相談したい'].filter(x=>x!==it.v);
@@ -1445,9 +1519,22 @@ function toggleOfferItem(oid, k){
   if(it.ok) it.alt = null;
   save(); render();
 }
+function rewardForMode(mode){
+  const me_ = me() || {};
+  if(mode==='インドアゴルフ') return (S.fset?.simFee)||8800;
+  if(mode==='打ちっぱなし') return (S.fset?.rangeFee)||5500;
+  return null; // ラウンド=元の謝礼
+}
 function setOfferAlt(oid, k, v){
   const o = S.recvOffers.find(x=>x.id===oid); if(!o) return;
-  offerItems(o)[k].alt = v; save();
+  const items = offerItems(o);
+  items[k].alt = v;
+  if(k==='mode'){
+    const nr = rewardForMode(v);
+    items.reward.v = (nr!==null ? nr : o.reward).toLocaleString() + ' コイン' + (nr!==null&&nr!==o.reward?'（形式変更で変わります）':'');
+    o.newReward = nr!==null ? nr : o.reward;
+  }
+  save(); render();
 }
 function offerChecklistHtml(o, compact){
   const items = offerItems(o);
@@ -1486,7 +1573,7 @@ function respondOffer(oid){
   if(!changed.length){ answerOffer(oid, true, fin); return; }
   let c = S.chats.find(x=>x.id===o.from);
   if(!c){ c = {id:o.from, msgs:[]}; S.chats.unshift(c); }
-  c.msgs.push({who:'me', t:'一部変更の希望を送りました（' + changed.map(k=>({date:'日程',venue:'会場',meet:'集合'})[k]).join('・') + '）', tm:'いま'});
+  c.msgs.push({who:'me', t:'一部変更の希望を送りました（' + changed.map(k=>({mode:'形式',date:'日程',venue:'会場',meet:'集合'})[k]).join('・') + '）', tm:'いま'});
   save(); render();
   toast('変更希望を送りました。お相手の返答をお待ちください');
   setTimeout(()=>{
@@ -1577,6 +1664,7 @@ function simulateAfterRound(id){
   S.reviewDue = { id };
   let c = S.chats.find(x=>x.id===id);
   if(!c){ c = {id, msgs:[]}; S.chats.unshift(c); }
+  if(!c.msgs.some(m=>m.kind==='match')) c.msgs.push({who:'card', kind:'match', ...((S.fixed||{})[id]||{})});
   if(!c.msgs.some(m=>m.kind==='review')) c.msgs.push({who:'card', kind:'review'});
   save(); render();
   setTimeout(()=>toast('当日終了後の状態を再現しました。評価を書くまで通知とバナーが残ります'), 300);
@@ -1602,6 +1690,8 @@ function submitReview(){
   const {id, stars, tags} = rev;
   S.reviews[id] = { stars, tags };
   S.reviewDue = null;
+  const _c = S.chats.find(x=>x.id===id);
+  if(_c && !_c.msgs.some(m=>m.who==='sys' && m.t.includes('お疲れ様でした'))) _c.msgs.push({who:'sys', t:'⛳ ラウンドお疲れ様でした。'});
   if(S.role==='m') S.bridge.msgs.push({card:{kind:'review'}, reviewDue:true});
   save(); closeSheet();
   go('#/chat/'+id); render();
@@ -1674,7 +1764,7 @@ function fixRound(){
 function sendMsg(id){
   const inp = document.getElementById('chat-in');
   const t = inp.value.trim(); if(!t) return;
-  if(S.role==='m' && !S.subActive && !(isD() && freeMsgOK(id))){ toast(isD()?((S.fixed||{})[id]?'マッチ翌日以降のメッセージにはサブスク登録が必要です':'新しい相手へのメッセージ開始にはサブスク登録が必要です'):'メッセージの送信にはサブスク登録が必要です'); setTimeout(paywall, 700); return; }
+  if(S.role==='m' && !S.subActive && !(isD() && freeMsgOK(id))){ toast(isD()?((S.fixed||{})[id]?'ラウンド日の翌日以降のメッセージにはサブスク登録が必要です':'新しい相手へのメッセージ開始にはサブスク登録が必要です'):'メッセージの送信にはサブスク登録が必要です'); setTimeout(paywall, 700); return; }
   let c = S.chats.find(x=>x.id===id);
   if(!c){ c={id,msgs:[]}; S.chats.unshift(c); }
   c.msgs.push({who:'me', t, tm:'いま'});
@@ -1791,7 +1881,7 @@ V.mypage = () => {
       ${[
         ['アプリでマッチしてラウンド1回以上（打ちっぱなし・インドア含む）', true],
         ['相互評価済み ＆ お相手からの評価 ★4以上（現在 ★4.9）', true],
-        ['プロフィール充実（写真3枚以上・自己紹介200字・全項目入力）', false],
+        ['プロフィール充実（写真3枚以上・自己紹介50字以上・全項目入力）', false],
       ].map(([t,ok])=>`
         <div style="display:flex;gap:9px;align-items:flex-start;padding:5px 0;font-size:11.5px;${ok?'':'color:var(--ink-soft)'}">
           <span style="flex:none;width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;${ok?'background:var(--fairway);color:#fff':'border:1.5px solid var(--line)'}">${ok?I.check.replace('width="40" height="40"','width="11" height="11"'):''}</span>
@@ -2367,11 +2457,9 @@ V.editProfile = () => {
     <p class="muted" style="font-size:10.5px;margin-top:6px">この時間を超える会場が候補に出たとき、あなたにだけ注意が表示されます（お相手には見えません）</p>
     `:''}
     <div class="label">お住まいの地域 <span class="chip line" style="font-size:9px;margin-left:4px">非公開</span></div>
-    <div style="display:flex;gap:10px">
-      <select class="input" style="flex:1" onchange="S.homeArea=this.value+(S.homeArea.split(' ')[1]||'');save()">
-        ${['千葉県','東京都','埼玉県','神奈川県','茨城県'].map(p=>`<option ${S.homeArea.startsWith(p)?'selected':''}>${p}</option>`).join('')}
-      </select>
-      <input class="input" style="flex:1.4" placeholder="市区町村（例：市川市）" value="${esc(S.homeArea.split(' ')[1]||'')}" onchange="S.homeArea=(S.homeArea.split(' ')[0]||'千葉県')+' '+this.value;save()">
+    <div style="display:flex;gap:10px;align-items:center">
+      <input class="input" style="flex:1" placeholder="郵便番号（例：272-0021）" inputmode="numeric" value="${esc(S.homeZip||'')}" onchange="S.homeZip=this.value;S.homeArea='千葉県市川市';save();render()">
+      <span style="flex:1.2;font-size:12px;color:var(--ink-soft)">${S.homeZip?('→ '+(S.homeArea||'千葉県市川市')):'入力すると住所が自動表示されます'}</span>
     </div>
     <p class="muted" style="font-size:10.5px;margin-top:6px">${I.shield} お相手には表示されません。距離が近い方とのマッチングにのみ使用します</p>
     <button class="btn" style="margin-top:22px" onclick="toast('プロフィールを保存しました（デモ）');history.back()">保存する</button>
@@ -2435,8 +2523,10 @@ function hcCal(){
   }
   return `
   <div class="cal">
-    <div style="display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:6px;font-family:var(--font-num);font-size:12px;letter-spacing:.12em;color:var(--ink-soft)">
-      <button onclick="hcMonthShift()" style="padding:2px 8px">‹</button>${y}年${m}月<button onclick="hcMonthShift()" style="padding:2px 8px">›</button>
+    <div class="cal-nav">
+      ${m>7?`<button class="cal-arw" onclick="hcMonthShift()">‹</button>`:`<span class="cal-arw ghost"></span>`}
+      <b>${y}年${m}月</b>
+      ${m<8?`<button class="cal-arw" onclick="hcMonthShift()">›</button>`:`<span class="cal-arw ghost"></span>`}
     </div>
     <div class="cal-week">${['日','月','火','水','木','金','土'].map((w,i)=>`<span class="${i===0?'sun':i===6?'sat':''}">${w}</span>`).join('')}</div>
     <div class="cal-grid">${cells}</div>
@@ -2456,7 +2546,7 @@ V.hostCompe = () => {
   const venues = VENUES[hc.fmt] || [];
   if(hc.fmt==='ラウンド'){ if(!COURSES.includes(hc.venue)) hc.venue = COURSES[0]; }
   else if(!venues.includes(hc.venue)) hc.venue = venues[0];
-  const totalPpl = (hc.cohost?2:1) + hc.guests.length + hc.slots + hc.wslots;
+  const totalPpl = (hc.cohost?2:1) + hc.slots + hc.wslots;
   const overCap = totalPpl > 8;
   const bookedOK = hc.fmt!=='ラウンド' || hc.booked;
   const gross = hc.slots * hc.fee + hc.wslots * hc.wfee;
@@ -2520,12 +2610,10 @@ V.hostCompe = () => {
       <button class="btn ghost sm" style="margin-top:10px" onclick="toast('招待リンクをコピーしました（デモ）')">${I.send} 未登録の友人に招待リンクを送る</button>
       <p class="muted" style="font-size:10px;margin-top:6px">招待リンクから登録が完了すると、その友人がここに自動で表示されます</p>
     </div>`:''}
-    <div class="label">女性ゲストを招待（PreGoユーザー）</div>
-    <div class="hc-guests">${WOMEN.slice(0,6).filter(w=>w.id!=='w1').map(w=>`
-      <button class="hc-g ${hc.guests.includes(w.id)?'on':''}" onclick="toggleHcGuest('${w.id}')">
-        <img src="${w.img}"><span>${esc(w.name)}</span>
-      </button>`).join('')}</div>
-    <p class="muted" style="font-size:10.5px;margin-top:6px">女性ゲストは参加無料。${hc.guests.length?`選択中 ${hc.guests.length}名に招待が届きます。`:''}<b>男性の募集枠が1名以上あるコンペのみ開催できます</b>（女性だけのコンペは不可）</p>
+    <div class="notice" style="margin:16px 0 0">
+      <span class="ic">${I.bell}</span>
+      <span>公開されると<b>PreGoの女性ユーザー全体にお知らせが届きます</b>（個別の指名は不要です）。<b>男性の募集枠が1名以上あるコンペのみ開催できます</b>（女性だけのコンペは不可）</span>
+    </div>
     <div class="label">女性の募集枠・参加費 <span class="chip line" style="font-size:9px;margin-left:4px">公募</span></div>
     <div style="display:flex;gap:10px">
       <select class="input" style="flex:1" onchange="hc.wslots=Number(this.value);render()">${[0,2,4].map(n=>`<option value="${n}" ${hc.wslots===n?'selected':''}>${n===0?'募集しない（招待のみ）':n+'名'}</option>`).join('')}</select>
@@ -2558,6 +2646,7 @@ function render(){
   const sameRoute = (_lastRoute === h);
   _lastRoute = h;
   document.body.classList.toggle('no-page-anim', sameRoute);
+  const _sy = sameRoute ? window.scrollY : 0;
   if(!S.role && !['login','signup','forgot','contact','articles','article','help'].includes(route)){ location.hash = '#/login'; return; }
   const map = {
     '': V.login, 'login': V.login, 'signup': V.signup, 'forgot': V.forgot,
@@ -2575,6 +2664,7 @@ function render(){
   };
   $app.innerHTML = (map[route] || V.login)();
   window.scrollTo(0,0);
+  window.scrollTo(0, _sy);
   countUp();
   if(route==='roundlog'){ document.fonts ? document.fonts.ready.then(drawFrame) : drawFrame(); setTimeout(drawFrame,300); }
 }
