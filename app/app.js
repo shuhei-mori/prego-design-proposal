@@ -1591,9 +1591,13 @@ V.editProfile = () => {
 };
 
 /* ---------- router ---------- */
+let _lastRoute = null;
 function render(){
   const h = location.hash || '#/login';
   const [_, route, arg] = h.split('/');
+  const sameRoute = (_lastRoute === h);
+  _lastRoute = h;
+  document.body.classList.toggle('no-page-anim', sameRoute);
   if(!S.role && !['login','signup','forgot','contact','articles','article','help'].includes(route)){ location.hash = '#/login'; return; }
   const map = {
     '': V.login, 'login': V.login, 'signup': V.signup, 'forgot': V.forgot,
