@@ -901,3 +901,17 @@ body.no-page-anim .page,body.no-page-anim .pcard,body.no-page-anim .card,body.no
 .swt2.on i{transform:translateX(19px)}
 /* 日程マッチ: 希望日登録カード */
 .mywish{margin-bottom:4px}
+
+/* v25: チャット内カード（マッチ成立・段取り提案） */
+.chatcard{background:var(--paper);border:1.5px solid var(--fairway);border-radius:16px;padding:13px 15px;margin:10px auto;max-width:320px;box-shadow:var(--sh-card);animation:cardIn .4s var(--ease) both}
+.chatcard.match{border-color:var(--brass)}
+.chatcard .cc-h{display:flex;align-items:center;gap:7px;font-weight:900;font-size:13px;margin-bottom:8px;color:var(--fairway)}
+.chatcard.match .cc-h{color:var(--brass-ink)}
+.chatcard .cc-ck{width:20px;height:20px;border-radius:50%;background:var(--brass);color:#fff;display:flex;align-items:center;justify-content:center;flex:none}
+.chatcard .cc-h svg{flex:none}
+.chatcard .cc-row{display:flex;justify-content:space-between;gap:10px;font-size:11.5px;padding:4px 0;border-bottom:1px dashed var(--line)}
+.chatcard .cc-row span{color:var(--ink-soft);flex:none}
+.chatcard .cc-row b{text-align:right}
+.chatcard .cc-st{margin-top:9px;font-size:10.5px;color:var(--ink-soft);display:flex;align-items:center;gap:5px}
+.chatcard .cc-st.ok{color:var(--fairway);font-weight:700}
+.chatcard .cc-st.ok svg{background:var(--fairway);color:#fff;border-radius:50%;padding:2px}

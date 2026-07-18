@@ -231,6 +231,7 @@ function switchRole(){
     let c = S.chats.find(x=>x.id==='m1');
     if(!c){ c = {id:'m1', msgs:[]}; S.chats.unshift(c); }
     S.bridge.msgs.forEach(m=>{
+      if(m.card){ c.msgs.push({who:'card', ...m.card}); return; }
       if(m.sys) c.msgs.push({who:'sys', t:m.sys});
       c.msgs.push({who:'them', t:m.t, tm:m.tm});
     });
@@ -965,6 +966,14 @@ V.chat = id => {
   const u = find(id);
   const fx = (S.fixed||{})[id];
   const msgs = c.msgs.map((m,i)=>{
+    if(m.who==='card' && m.kind==='plan') return `
+      <div class="chatcard ${m.mine?'mine':''}">
+        <div class="cc-h">${I.cal.replace('<svg ','<svg width="15" height="15" ')} 当日の段取り提案</div>
+        <div class="cc-row"><span>日程</span><b>${esc(m.date||'')}</b></div>
+        <div class="cc-row"><span>集合時間</span><b>${esc(m.time)}</b></div>
+        <div class="cc-row"><span>集合場所</span><b>${esc(m.spot)}</b></div>
+        <div class="cc-st ${m.ok?'ok':''}">${m.ok ? I.check.replace('width="40" height="40"','width="12" height="12"')+' お相手がOKしました・スケジュール登録済み' : 'お相手の返事待ち'}</div>
+      </div>`;
     if(m.who==='sys') return `<div class="msg sys">${m.t}</div>`;
     if(m.who==='me'){
       const read = c.msgs.slice(i+1).some(x=>x.who==='them');
@@ -975,25 +984,26 @@ V.chat = id => {
     }
     return `<div class="mrow"><div class="msg them">${esc(m.t)}<span class="tm">${m.tm}</span></div></div>`;
   }).join('');
-  const fixbar = fx ? `
-    <div class="fixbar done">
-      <span class="ic">${I.cal}</span>
-      <span style="flex:1">
-        <b>${fx.date} ${fx.mode&&fx.mode!=='ラウンド'?fx.mode:'ラウンド'}${fx.offer?'マッチ成立':'確定'}</b>
-        <small>${esc(fx.course)}${fx.offer?` ・ 謝礼 ${Number(fx.reward||0).toLocaleString()}コイン確定済み`:''} ・ 位置共有/チェックインは当日自動ON</small>
-      </span>
-      <button class="btn sm" onclick="openPlanSheet('${id}')">段取りを提案</button>
-    </div>` : `
+  const fixbar = fx ? '' : `
     <div class="fixbar">
       <span class="ic">${I.cal}</span>
       <span style="flex:1">ラウンドの約束ができたら記録しましょう<small>確定するとレビュー・安全機能・実績カウントが有効になります</small></span>
       <button class="btn sm" onclick="openFixSheet('${id}')">ラウンド確定</button>
     </div>`;
+  const hasPlan = c.msgs.some(m=>m.who==='card'&&m.kind==='plan');
+  const matchCard = fx ? `
+    <div class="chatcard match">
+      <div class="cc-h"><span class="cc-ck">${I.check.replace('width="40" height="40"','width="13" height="13"')}</span> ${fx.date} ${fx.mode&&fx.mode!=='ラウンド'?fx.mode:'ラウンド'}${fx.offer?'マッチ成立':'確定'}</div>
+      <div class="cc-row"><span>場所</span><b>${esc(fx.course)}</b></div>
+      ${fx.offer?`<div class="cc-row"><span>謝礼</span><b>${Number(fx.reward||0).toLocaleString()} コイン確定済み</b></div>`:''}
+      <div class="cc-row"><span>安全機能</span><b>位置共有・チェックイン 当日自動ON</b></div>
+      ${hasPlan?'':`<button class="btn sm" style="width:100%;margin-top:10px" onclick="openPlanSheet('${id}')">当日の段取りを提案する</button>`}
+    </div>` : '';
   return `
   ${appbar({title:esc(u.name), back:true, noBell:true})}
   <div class="page nofoot" style="display:flex;flex-direction:column;min-height:calc(100dvh - 60px)">
     ${fixbar}
-    <div class="chat">${msgs || `<div class="empty" style="padding-top:60px"><div class="big">⛳</div>${esc(u.name)}さんに挨拶してみましょう</div>`}</div>
+    <div class="chat">${(msgs + matchCard) || `<div class="empty" style="padding-top:60px"><div class="big">⛳</div>${esc(u.name)}さんに挨拶してみましょう</div>`}</div>
     <div class="chatbar">
       <input class="input" id="chat-in" placeholder="メッセージを入力" onkeydown="if(event.key==='Enter')sendMsg('${id}')">
       <button class="send" onclick="sendMsg('${id}')">${I.send}</button>
@@ -1033,13 +1043,12 @@ function sendPlan(){
   const fx = (S.fixed||{})[id] || {};
   let c = S.chats.find(x=>x.id===id);
   if(!c){ c = {id, msgs:[]}; S.chats.unshift(c); }
-  const sysT = `📋 当日の段取り提案：${fx.date||''} ${time} ${spot} 集合`;
-  const meT = `当日は ${time} に ${spot} 集合でどうでしょう？`;
-  c.msgs.push({who:'sys', t: sysT});
-  c.msgs.push({who:'me', t: meT, tm:'いま'});
-  if(S.role==='m') S.bridge.msgs.push({sys: sysT, t: meT, tm:'いま'});
+  const card = {who:'card', kind:'plan', mine:true, date:fx.date||'', time, spot, ok:false};
+  c.msgs.push(card);
+  if(S.role==='m') S.bridge.msgs.push({card:{kind:'plan', date:fx.date||'', time, spot, ok:true}});
   save(); closeSheet(); render();
   setTimeout(()=>{
+    card.ok = true;
     c.msgs.push({who:'them', t:'OKです！その段取りでお願いします🙆‍♀️', tm:'いま'});
     save(); if(location.hash==='#/chat/'+id) render();
   }, 1400);
