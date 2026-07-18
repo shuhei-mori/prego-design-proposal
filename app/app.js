@@ -126,6 +126,17 @@ function sheet(html){
   root.innerHTML = `<div class="sheet-bg" onclick="if(event.target===this)closeSheet()"><div class="sheet"><div class="grab"></div>${html}</div></div>`;
 }
 function closeSheet(){ document.getElementById('sheet-root').innerHTML=''; }
+function celebrate(){
+  const colors=['#D9B96A','#68A083','#7AE0BD','#FFFFFF','#009395'];
+  const el=document.createElement('div'); el.id='celebrate';
+  el.innerHTML = `<div class="ck">${I.check.replace('width="40" height="40"','width="38" height="38"')}</div>` +
+    Array.from({length:18},(_,i)=>{
+      const ang=(i/18)*Math.PI*2, d=90+(i%5)*28;
+      return `<span class="cf" style="background:${colors[i%5]};--dx:${Math.cos(ang)*d}px;--dy:${Math.sin(ang)*d-40}px;--rr:${(i%2?1:-1)*(180+i*20)}deg;animation-delay:${i*12}ms"></span>`;
+    }).join('');
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),1200);
+}
 function go(h){ location.hash = h; }
 
 /* ---------- icons ---------- */
@@ -730,6 +741,7 @@ function paywall(){
 }
 function subscribe(plan){
   S.subActive = true; save(); closeSheet(); render();
+  celebrate();
   setTimeout(()=>toast(`${plan}で登録しました。14日間無料です（デモ）`),200);
 }
 function sendOffer(id){
@@ -810,7 +822,7 @@ V.offers = () => {
 function answerOffer(id, ok){
   const o = S.recvOffers.find(x=>x.id===id);
   o.status = ok?'ok':'ng';
-  if(ok){ S.coins += o.reward; toast(`マッチ成立！ ${o.reward.toLocaleString()}コインが確定しました`); }
+  if(ok){ S.coins += o.reward; celebrate(); toast(`マッチ成立！ ${o.reward.toLocaleString()}コインが確定しました`); }
   else toast('オファーを辞退しました');
   save(); render();
 }
@@ -902,6 +914,7 @@ function fixRound(){
   let c = S.chats.find(x=>x.id===id);
   if(!c){ c = {id, msgs:[]}; S.chats.unshift(c); }
   c.msgs.push({who:'sys', t:`⛳ ${date}・${course} でラウンド確定`});
+  celebrate();
   save(); closeSheet(); render();
   setTimeout(()=>toast('ラウンドを確定しました。当日の安全機能がONになります'), 250);
 }
