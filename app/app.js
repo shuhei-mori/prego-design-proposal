@@ -1648,7 +1648,7 @@ V.compe = id => {
       </div>
       <div class="notice" style="margin:14px 0 0">
         <span class="ic">${I.shield}</span>
-        <span>グループ開催・運営スタッフ同行。はじめての方も安心です</span>
+        <span>グループ開催・本人確認済みメンバーのみ。はじめての方も安心です</span>
       </div>
       <button class="btn brass" style="margin-top:16px" onclick="toast('コンペにエントリーしました（デモ）')">エントリーする ${yen(c.fee)}</button>
       <p class="muted" style="text-align:center;margin-top:10px;font-size:11px">キャンセルは3日前まで無料</p>
@@ -2317,7 +2317,16 @@ V.inviteSet = () => {
 };
 
 /* ---- コンペ開催（女性ホスト・機能1） ---- */
-let hc = { fmt:'インドア練習会', date:'7/21', venue:null, venueCustom:'', booked:false, cohost:true, guests:[], slots:4, fee:8000, title:'', desc:'', prize:'' };
+let hc = { fmt:'インドア練習会', date:'7/21', venue:null, venueCustom:'', booked:false, cohost:true, cohostUser:null, guests:[], slots:4, fee:8000, title:'', desc:'', prize:'' };
+function hcSearch(q){
+  hc.cohostQ = q;
+  const res = document.getElementById('hc-res');
+  if(!res) return;
+  const list = q ? WOMEN.filter(w => w.name.toLowerCase().includes(q.toLowerCase()) && w.id !== hc.cohostUser) : [];
+  res.innerHTML = list.length
+    ? list.map(w=>`<button class="hc-g" onclick="hc.cohostUser='${w.id}';render()"><img src="${w.img}"><span>${w.name}</span></button>`).join('')
+    : (q ? '<p class="muted" style="font-size:10.5px;padding:4px 0">見つかりませんでした。未登録の友人は招待リンクから招待できます</p>' : '');
+}
 let hcMonth = 7;
 function hcMonthShift(){ hcMonth = hcMonth===7 ? 8 : 7; render(); }
 function hcCal(){
@@ -2357,7 +2366,7 @@ V.hostCompe = () => {
   const overCap = totalPpl > 8;
   const bookedOK = hc.fmt!=='ラウンド' || hc.booked;
   const gross = hc.slots * hc.fee;
-  const hostFee = Math.round(gross * 0.3 / 100) * 100;
+  const hostFee = Math.round(gross * 0.8 / 100) * 100;
   const perHost = hc.cohost ? Math.round(hostFee/2/100)*100 : hostFee;
   return `
   ${appbar({title:'コンペを開催する', back:true, noBell:true})}
@@ -2403,7 +2412,20 @@ V.hostCompe = () => {
       </div>
       <button class="swt2 ${hc.cohost?'on':''}" onclick="hc.cohost=!hc.cohost;render()"><i></i></button>
     </div>
-    ${hc.cohost?`<button class="btn ghost sm" style="margin-top:8px" onclick="toast('招待リンクをコピーしました（デモ）')">${I.send} 友人に招待リンクを送る</button>`:''}
+    ${hc.cohost?`
+    <div class="card" style="padding:12px 14px;margin-top:8px">
+      <b style="font-size:12px">共同ホストを選ぶ</b>
+      ${hc.cohostUser?`
+      <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+        <img src="${find(hc.cohostUser).img}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;outline:2px solid var(--fairway);outline-offset:1px">
+        <b style="flex:1;font-size:13px">${esc(find(hc.cohostUser).name)}さん <span class="chip brass" style="font-size:9px">共同ホスト</span></b>
+        <button class="chip line" style="font-size:10px" onclick="hc.cohostUser=null;render()">解除</button>
+      </div>`:`
+      <input class="input" style="margin-top:8px" placeholder="PreGoの友人を名前で検索（例：SAKI）" oninput="hcSearch(this.value)">
+      <div id="hc-res" class="hc-guests" style="margin-top:8px"></div>`}
+      <button class="btn ghost sm" style="margin-top:10px" onclick="toast('招待リンクをコピーしました（デモ）')">${I.send} 未登録の友人に招待リンクを送る</button>
+      <p class="muted" style="font-size:10px;margin-top:6px">招待リンクから登録が完了すると、その友人がここに自動で表示されます</p>
+    </div>`:''}
     <div class="label">女性ゲストを招待（PreGoユーザー）</div>
     <div class="hc-guests">${WOMEN.slice(0,6).filter(w=>w.id!=='w1').map(w=>`
       <button class="hc-g ${hc.guests.includes(w.id)?'on':''}" onclick="toggleHcGuest('${w.id}')">
@@ -2418,9 +2440,10 @@ V.hostCompe = () => {
     </div>
     <div class="price-box">
       <div class="row"><span>参加費合計（${hc.slots}名 × ¥${hc.fee.toLocaleString()}）</span><span class="money">¥${gross.toLocaleString()}</span></div>
-      <div class="row muted" style="font-size:11.5px"><span>└ 幹事報酬（30%）</span><span>¥${hostFee.toLocaleString()}</span></div>
+      <div class="row muted" style="font-size:11.5px"><span>└ 幹事報酬（80%）</span><span>¥${hostFee.toLocaleString()}</span></div>
+      <div class="row muted" style="font-size:11.5px"><span>└ サービス利用料（20%）</span><span>¥${(gross-hostFee).toLocaleString()}</span></div>
       <div class="row total"><span>あなたの受取${hc.cohost?'（2人でシェア）':''}</span><span class="money" style="color:var(--brass)">¥${perHost.toLocaleString()} <small style="font-size:10px">/人</small></span></div>
-      <p class="muted" style="font-size:10.5px;margin-top:8px">会場費・保険・キャンセル規定は運営テンプレを利用。当日は運営スタッフが1名同行します</p>
+      <p class="muted" style="font-size:10.5px;margin-top:8px">保険・キャンセル規定は運営テンプレを利用できます。景品・会場費はホスト負担です</p>
     </div>
     <button class="btn brass" ${(!overCap && bookedOK)?'':'disabled'} onclick="celebrate();toast('開催申請を送信しました。審査後に公開されます（デモ）');setTimeout(()=>{go('#/mypage')},1200)">この内容で開催申請する</button>
     ${bookedOK?'':`<p class="muted" style="font-size:10.5px;text-align:center;margin-top:8px">ゴルフ場の予約完了にチェックすると申請できます</p>`}
