@@ -748,12 +748,13 @@ V.offer = id => {
 };
 let inv = {};
 function inviteSheet(id){
-  if(S.role==='m' && !S.subActive){ paywall(); return; }
+  if(S.role==='m' && !S.subActive && !isD()){ paywall(); return; }
+  const freeU = isD() && S.role==='m' && !S.subActive;
   const u = find(id);
   const myDates = me().dates || [];
   const shared = u.dates.filter(d=>myDates.includes(d));
   const dates = shared.length ? shared : u.dates;
-  inv = { id, date: dates[0], mode: 'ラウンド', pay: 'プレー代はこちらで持ちます' };
+  inv = { id, date: dates[0], mode: (isD() && S.role==='m' && !S.subActive) ? 'シミュゴルフ' : 'ラウンド', pay: (isD() && S.role==='m' && !S.subActive) ? '費用はこちらで持ちます' : 'プレー代はこちらで持ちます' };
   const iSim = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12.5" rx="2"/><path d="M9 20.5h6M12 16.5v4"/><path d="M8 12.5l2.5-3.5 2 2 3-4"/></svg>';
   const iRange = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20.5c2-1 3-2.6 3-5V5l8-1.8"/><circle cx="17" cy="14" r="2.6"/><path d="M4.5 20.5h8"/></svg>';
   const MODES = [
@@ -766,12 +767,15 @@ function inviteSheet(id){
     <p class="muted">仲間探しスタイルの方には、サブスクだけで誘えます（謝礼不要）</p>
     ${isD()?`
     <div class="label">会う形式 *</div>
-    <div class="mode-list">${MODES.map(([m,s,ic,tag])=>`
-      <button class="mode-row ${inv.mode===m?'on':''}" onclick="inv.mode='${m}';inv.pay=inv.pay.replace(/^(プレー代|費用)/,'${m}'==='ラウンド'?'プレー代':'費用');window._invR()">
+    <div class="mode-list">${MODES.map(([m,s,ic,tag])=>{
+      const locked = freeU && m==='ラウンド';
+      return `
+      <button class="mode-row ${inv.mode===m?'on':''}" style="${locked?'opacity:.55':''}" onclick="${locked?'paywall()':`inv.mode='${m}';inv.pay=inv.pay.replace(/^(プレー代|費用)/,'${m}'==='ラウンド'?'プレー代':'費用');window._invR()`}">
         <span class="mic">${ic}</span>
-        <span class="mtx"><span class="mt">${m}${tag?`<span class="mtag">${tag}</span>`:''}</span><span class="ms">${s}</span></span>
+        <span class="mtx"><span class="mt">${m}${locked?`<span class="mtag">サブスク限定</span>`:tag?`<span class="mtag">${tag}</span>`:''}</span><span class="ms">${s}</span></span>
         <span class="mck">${inv.mode===m?I.check.replace('width="40" height="40"','width="15" height="15"'):''}</span>
-      </button>`).join('')}</div>
+      </button>`;}).join('')}</div>
+    ${freeU?`<p class="muted" style="font-size:10.5px;margin:2px 0 8px">無料会員はシミュゴルフ・打ちっぱなしの誘いが使えます（ラウンド誘いはサブスクで）</p>`:''}
     `:''}
     <div class="label">日程${shared.length?'（お互いの空き日）':''}</div>
     <div class="opt-grid">${dates.map(d=>`<button class="opt ${inv.date===d?'on':''}" onclick="inv.date='${d}';window._invR()">${d}</button>`).join('')}</div>
@@ -804,9 +808,10 @@ function paywall(){
   if(isD()){
     sheet(`<div class="paywall">
     <div class="pw-h">サブスクプラン（チケット制）</div>
+    <p class="muted" style="font-size:10.5px;margin-bottom:10px;text-align:center">無料でも：シミュ・打ちっぱなしの誘い／謝礼オファー（都度）／約束した相手とのメッセージ</p>
     <ul class="pw-list">
-      <li>メッセージ・ラウンド誘い（プレー代宣言）が使い放題</li>
-      <li>プレミアムは謝礼オファーチケットが毎月1枚届く</li>
+      <li>ラウンド誘い（プレー代宣言）と新規メッセージが使い放題</li>
+      <li>プレミアムは謝礼オファーチケットが毎月1枚届く（都度購入より55%お得）</li>
       <li>チケットは当月限り有効。使わないと失効します</li>
     </ul>
     <button class="pw-plan reco" onclick="subscribe('プレミアム')">
@@ -823,6 +828,12 @@ function paywall(){
     return;
   }
   sheet(`<div class="paywall">${pwPlansHtml()}</div>`);
+}
+function freeMsgOK(id){
+  if((S.fixed||{})[id]) return true;
+  if(S.sentOffers.some(o=>o.to===id)) return true;
+  const c = (S.chats||[]).find(x=>x.id===id);
+  return !!(c && c.msgs.some(m=>m.who==='card'||m.who==='sys'));
 }
 function pwPlansHtml(){
   return `
@@ -852,7 +863,7 @@ function subscribe(plan){
 }
 function sendOffer(id){
   const u = find(id); const t = TIERS[u.tier];
-  if(S.role==='m' && !S.subActive){ paywall(); return; }
+  if(S.role==='m' && !S.subActive && !isD()){ paywall(); return; }
   const _mode = (isD() && of_.mode) ? of_.mode : 'ラウンド';
   const _reward = _mode==='シミュゴルフ' ? (u.sim?.fee||8800) : _mode==='打ちっぱなし' ? (u.rng?.fee||5500) : t.reward;
   const _price = _mode==='ラウンド' ? t.price : Math.round(_reward/0.8/100)*100;
@@ -1139,7 +1150,7 @@ function fixRound(){
 function sendMsg(id){
   const inp = document.getElementById('chat-in');
   const t = inp.value.trim(); if(!t) return;
-  if(S.role==='m' && !S.subActive){ toast('メッセージの送信にはサブスク登録が必要です'); setTimeout(paywall, 700); return; }
+  if(S.role==='m' && !S.subActive && !(isD() && freeMsgOK(id))){ toast(isD()?'新しい相手へのメッセージ開始にはサブスク登録が必要です（誘い・オファーを送った相手とは無料で話せます）':'メッセージの送信にはサブスク登録が必要です'); setTimeout(paywall, 700); return; }
   let c = S.chats.find(x=>x.id===id);
   if(!c){ c={id,msgs:[]}; S.chats.unshift(c); }
   c.msgs.push({who:'me', t, tm:'いま'});
