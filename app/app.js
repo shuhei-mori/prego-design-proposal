@@ -2491,9 +2491,18 @@ V.inviteSet = () => {
   ${appbar({title:'お誘い設定', back:true})}
   <div class="page wrap">
     <p class="muted" style="margin:12px 0 14px;font-size:12px">ラウンド以外のお誘い（インドアゴルフ・打ちっぱなし）を受け付けるか、金額とあわせて設定できます。OFFにするとお相手のオファー画面で選択できなくなります。</p>
+    <div class="card" style="padding:14px 16px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="flex:1">
+          <b style="font-size:13px">ラウンドのお誘い</b>
+          <div class="muted" style="font-size:10.5px">謝礼はランク制（現在GOLD ¥17,600）のため金額は変更できません</div>
+        </div>
+        <button class="swt2 ${S.fset.rnd!==false?'on':''}" onclick="S.fset.rnd=(S.fset.rnd===false);save();render()"><i></i></button>
+      </div>
+      ${S.fset.rnd===false?`<p class="muted" style="font-size:10px;margin-top:8px">OFFの間、お相手のオファー画面でラウンドは「受付停止中」になります</p>`:''}
+    </div>
     ${row('sim','インドアゴルフのお誘い','1〜2時間・駅近・雨でもOK','simFee')}
     ${row('range','打ちっぱなしのお誘い','1時間前後・手ぶらOK','rangeFee')}
-    <div class="notice"><span class="ic">${I.shield}</span><span>ラウンドの謝礼はランク制（現在GOLD）のため、ここでは変更できません</span></div>
   </div>
   ${tabbar('my')}${demoPill()}`;
 };
