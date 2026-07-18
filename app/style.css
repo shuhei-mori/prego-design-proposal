@@ -392,6 +392,10 @@ a{color:inherit;text-decoration:none}
 }
 .notice .ic{color:var(--on-brand-accent);flex:none}
 .notice .x{margin-left:auto;color:rgba(250,248,242,.6)}
+.notice .go{margin-left:auto;white-space:nowrap;font-weight:900;flex:none}
+.notice.warn{background:var(--brass-soft);color:var(--brass-ink);border:1px solid rgba(176,138,60,.25)}
+.notice.warn .ic{color:var(--brass-ink)}
+.notice.warn .go{color:var(--brass-ink)}
 .filters{
   display:flex;gap:8px;overflow-x:auto;padding:14px 18px 4px;scrollbar-width:none;
 }

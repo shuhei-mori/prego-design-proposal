@@ -240,11 +240,14 @@ function switchRole(){
   if(S.role==='f' && S.bridge.msgs.length){
     let c = S.chats.find(x=>x.id==='m1');
     if(!c){ c = {id:'m1', msgs:[]}; S.chats.unshift(c); }
+    if(S.bridge.to) c.msgs.push({who:'sys', t:`（デモ）男性デモで${S.bridge.to}さん宛てに行った操作を、あなた（みどり）宛てとして再現しています`});
     S.bridge.msgs.forEach(m=>{
+      if(m.reviewDue) S.reviewDue = { id:'m1' };
       if(m.card){ c.msgs.push({who:'card', ...m.card}); return; }
       if(m.sys) c.msgs.push({who:'sys', t:m.sys});
-      c.msgs.push({who:'them', t:m.t, tm:m.tm});
+      if(m.t) c.msgs.push({who:'them', t:m.t, tm:m.tm});
     });
+    S.bridge.msgs = []; S.bridge.to = null;
     S.chats = [c, ...S.chats.filter(x=>x!==c)];
   }
   save(); toast(S.role==='f' ? '女性デモ（みどり）に切替えました' : '男性デモ（SHU）に切替えました');
@@ -443,9 +446,10 @@ V.home = () => {
   ${appbar({brand:true})}
   <div class="page">
     ${isD() && S.reviewDue ? `
-    <div class="notice" style="background:var(--brass-soft);color:var(--brass-ink);cursor:pointer" onclick="openReview('${S.reviewDue.id}')">
+    <div class="notice warn" style="cursor:pointer" onclick="openReview('${S.reviewDue.id}')">
       <span class="ic">${I.star.replace('width="14" height="14"','width="17" height="17"')}</span>
-      <span><b>評価を書いてマッチを完了しましょう</b>（30秒で完了・書くまでこのお知らせは消えません）</span>
+      <span><b>評価を書いてマッチを完了しましょう</b>（30秒で完了）</span>
+      <span class="go">書く →</span>
     </div>`:''}
     <div class="notice" onclick="${!S.hf?"go('#/tee')":''}" style="${!S.hf?'cursor:pointer':''}">
       <span class="ic">${S.hf==='n'?I.invite:S.hf==='o'?I.trophy:I.cal}</span>
@@ -837,6 +841,7 @@ function sendInvite(){
   if(!c){ c = {id:inv.id, msgs:[]}; S.chats.unshift(c); }
   c.msgs.push({who:'sys', t:`⛳ ${inv.date} の${inv.mode||'ラウンド'}にお誘い（${inv.pay}）`});
   if(inv.venue) c.msgs.push({who:'sys', t:`📍 会場候補：${inv.venue}（${inv.meet||'現地集合'}）`});
+  if(S.role==='m') S.bridge.to = u.name;
   const _invMsg = `はじめまして！${inv.date}に${inv.mode&&inv.mode!=='ラウンド'?inv.mode:'ラウンド'}をご一緒できたら嬉しいです。${inv.pay}。`;
   c.msgs.push({who:'me', t:_invMsg, tm:'いま'});
   if(S.role==='m') S.bridge.msgs.push({sys:`⛳ ${inv.date} の${inv.mode||'ラウンド'}にお誘い（${inv.pay}）`+(inv.venue?`\n📍 会場候補：${inv.venue}（${inv.meet||'現地集合'}）`:''), t:_invMsg, tm:'いま'});
@@ -949,6 +954,7 @@ function sendOffer(id){
   S.sentOffers.push({ id:oid, to:id, date:of_.date, meet:of_.meet, course:of_.course, mode:_mode, price:_price, status:'pending' });
   const _course = _mode==='ラウンド' ? of_.course : (_mode+'（提携施設）');
   S.recvOffers.unshift({ id:'b'+oid, from:'m1', to:id, date:of_.date, meet:of_.meet==='car'?'車送迎':'現地集合', course:_course, mode:_mode, reward:_reward, status:'pending', bridged:true });
+  S.bridge.to = u.name;
   const greet = `はじめまして！${of_.date}に${_mode==='ラウンド'?'ラウンド':_mode}をご一緒できたら嬉しく、オファーを送らせていただきました。ご検討よろしくお願いします！`;
   S.chats = S.chats || defaultChats(S.role);
   let oc = S.chats.find(x=>x.id===id);
@@ -1252,6 +1258,7 @@ function submitReview(){
   const {id, stars, tags} = rev;
   S.reviews[id] = { stars, tags };
   S.reviewDue = null;
+  if(S.role==='m') S.bridge.msgs.push({card:{kind:'review'}, reviewDue:true});
   save(); closeSheet();
   go('#/chat/'+id); render();
   setTimeout(()=>toast('評価を送信しました。お相手の評価が開示されました'), 300);
@@ -1277,6 +1284,7 @@ function sendAltVenue(id, name){
   if(!c){ c = {id, msgs:[]}; S.chats.unshift(c); }
   const card = {who:'card', kind:'venue', mine:true, name, ok:false};
   c.msgs.push(card);
+  if(S.role==='m') S.bridge.msgs.push({card:{kind:'venue', name, ok:true}});
   save(); closeSheet(); render();
   setTimeout(()=>{
     card.ok = true;
@@ -1959,9 +1967,10 @@ V.me = () => {
   const m = me();
   const inner = V.profile(S.role==='f'?'w1':'m1');
   const banner = `
-    <div class="warn-banner" style="position:relative;z-index:5">
-      未入力の項目があります。プロフィールを充実させてマッチング率を上げましょう
-      <button class="go" onclick="go('#/edit-profile')">編集 →</button>
+    <div class="notice warn" style="position:relative;z-index:5;cursor:pointer" onclick="go('#/edit-profile')">
+      <span class="ic">${I.user.replace('<svg ','<svg width="17" height="17" ')}</span>
+      <span>未入力の項目があります。プロフィールを充実させてマッチング率を上げましょう</span>
+      <span class="go">編集 →</span>
     </div>`;
   return inner.replace('<div class="page" style="padding-bottom:0">', `<div class="page" style="padding-bottom:0">${banner}`)
     .replace(/<div class="prof-cta">[\s\S]*?<\/div>\s*<\/div>/, `
