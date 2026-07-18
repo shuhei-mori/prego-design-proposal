@@ -893,3 +893,11 @@ body.no-page-anim .page,body.no-page-anim .pcard,body.no-page-anim .card,body.no
 @keyframes ckPop{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
 #celebrate .cf{position:absolute;width:8px;height:12px;border-radius:2px;top:46%;left:50%;animation:cfFly 1s var(--ease) both}
 @keyframes cfFly{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(var(--rr));opacity:0}}
+
+/* v23: お誘い設定トグル */
+.swt2{width:46px;height:27px;border-radius:99px;background:var(--line);position:relative;flex:none;transition:background .15s var(--ease)}
+.swt2 i{position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.2);transition:transform .15s var(--ease)}
+.swt2.on{background:var(--fairway)}
+.swt2.on i{transform:translateX(19px)}
+/* 日程マッチ: 希望日登録カード */
+.mywish{margin-bottom:4px}

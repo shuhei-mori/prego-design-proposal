@@ -15,23 +15,23 @@ const yen = n => '¥' + n.toLocaleString();
 
 /* ---------- demo users ---------- */
 const WOMEN = [
-  { id:'w1', st:'o', name:'MIKA',   age:29, img:'img/w1.jpg', best:92,  ave:104, tier:'GOLD',   rounds:38, rating:4.9, rc:41, hist:'5年',   area:['千葉','東京','埼玉'], dates:['7/8','7/14','7/17','7/21'], meet:'現地集合', drink:'少し飲む', style:'楽しくエンジョイ・マナー重視', reply:true,  bio:'休日はほぼゴルフ場にいます。ベスト更新が今年の目標。ラウンド後のビールまでがゴルフです🍺' },
-  { id:'w2', st:'n', name:'SAKI',   age:28, img:'img/w2.jpg', best:99,  ave:110, tier:'SILVER', rounds:21, rating:4.8, rc:18, hist:'3〜5年', area:['千葉','茨城'], dates:['7/14','7/19','7/26'], meet:'駅集合OK', drink:'飲む', style:'わいわい・コンペ好き', reply:true,  bio:'最近100切りしました！月2でラウンドしています。駅集合で大丈夫です。' },
-  { id:'w3', st:'n', name:'Emi',    age:31, img:'img/w3.jpg', best:96,  ave:108, tier:'SILVER', rounds:17, rating:4.7, rc:12, hist:'3〜5年', area:['東京','神奈川'], dates:['7/9','7/17','7/30'], meet:'現地集合', drink:'飲まない', style:'しっとり・丁寧なゴルフ', reply:false, bio:'フォームを大事にしています。レッスン週1。ご一緒する方のプレーの邪魔はしません◎' },
-  { id:'w4', st:'o', name:'Rina',   age:26, img:'img/w4.jpg', best:118, ave:126, tier:'BRONZE', rounds:6,  rating:4.6, rc:5,  hist:'1〜3年', area:['埼玉','群馬'], dates:['7/12','7/21'], meet:'駅集合OK', drink:'少し飲む', style:'初心者歓迎でお願いします', reply:true,  bio:'ゴルフ歴2年目です。まだまだ下手ですが、一生懸命がんばります！' },
-  { id:'w5', st:'n', name:'manami', age:31, img:'img/w5.jpg', best:104, ave:115, tier:'SILVER', rounds:14, rating:4.8, rc:11, hist:'3〜5年', area:['千葉','埼玉','東京'], dates:['7/14','7/17','7/30'], meet:'現地集合', drink:'飲む', style:'コンペ・わいわい・楽しくゴルフ', reply:true,  bio:'平日ゴルファーです。明るく穏やかな性格。ニコニコよく笑います。' },
-  { id:'w6', st:'o', name:'yuka',   age:33, img:'img/w6.jpg', best:91,  ave:100, tier:'GOLD',   rounds:44, rating:5.0, rc:37, hist:'10年以上', area:['東京','千葉','神奈川'], dates:['7/10','7/19','7/27'], meet:'現地集合', drink:'少し飲む', style:'スコア重視・淡々と回りたい', reply:true,  bio:'シングル目指して練習中。ストイックに回りたい方、ぜひ。' },
-  { id:'w7', st:'o', name:'Coco',   age:27, img:'img/w7.jpg', best:112, ave:121, tier:'BRONZE', rounds:9,  rating:4.5, rc:7,  hist:'1〜3年', area:['神奈川','静岡'], dates:['7/13','7/20'], meet:'駅集合OK', drink:'飲む', style:'エンジョイ・写真もたくさん撮りたい', reply:false, bio:'ゴルフウェア集めが趣味です。楽しく回れたら最高です🌸' },
-  { id:'w8', st:'n', name:'Karin',  age:24, img:'img/w8.jpg', best:124, ave:132, tier:'WHITE',  rounds:2,  rating:4.4, rc:2,  hist:'1年未満', area:['東京','埼玉'], dates:['7/15','7/22'], meet:'駅集合OK', drink:'少し飲む', style:'デビューしたてです', reply:true,  bio:'先月コースデビューしました！優しく教えてくれる方だと嬉しいです。' },
-  { id:'w9', st:'o', name:'あんな', age:34, img:'img/w9.jpg', best:97,  ave:107, tier:'SILVER', rounds:19, rating:4.7, rc:15, hist:'5年',   area:['茨城','千葉'], dates:['7/16','7/23','7/30'], meet:'現地集合', drink:'飲む', style:'早朝スルー好き', reply:true,  bio:'朝イチスタート好きです。午後は温泉に寄って帰るのが定番コース。' },
-  { id:'w10', st:'n',name:'Rio',    age:30, img:'img/w10.jpg',best:101, ave:113, tier:'SILVER', rounds:16, rating:4.6, rc:13, hist:'3〜5年', area:['千葉','東京'], dates:['7/11','7/18','7/25'], meet:'駅集合OK', drink:'飲む', style:'わいわい・コンペ好き', reply:false, bio:'夏ゴルフに向けて体力づくり中。カート乗りっぱなしにはしません(笑)' },
+  { id:'w1', st:'o', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, name:'MIKA',   age:29, img:'img/w1.jpg', best:92,  ave:104, tier:'GOLD',   rounds:38, rating:4.9, rc:41, hist:'5年',   area:['千葉','東京','埼玉'], dates:['7/8','7/14','7/17','7/21'], meet:'現地集合', drink:'少し飲む', style:'楽しくエンジョイ・マナー重視', reply:true,  bio:'休日はほぼゴルフ場にいます。ベスト更新が今年の目標。ラウンド後のビールまでがゴルフです🍺' },
+  { id:'w2', st:'n', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, name:'SAKI',   age:28, img:'img/w2.jpg', best:99,  ave:110, tier:'SILVER', rounds:21, rating:4.8, rc:18, hist:'3〜5年', area:['千葉','茨城'], dates:['7/14','7/19','7/26','8/2','8/9'], meet:'現地集合OK', drink:'飲む', style:'わいわい・コンペ好き', reply:true,  bio:'最近100切りしました！月2でラウンドしています。よろしくお願いします。' },
+  { id:'w3', st:'n', cert:false, sim:{ok:false,fee:8800}, rng:{ok:true,fee:5500}, name:'Emi',    age:31, img:'img/w3.jpg', best:96,  ave:108, tier:'SILVER', rounds:17, rating:4.7, rc:12, hist:'3〜5年', area:['東京','神奈川'], dates:['7/9','7/17','7/30'], meet:'現地集合', drink:'飲まない', style:'しっとり・丁寧なゴルフ', reply:false, bio:'フォームを大事にしています。レッスン週1。ご一緒する方のプレーの邪魔はしません◎' },
+  { id:'w4', st:'o', cert:false, sim:{ok:false,fee:8800}, rng:{ok:true,fee:5500}, name:'Rina',   age:26, img:'img/w4.jpg', best:118, ave:126, tier:'BRONZE', rounds:6,  rating:4.6, rc:5,  hist:'1〜3年', area:['埼玉','群馬'], dates:['7/12','7/21'], meet:'現地集合OK', drink:'少し飲む', style:'初心者歓迎でお願いします', reply:true,  bio:'ゴルフ歴2年目です。まだまだ下手ですが、一生懸命がんばります！' },
+  { id:'w5', st:'n', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, name:'manami', age:31, img:'img/w5.jpg', best:104, ave:115, tier:'SILVER', rounds:14, rating:4.8, rc:11, hist:'3〜5年', area:['千葉','埼玉','東京'], dates:['7/14','7/17','7/30'], meet:'現地集合', drink:'飲む', style:'コンペ・わいわい・楽しくゴルフ', reply:true,  bio:'平日ゴルファーです。明るく穏やかな性格。ニコニコよく笑います。' },
+  { id:'w6', st:'o', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, name:'yuka',   age:33, img:'img/w6.jpg', best:91,  ave:100, tier:'GOLD',   rounds:44, rating:5.0, rc:37, hist:'10年以上', area:['東京','千葉','神奈川'], dates:['7/10','7/19','7/27'], meet:'現地集合', drink:'少し飲む', style:'スコア重視・淡々と回りたい', reply:true,  bio:'シングル目指して練習中。ストイックに回りたい方、ぜひ。' },
+  { id:'w7', st:'o', cert:false, sim:{ok:false,fee:8800}, rng:{ok:true,fee:5500}, name:'Coco',   age:27, img:'img/w7.jpg', best:112, ave:121, tier:'BRONZE', rounds:9,  rating:4.5, rc:7,  hist:'1〜3年', area:['神奈川','静岡'], dates:['7/13','7/20'], meet:'現地集合OK', drink:'飲む', style:'エンジョイ・写真もたくさん撮りたい', reply:false, bio:'ゴルフウェア集めが趣味です。楽しく回れたら最高です🌸' },
+  { id:'w8', st:'n', cert:false, sim:{ok:false,fee:8800}, rng:{ok:true,fee:5500}, name:'Karin',  age:24, img:'img/w8.jpg', best:124, ave:132, tier:'WHITE',  rounds:2,  rating:4.4, rc:2,  hist:'1年未満', area:['東京','埼玉'], dates:['7/15','7/22'], meet:'現地集合OK', drink:'少し飲む', style:'デビューしたてです', reply:true,  bio:'先月コースデビューしました！優しく教えてくれる方だと嬉しいです。' },
+  { id:'w9', st:'o', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, name:'あんな', age:34, img:'img/w9.jpg', best:97,  ave:107, tier:'SILVER', rounds:19, rating:4.7, rc:15, hist:'5年',   area:['茨城','千葉'], dates:['7/16','7/23','7/30'], meet:'現地集合', drink:'飲む', style:'早朝スルー好き', reply:true,  bio:'朝イチスタート好きです。午後は温泉に寄って帰るのが定番コース。' },
+  { id:'w10', st:'n', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500},name:'Rio',    age:30, img:'img/w10.jpg',best:101, ave:113, tier:'SILVER', rounds:16, rating:4.6, rc:13, hist:'3〜5年', area:['千葉','東京'], dates:['7/11','7/18','7/25','8/9','8/23'], meet:'現地集合OK', drink:'飲む', style:'わいわい・コンペ好き', reply:false, bio:'夏ゴルフに向けて体力づくり中。カート乗りっぱなしにはしません(笑)' },
 ];
 const MEN = [
-  { id:'m1', name:'SHU',     age:44, img:'img/m1.jpg', best:88,  ave:100, plan:'PREMIUM',  rounds:52, rating:5.0, rc:24, hist:'10年以上', area:['千葉','茨城','埼玉'], dates:['7/14','7/17','7/26','7/30'], meet:'車送迎OK', drink:'飲む', style:'楽しく・たまに真剣', bio:'月3ラウンド。車出せます（駅集合ももちろんOK）。楽しく回りましょう。' },
+  { id:'m1', name:'SHU',     age:44, img:'img/m1.jpg', best:88,  ave:100, plan:'PREMIUM',  rounds:52, rating:5.0, rc:24, hist:'10年以上', area:['千葉','茨城','埼玉'], dates:['7/14','7/17','7/26','7/30','8/2','8/9','8/23'], meet:'車送迎OK', drink:'飲む', style:'楽しく・たまに真剣', bio:'月3ラウンド。車出せます。楽しく回りましょう。' },
   { id:'m2', name:'Dai',     age:38, img:'img/m2.jpg', best:94,  ave:103, plan:'STANDARD', rounds:31, rating:4.8, rc:17, hist:'5年', area:['東京','神奈川'], dates:['7/12','7/19'], meet:'車送迎OK', drink:'少し飲む', style:'エンジョイ', bio:'ラウンド帰りの飯まで含めてゴルフだと思ってます。' },
   { id:'m3', name:'Nori',    age:51, img:'img/m3.jpg', best:82,  ave:91,  plan:'PREMIUM',  rounds:120,rating:4.9, rc:56, hist:'20年以上', area:['千葉','茨城'], dates:['7/9','7/16','7/23'], meet:'車送迎OK', drink:'飲まない', style:'スコア重視・でも優しい', bio:'元研修生です。スイングのアドバイスもできます。' },
   { id:'m4', name:'GOLFMAN', age:41, img:'img/m4.jpg', best:99,  ave:107, plan:'STANDARD', rounds:26, rating:4.6, rc:9,  hist:'5年', area:['埼玉','群馬'], dates:['7/13','7/20'], meet:'現地集合', drink:'飲む', style:'わいわい', bio:'コンペ大好き。ドラコンだけは負けません。' },
-  { id:'m5', name:'Ken',     age:35, img:'img/m5.jpg', best:105, ave:112, plan:'STANDARD', rounds:12, rating:4.5, rc:6,  hist:'3年', area:['東京','千葉'], dates:['7/15','7/22'], meet:'駅集合', drink:'少し飲む', style:'エンジョイ', bio:'仕事の合間にコツコツ練習中です。' },
+  { id:'m5', name:'Ken',     age:35, img:'img/m5.jpg', best:105, ave:112, plan:'STANDARD', rounds:12, rating:4.5, rc:6,  hist:'3年', area:['東京','千葉'], dates:['7/15','7/22'], meet:'現地集合', drink:'少し飲む', style:'エンジョイ', bio:'仕事の合間にコツコツ練習中です。' },
   { id:'m6', name:'BUMA',    age:48, img:'img/m6.jpg', best:79,  ave:94,  plan:'PREMIUM',  rounds:80, rating:4.9, rc:33, hist:'15年', area:['千葉','茨城','栃木'], dates:['7/10','7/17','7/24'], meet:'車送迎OK', drink:'飲む', style:'真剣勝負も歓迎', bio:'ベスト79。バーディ合戦しましょう。' },
 ];
 /* extra photos per profile (portrait + play/course shots) */
@@ -61,7 +61,7 @@ const ARTICLES = [
   { id:'a1', title:'もっと気軽にラウンドできる仲間がいれば…', date:'2026年4月21日', img:'img/c6.jpg',
     body:['「ゴルフに行きたいのに、誘える相手がいない」。社会人ゴルファーの一番の悩みは、実はスコアよりも“同伴者”です。','会社のコンペは年に数回。友人とは予定が合わない。一人予約は気を使う——。PreGoは、プレー希望日から相手を探せる「日程マッチング」でこの悩みを解決するために生まれました。','この記事では、日程マッチングの使い方と、初めてのラウンドを安心して迎えるためのポイントを紹介します。'] },
   { id:'a2', title:'ゴルフ友達がなかなかできない…33歳独身男子の切実な悩みと解決策', date:'2026年4月2日', img:'img/c5.jpg',
-    body:['30代になると、ゴルフを始める友人は増える一方で「一緒に回る仲間」を作るのは意外と難しいもの。','練習場には通っているのに、コースデビューのきっかけがない。そんな声をよく聞きます。','大切なのは「同じ日に行ける人」と出会うこと。腕前よりもまず日程です。PreGoのティーシートで、あなたの行ける日に行ける仲間を見つけてください。'] },
+    body:['30代になると、ゴルフを始める友人は増える一方で「一緒に回る仲間」を作るのは意外と難しいもの。','練習場には通っているのに、コースデビューのきっかけがない。そんな声をよく聞きます。','大切なのは「同じ日に行ける人」と出会うこと。腕前よりもまず日程です。PreGoの日程マッチで、あなたの行ける日に行ける仲間を見つけてください。'] },
 ];
 
 /* ---------- state ---------- */
@@ -72,10 +72,13 @@ const S = Object.assign({
   points: 30000,         // male points
   coins: 17600,          // female coins
   sentOffers: [], recvOffers: [
-    { id:'ro1', from:'m3', date:'7/16（木）', meet:'駅集合（五井駅 8:20）', course:'市原京急カントリークラブ', reward:17600, status:'pending' },
+    { id:'ro1', from:'m3', date:'7/16（木）', meet:'現地集合（8:20 クラブハウス前）', course:'市原京急カントリークラブ', reward:17600, status:'pending' },
     { id:'ro2', from:'m2', date:'7/19（日）', meet:'現地集合', course:'大多喜城ゴルフ倶楽部', reward:17600, status:'pending' },
   ],
   chats: null, logs: [], seenNotice: false, theme:'g',
+  myDates: ['7/14','7/26'], myArea: ['千葉','東京'], homeArea: '',
+  fset: { sim:true, simFee:8800, range:true, rangeFee:5500 },
+  bridge: { msgs: [], note: null }, fixed: {},
   subActive: false, favs: {}, verified: true,
   ntf: { email:true, line:false, news:true, foot:true, like:true, msg:true },
 }, store);
@@ -100,7 +103,7 @@ function cycleTheme(){
 }
 
 const defaultChats = role => role === 'm' ? [
-  { id:'w2', msgs:[ {who:'them', t:'はじめまして！7/14ご一緒できそうですね⛳', tm:'6/28 21:04'}, {who:'me', t:'はじめまして！ぜひお願いします。コースの希望ありますか？', tm:'6/28 21:40'}, {who:'them', t:'大多喜城いいなと思ってました！駅集合で大丈夫です😊', tm:'6/29 08:12'} ] },
+  { id:'w2', msgs:[ {who:'them', t:'はじめまして！7/14ご一緒できそうですね⛳', tm:'6/28 21:04'}, {who:'me', t:'はじめまして！ぜひお願いします。コースの希望ありますか？', tm:'6/28 21:40'}, {who:'them', t:'大多喜城いいなと思ってました！現地集合で大丈夫です😊', tm:'6/29 08:12'} ] },
   { id:'w5', msgs:[ {who:'them', t:'メッセージありがとうございます！是非タイミング合いましたら🙏', tm:'6/26 19:22'} ] },
   { id:'w8', msgs:[ {who:'them', t:'はじめまして、よろしくお願いします！デビューしたてですが頑張ります🔰', tm:'6/24 12:03'} ] },
 ] : [
@@ -176,7 +179,7 @@ function tabbar(cur){
     `<a class="tb ${cur===id?'on':''}" href="${href}">${nd?'<span class="nd"></span>':''}${icon}<span>${label}</span></a>`;
   return `<nav class="tabbar">
     ${t('home', I.home, 'ホーム', '#/home')}
-    ${t('tee', I.cal, 'ティーシート', '#/tee')}
+    ${t('tee', I.cal, '日程マッチ', '#/tee')}
     ${t('feed', I.flag, 'フィード', '#/feed')}
     ${t('msg', I.msg, 'メッセージ', '#/messages', true)}
     ${t('my', I.user, 'マイページ', '#/mypage')}
@@ -186,6 +189,13 @@ function tierBadge(tk, small){
   const t = TIERS[tk];
   const bg = tk === 'GOLD' ? 'linear-gradient(120deg,#D9B96A,#B08A3C)' : t.color;
   return `<span class="tier-badge" style="background:${bg};color:${t.text};${small?'font-size:8px;padding:2px 8px;':''}">${t.name}</span>`;
+}
+function certBadge(u, small){
+  if(!isD() || u.cert===undefined) return '';
+  const s = small?'font-size:8.5px;padding:2px 8px;':'';
+  return u.cert
+    ? `<span class="chip brass" style="${s}">認定</span>`
+    : `<span class="chip" style="${s};background:rgba(255,255,255,.85)">一般</span>`;
 }
 function styleBadge(u, small){
   if(!u.st) return '';
@@ -217,6 +227,15 @@ function resetDemo(){
 function switchRole(){
   S.role = S.role === 'f' ? 'm' : 'f';
   S.chats = defaultChats(S.role);
+  if(S.role==='f' && S.bridge.msgs.length){
+    let c = S.chats.find(x=>x.id==='m1');
+    if(!c){ c = {id:'m1', msgs:[]}; S.chats.unshift(c); }
+    S.bridge.msgs.forEach(m=>{
+      if(m.sys) c.msgs.push({who:'sys', t:m.sys});
+      c.msgs.push({who:'them', t:m.t, tm:m.tm});
+    });
+    S.chats = [c, ...S.chats.filter(x=>x!==c)];
+  }
   save(); toast(S.role==='f' ? '女性デモ（みどり）に切替えました' : '男性デモ（SHU）に切替えました');
   go('#/home'); render();
 }
@@ -400,7 +419,7 @@ V.home = () => {
         <button class="like ${liked?'on':''}" onclick="event.stopPropagation();toggleLike('${u.id}')">${I.heart}</button>
         <div class="id">
           <div class="nm">${esc(u.name)} <span class="ag">${u.age}</span></div>
-          ${isM?`<div style="display:flex;gap:4px">${styleBadge(u,true)}${u.st==='o'?tierBadge(u.tier,true):''}</div>`:''}
+          ${isM?`<div style="display:flex;gap:4px">${certBadge(u,true)}${styleBadge(u,true)}${u.st==='o'?tierBadge(u.tier,true):''}</div>`:''}
         </div>
       </div>
       <div class="stats" onclick="go('#/profile/${u.id}')">
@@ -412,17 +431,19 @@ V.home = () => {
   return `
   ${appbar({brand:true})}
   <div class="page">
-    <div class="notice">
-      <span class="ic">${I.cal}</span>
-      <span>プレー希望日を登録するとマッチ率が3倍になります</span>
+    <div class="notice" onclick="${!S.hf?"go('#/tee')":''}" style="${!S.hf?'cursor:pointer':''}">
+      <span class="ic">${S.hf==='n'?I.invite:S.hf==='o'?I.trophy:I.cal}</span>
+      <span>${S.hf==='n' ? '謝礼不要。プレー代の宣言だけで誘えるお相手です'
+            : S.hf==='o' ? (isD() ? '認定ゴルファーに謝礼つきオファーで誘えます' : '謝礼つきオファーで誘えるお相手です')
+            : 'プレー希望日を登録するとマッチ率が3倍になります →'}</span>
     </div>
     <div class="filters">
       <button class="chip ${!S.hf?'':'line'}" onclick="S.hf=null;save();render()">すべて</button>
       ${isM?`
       <button class="chip ${S.hf==='n'?'':'line'}" onclick="S.hf='n';save();render()">仲間探し（謝礼不要）</button>
       <button class="chip ${S.hf==='o'?'':'line'}" onclick="S.hf='o';save();render()">おもてなし</button>`:''}
-      <span class="chip line">日程が合う</span>
-      <span class="chip line">エリア：千葉</span>
+      <button class="chip line" onclick="go('#/tee')">日程が合う</button>
+      <span class="chip line">エリア：${S.myArea[0]||'未設定'}</span>
     </div>
     <div class="grid">${cards}</div>
   </div>
@@ -433,17 +454,48 @@ function toggleLike(id){
   if(S.likes[id]) toast('いいねしました');
 }
 
-/* ---- tee sheet ---- */
+/* ---- 日程マッチ ---- */
 let teeSel = '7/14';
-const TEE_DAYS = [
-  { d:'7/8',  w:'WED' }, { d:'7/9', w:'THU' }, { d:'7/10', w:'FRI' },
-  { d:'7/12', w:'SUN' }, { d:'7/14', w:'TUE' }, { d:'7/17', w:'FRI' },
-  { d:'7/19', w:'SUN' }, { d:'7/21', w:'TUE' }, { d:'7/26', w:'SUN' }, { d:'7/30', w:'THU' },
-];
+let teeMonth = 7;
+const TEE_MONTHS = {
+  7: { label:'JULY 2026', days:[
+    { d:'7/8',  w:'WED' }, { d:'7/9', w:'THU' }, { d:'7/10', w:'FRI' },
+    { d:'7/12', w:'SUN' }, { d:'7/14', w:'TUE' }, { d:'7/17', w:'FRI' },
+    { d:'7/19', w:'SUN' }, { d:'7/21', w:'TUE' }, { d:'7/26', w:'SUN' }, { d:'7/30', w:'THU' } ] },
+  8: { label:'AUGUST 2026', days:[
+    { d:'8/2', w:'SUN' }, { d:'8/5', w:'WED' }, { d:'8/9', w:'SUN' },
+    { d:'8/11', w:'TUE' }, { d:'8/16', w:'SUN' }, { d:'8/23', w:'SUN' }, { d:'8/30', w:'SUN' } ] },
+};
+const TEE_DAYS = { get days(){ return TEE_MONTHS[teeMonth].days; }, find(f){ return TEE_MONTHS[7].days.concat(TEE_MONTHS[8].days).find(f); } };
+function teeMonthShift(dir){
+  teeMonth = teeMonth===7 ? 8 : 7;
+  teeSel = TEE_MONTHS[teeMonth].days[0].d;
+  render();
+}
+function editMyArea(){
+  const PREFS = ['東京','千葉','埼玉','神奈川','茨城','群馬','栃木','静岡'];
+  const html = () => `
+    <h3>プレーエリア</h3>
+    <p class="muted">よくプレーするエリアを選択してください（複数可）</p>
+    <div class="opt-grid">${PREFS.map(p=>`<button class="opt ${S.myArea.includes(p)?'on':''}" onclick="toggleMyArea('${p}')">${p}</button>`).join('')}</div>
+    <button class="btn" style="margin-top:16px" onclick="closeSheet();render()">保存する</button>`;
+  window._areaR = () => sheet(html());
+  sheet(html());
+}
+function toggleMyArea(p){
+  const i = S.myArea.indexOf(p);
+  i>=0 ? S.myArea.splice(i,1) : S.myArea.push(p);
+  save(); window._areaR();
+}
+function toggleMyDate(d){
+  const i = S.myDates.indexOf(d);
+  i>=0 ? S.myDates.splice(i,1) : S.myDates.push(d);
+  save(); render();
+}
 V.tee = () => {
   const cand = pool().filter(u => u.dates.includes(teeSel));
   const compe = COMPES.filter(c => c.date.startsWith(teeSel));
-  const dayBtns = TEE_DAYS.map(x => {
+  const dayBtns = TEE_DAYS.days.map(x => {
     const has = pool().some(u => u.dates.includes(x.d)) || COMPES.some(c=>c.date.startsWith(x.d));
     return `<button class="day ${x.d===teeSel?'sel':''} ${has?'has':''}" onclick="teeSel='${x.d}';render()">
       <div class="dw">${x.w}</div><div class="dn">${x.d.split('/')[1]}</div><div class="dot"></div></button>`;
@@ -472,14 +524,27 @@ V.tee = () => {
   return `
   <div class="page">
     <div class="tee-head">
-      ${appbar({green:true, title:'', noBell:true}).replace('<span class="ttl"></span>','<span class="ttl" style="text-align:left;font-size:18px">ティーシート</span><span class="mon" style="margin-left:auto">JULY 2026</span>')}
+      ${appbar({green:true, title:'', noBell:true}).replace('<span class="ttl"></span>','<span class="ttl" style="text-align:left;font-size:18px">日程マッチ</span><span class="mon" style="margin-left:auto;display:flex;align-items:center;gap:10px"><button onclick="teeMonthShift(-1)" style="color:inherit;padding:4px">‹</button>' + TEE_MONTHS[teeMonth].label + '<button onclick="teeMonthShift(1)" style="color:inherit;padding:4px">›</button></span>')}
       <div class="strip">${dayBtns}</div>
     </div>
     <div class="tee-body">
-      <div class="date-lbl"><span class="d">${teeSel}</span><span class="t">${TEE_DAYS.find(x=>x.d===teeSel)?.w==='SUN'?'日曜日':'プレー希望日'}・あなたも空き登録済み</span></div>
-      ${compeCards}
-      ${rows || ''}
-      ${(!rows && !compeCards) ? `<div class="empty"><div class="big">—</div>この日はまだ候補がいません</div>` : ''}
+      <div class="mywish card" style="padding:13px 15px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <b style="font-size:12.5px">あなたのプレー希望日</b>
+          <span class="muted" style="font-size:10px">登録するとお相手が表示されます</span>
+        </div>
+        <div class="opt-grid">${TEE_MONTHS[teeMonth].days.map(x=>`<button class="opt ${S.myDates.includes(x.d)?'on':''}" style="padding:7px 12px;font-size:11.5px" onclick="toggleMyDate('${x.d}')">${x.d}</button>`).join('')}</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:10px">
+          <b style="font-size:12.5px">エリア</b>
+          ${S.myArea.map(p=>`<span class="chip" style="font-size:10px">${p}</span>`).join('')}
+          <button class="chip line" style="font-size:10px" onclick="editMyArea()">変更</button>
+        </div>
+      </div>
+      ${!S.myDates.length ? `<div class="empty"><div class="big">${I.cal.replace('<svg ','<svg width="40" height="40" ')}</div>プレー希望日を登録すると<br>その日に行けるお相手が表示されます</div>` : `
+      <div class="date-lbl"><span class="d">${teeSel}</span><span class="t">${S.myDates.includes(teeSel)?'あなたも空き登録済み':'この日はあなたは未登録'}</span></div>`}
+      ${S.myDates.length ? compeCards : ''}
+      ${S.myDates.length ? (rows || '') : ''}
+      ${(S.myDates.length && !rows && !compeCards) ? `<div class="empty"><div class="big">—</div>この日はまだ候補がいません</div>` : ''}
       <button class="card" style="padding:14px;display:flex;align-items:center;gap:12px;width:100%" onclick="go('#/miss')">
         <span style="width:38px;height:38px;border-radius:50%;background:var(--brass-soft);color:#8A6B25;display:flex;align-items:center;justify-content:center;flex:none">${I.pin}</span>
         <span style="flex:1;text-align:left">
@@ -563,7 +628,6 @@ V.profile = id => {
         <div class="bd">
           ${isWoman&&S.role==='m'?styleBadge(u):''}
           <span class="chip" style="background:rgba(250,248,242,.9)">${I.shield} 本人確認済</span>
-          ${u.meet.includes('駅')?`<span class="chip" style="background:rgba(250,248,242,.9)">${I.train} 駅集合OK</span>`:''}
           ${u.meet.includes('車')?`<span class="chip" style="background:rgba(250,248,242,.9)">${I.car} 送迎OK</span>`:''}
         </div>
       </div>
@@ -607,19 +671,23 @@ let of_ = {};
 V.offer = id => {
   const u = find(id); if(!u) return V.home();
   const t = TIERS[u.tier];
-  if(of_.id !== id) of_ = { id, date:null, meet:null, course:null };
+  if(of_.id !== id) of_ = { id, date:null, meet:null, course:null, mode:'ラウンド' };
+  if(!of_.mode) of_.mode = 'ラウンド';
+  const feeOf = m => m==='シミュゴルフ' ? (u.sim?.fee||8800) : m==='打ちっぱなし' ? (u.rng?.fee||5500) : t.reward;
+  const priceOf = m => m==='ラウンド' ? t.price : Math.round(feeOf(m)/0.8/100)*100;
+  const okOf = m => m==='ラウンド' ? true : m==='シミュゴルフ' ? (u.sim?.ok!==false) : (u.rng?.ok!==false);
+  const oPrice = priceOf(of_.mode), oReward = feeOf(of_.mode);
   const myDates = me().dates || [];
   const shared = u.dates.filter(d=>myDates.includes(d));
   const dateOpts = (shared.length?shared:u.dates).map(d =>
     `<button class="opt ${of_.date===d?'on':''}" onclick="of_.date='${d}';render()">${d}（${TEE_DAYS.find(x=>x.d===d)?.w||'-'}）</button>`).join('');
   const meets = [
-    {k:'station', l:`${I.train} 駅集合（推奨）`, d:'最寄駅からクラブバス'},
-    {k:'onsite', l:`${I.pin} 現地集合`, d:'各自でコースへ'},
+    {k:'onsite', l:`${I.pin} 現地集合（推奨）`, d:'各自でコースへ・バッグは宅急便OK'},
     {k:'car', l:`${I.car} 車送迎`, d:'認証ドライバーのみ'},
   ].map(m=>`<button class="opt ${of_.meet===m.k?'on':''}" onclick="of_.meet='${m.k}';render()" style="display:flex;flex-direction:column;align-items:flex-start;border-radius:14px;flex:1;min-width:100px">
      <span style="display:flex;gap:5px;align-items:center;font-weight:700">${m.l}</span><span style="font-size:9.5px;color:var(--ink-soft)">${m.d}</span></button>`).join('');
   const courses = COURSES.slice(0,3).map(c=>`<button class="opt ${of_.course===c?'on':''}" onclick="of_.course='${c}';render()">${c}</button>`).join('');
-  const ready = of_.date && of_.meet && of_.course;
+  const ready = of_.date && of_.meet && (of_.course || (isD() && of_.mode!=='ラウンド'));
   return `
   ${appbar({title:`${esc(u.name)}さんをラウンドに誘う`, back:true, noBell:true})}
   <div class="page nofoot oflow">
@@ -630,25 +698,39 @@ V.offer = id => {
         <div class="muted" style="font-size:11px">Best ${u.best}・${u.area.slice(0,2).join('・')}</div>
       </div>
     </div>
+    ${isD()?`
     <div>
-      <div class="label">ラウンド日${shared.length?'（ハイライト＝お互い空いている日）':''}</div>
+      <div class="label">会う形式</div>
+      <div class="osel" style="flex-wrap:nowrap;overflow-x:auto">${['ラウンド','シミュゴルフ','打ちっぱなし'].map(m=>`
+        <button class="opt ${of_.mode===m?'on':''}" ${okOf(m)?'':'disabled style="opacity:.4"'} onclick="of_.mode='${m}';render()" style="display:flex;flex-direction:column;align-items:flex-start;border-radius:14px;flex:1;min-width:104px">
+          <span style="font-weight:700">${m}</span>
+          <span style="font-size:9.5px;color:var(--ink-soft)">${okOf(m) ? (m==='ラウンド'?'ランク料金':'謝礼 ¥'+feeOf(m).toLocaleString()+'・本人設定') : '受付停止中'}</span>
+        </button>`).join('')}</div>
+    </div>`:''}
+    <div>
+      <div class="label">${isD()&&of_.mode!=='ラウンド'?'日程':'ラウンド日'}${shared.length?'（ハイライト＝お互い空いている日）':''}</div>
       <div class="osel">${dateOpts}</div>
     </div>
     <div>
       <div class="label">合流方法</div>
       <div class="osel" style="flex-wrap:nowrap;overflow-x:auto">${meets}</div>
     </div>
+    ${isD()&&of_.mode!=='ラウンド'?`
+    <div>
+      <div class="label">場所</div>
+      <div class="card" style="padding:12px 14px;font-size:12px">${I.pin} お二人の中間エリアの提携${of_.mode==='シミュゴルフ'?'インドアゴルフ':'練習場'}から候補を提案します<br><span class="muted" style="font-size:10.5px">確定時に3候補から選べます（駅近・雨天OK）</span></div>
+    </div>`:`
     <div>
       <div class="label">ゴルフ場（候補から選択）</div>
       <div class="osel">${courses}</div>
       <button class="btn ghost sm" style="margin-top:10px" onclick="coursePick='offer';go('#/courses')">ゴルフ場一覧から選ぶ</button>
       <p class="muted" style="margin-top:8px;font-size:11px">${I.pin} お二人の拠点の中間地点から自動で候補を出しています</p>
-    </div>
+    </div>`}
     <div class="price-box">
-      <div class="row"><span>オファー料金（${t.name}ランク）</span><span class="money">${yen(t.price)}</span></div>
-      <div class="row muted" style="font-size:11.5px"><span>└ お相手への謝礼（80%）</span><span>${yen(t.reward)}</span></div>
-      <div class="row muted" style="font-size:11.5px"><span>└ サービス利用料（20%）</span><span>${yen(t.price - t.reward)}</span></div>
-      <div class="row total"><span>お支払い</span><span class="money" style="color:var(--fairway)">${yen(t.price)}</span></div>
+      <div class="row"><span>オファー料金（${isD()&&of_.mode!=='ラウンド'?of_.mode:t.name+'ランク'}）</span><span class="money">${yen(oPrice)}</span></div>
+      <div class="row muted" style="font-size:11.5px"><span>└ お相手への謝礼（80%）</span><span>${yen(oReward)}</span></div>
+      <div class="row muted" style="font-size:11.5px"><span>└ サービス利用料（20%）</span><span>${yen(oPrice - oReward)}</span></div>
+      <div class="row total"><span>お支払い</span><span class="money" style="color:var(--fairway)">${yen(oPrice)}</span></div>
       <p class="muted" style="font-size:10.5px;margin-top:8px">成立後キャンセルは前日まで無料。当日キャンセルは100%が謝礼に充当されます。</p>
     </div>
     <button class="btn brass" ${ready?'':'disabled'} onclick="sendOffer('${u.id}')">オファーを送信する（残 ${S.points.toLocaleString()} pt）</button>
@@ -701,7 +783,9 @@ function sendInvite(){
   let c = S.chats.find(x=>x.id===inv.id);
   if(!c){ c = {id:inv.id, msgs:[]}; S.chats.unshift(c); }
   c.msgs.push({who:'sys', t:`⛳ ${inv.date} の${inv.mode||'ラウンド'}にお誘い（${inv.pay}）`});
-  c.msgs.push({who:'me', t:`はじめまして！${inv.date}に${inv.mode&&inv.mode!=='ラウンド'?inv.mode:'ラウンド'}をご一緒できたら嬉しいです。${inv.pay}。`, tm:'いま'});
+  const _invMsg = `はじめまして！${inv.date}に${inv.mode&&inv.mode!=='ラウンド'?inv.mode:'ラウンド'}をご一緒できたら嬉しいです。${inv.pay}。`;
+  c.msgs.push({who:'me', t:_invMsg, tm:'いま'});
+  if(S.role==='m') S.bridge.msgs.push({sys:`⛳ ${inv.date} の${inv.mode||'ラウンド'}にお誘い（${inv.pay}）`, t:_invMsg, tm:'いま'});
   save(); closeSheet();
   go('#/chat/'+inv.id); render();
   setTimeout(()=>toast('誘いを送りました。謝礼は発生しません'),300);
@@ -755,9 +839,14 @@ function subscribe(plan){
 function sendOffer(id){
   const u = find(id); const t = TIERS[u.tier];
   if(S.role==='m' && !S.subActive){ paywall(); return; }
-  if(S.points < t.price){ toast('ポイントが不足しています（デモ）'); return; }
-  S.points -= t.price;
-  S.sentOffers.push({ id:'so'+Date.now(), to:id, date:of_.date, meet:of_.meet, course:of_.course, price:t.price, status:'pending' });
+  const _mode = (isD() && of_.mode) ? of_.mode : 'ラウンド';
+  const _reward = _mode==='シミュゴルフ' ? (u.sim?.fee||8800) : _mode==='打ちっぱなし' ? (u.rng?.fee||5500) : t.reward;
+  const _price = _mode==='ラウンド' ? t.price : Math.round(_reward/0.8/100)*100;
+  if(S.points < _price){ toast('ポイントが不足しています（デモ）'); return; }
+  S.points -= _price;
+  const oid = 'so'+Date.now();
+  S.sentOffers.push({ id:oid, to:id, date:of_.date, meet:of_.meet, course:of_.course, mode:_mode, price:_price, status:'pending' });
+  S.recvOffers.unshift({ id:'b'+oid, from:'m1', to:id, date:of_.date, meet:of_.meet==='car'?'車送迎':'現地集合', course:_mode==='ラウンド'?of_.course:(_mode+'（提携施設）'), mode:_mode, reward:_reward, status:'pending', bridged:true });
   save();
   $app.innerHTML = `
     <div class="page nofoot">
@@ -830,7 +919,18 @@ V.offers = () => {
 function answerOffer(id, ok){
   const o = S.recvOffers.find(x=>x.id===id);
   o.status = ok?'ok':'ng';
-  if(ok){ S.coins += o.reward; celebrate(); toast(`マッチ成立！ ${o.reward.toLocaleString()}コインが確定しました`); }
+  if(ok){
+    S.coins += o.reward; celebrate();
+    S.fixed = S.fixed || {};
+    const fx = { date:o.date, course:o.course, mode:o.mode||'ラウンド', offer:true, reward:o.reward };
+    S.fixed[o.from] = fx;
+    if(o.bridged && o.to){
+      S.fixed[o.to] = fx;
+      const so = S.sentOffers.find(x=>'b'+x.id===o.id);
+      if(so) so.status = 'ok';
+    }
+    toast(`マッチ成立！ ${o.reward.toLocaleString()}コインが確定しました`);
+  }
   else toast('オファーを辞退しました');
   save(); render();
 }
@@ -875,8 +975,11 @@ V.chat = id => {
   const fixbar = fx ? `
     <div class="fixbar done">
       <span class="ic">${I.cal}</span>
-      <span style="flex:1"><b>${fx.date} ラウンド確定</b><small>${esc(fx.course)}・当日は位置共有と到着チェックインが自動でONになります</small></span>
-      <button class="btn sm" style="background:var(--brass)" onclick="go('#/roundlog')">当日へ</button>
+      <span style="flex:1">
+        <b>${fx.date} ${fx.mode&&fx.mode!=='ラウンド'?fx.mode:'ラウンド'}${fx.offer?'マッチ成立':'確定'}</b>
+        <small>${esc(fx.course)}${fx.offer?` ・ 謝礼 ${Number(fx.reward||0).toLocaleString()}コイン確定済み`:''} ・ 位置共有/チェックインは当日自動ON</small>
+      </span>
+      <button class="btn sm" onclick="openPlanSheet('${id}')">段取りを提案</button>
     </div>` : `
     <div class="fixbar">
       <span class="ic">${I.cal}</span>
@@ -894,6 +997,43 @@ V.chat = id => {
     </div>
   </div>`;
 };
+let planSel = {};
+function openPlanSheet(id){
+  const u = find(id);
+  const fx = (S.fixed||{})[id] || {};
+  planSel = { id, time:'7:40', spot: (fx.mode&&fx.mode!=='ラウンド') ? '施設受付前' : 'クラブハウス前' };
+  const spots = (fx.mode&&fx.mode!=='ラウンド') ? ['施設受付前','駅改札（施設最寄）'] : ['クラブハウス前','練習場受付','コース玄関'];
+  const html = () => `
+    <h3>当日の段取りを提案</h3>
+    <p class="muted">${esc(u.name)}さんに集合の段取りを送ります。OKなら当日そのまま合流できます</p>
+    <div class="label">集合時間</div>
+    <div class="opt-grid">${['7:20','7:40','8:00','8:30'].map(t=>`<button class="opt ${planSel.time===t?'on':''}" onclick="planSel.time='${t}';window._planR()">${t}</button>`).join('')}</div>
+    <div class="label">集合場所</div>
+    <div class="opt-grid">${spots.map(s=>`<button class="opt ${planSel.spot===s?'on':''}" onclick="planSel.spot='${s}';window._planR()">${s}</button>`).join('')}</div>
+    <div class="notice" style="margin:14px 0 0">
+      <span class="ic">${I.shield}</span>
+      <span>お相手が「OK」すると双方のスケジュールに登録され、前日にリマインドが届きます</span>
+    </div>
+    <button class="btn" style="margin-top:14px" onclick="sendPlan()">この段取りを送る</button>`;
+  window._planR = () => sheet(html());
+  sheet(html());
+}
+function sendPlan(){
+  const {id, time, spot} = planSel;
+  const fx = (S.fixed||{})[id] || {};
+  let c = S.chats.find(x=>x.id===id);
+  if(!c){ c = {id, msgs:[]}; S.chats.unshift(c); }
+  const sysT = `📋 当日の段取り提案：${fx.date||''} ${time} ${spot} 集合`;
+  const meT = `当日は ${time} に ${spot} 集合でどうでしょう？`;
+  c.msgs.push({who:'sys', t: sysT});
+  c.msgs.push({who:'me', t: meT, tm:'いま'});
+  if(S.role==='m') S.bridge.msgs.push({sys: sysT, t: meT, tm:'いま'});
+  save(); closeSheet(); render();
+  setTimeout(()=>{
+    c.msgs.push({who:'them', t:'OKです！その段取りでお願いします🙆‍♀️', tm:'いま'});
+    save(); if(location.hash==='#/chat/'+id) render();
+  }, 1400);
+}
 let fixSel = {};
 function openFixSheet(id){
   const u = find(id);
@@ -933,6 +1073,7 @@ function sendMsg(id){
   let c = S.chats.find(x=>x.id===id);
   if(!c){ c={id,msgs:[]}; S.chats.unshift(c); }
   c.msgs.push({who:'me', t, tm:'いま'});
+  if(S.role==='m') S.bridge.msgs.push({t, tm:'いま'});
   save(); render();
   setTimeout(()=>{
     c.msgs.push({who:'them', t:'（デモ自動返信）ありがとうございます！楽しみにしています⛳', tm:'いま'});
@@ -1017,6 +1158,7 @@ V.mypage = () => {
     ['ラウンド録', I.camera, ()=>`go('#/roundlog')`],
     ['フレーム', I.trophy, ()=>`go('#/frames')`],
     ['ゴルフ場', I.pin, ()=>`coursePick=null;go('#/courses')`],
+    ...(isF && isD() ? [['お誘い設定', I.gear, ()=>`go('#/invite-set')`]] : []),
     ['ヘルプ', I.bell, ()=>`go('#/help')`],
     ['記事', I.flag.replace('viewBox','width="23" height="23" viewBox'), ()=>`go('#/articles')`],
     ['設定', I.gear, ()=>`go('#/settings')`],
@@ -1035,6 +1177,23 @@ V.mypage = () => {
         <div class="m"><div class="v">${isF?450:244}</div><div class="k">足あと</div></div>
       </div>
     </div>
+    ${isF && isD() ? `
+    <div class="card" style="margin:16px 18px 0;padding:14px 16px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px">
+        <b style="font-size:13px">認定ゴルファー ステータス</b>
+        <span class="chip brass" style="font-size:9px">認定まであと1条件</span>
+      </div>
+      ${[
+        ['アプリでマッチしてラウンド1回以上（打ちっぱなし・シミュ含む）', true],
+        ['相互評価済み ＆ お相手からの評価 ★4以上（現在 ★4.9）', true],
+        ['プロフィール充実（写真3枚以上・自己紹介200字・全項目入力）', false],
+      ].map(([t,ok])=>`
+        <div style="display:flex;gap:9px;align-items:flex-start;padding:5px 0;font-size:11.5px;${ok?'':'color:var(--ink-soft)'}">
+          <span style="flex:none;width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;${ok?'background:var(--fairway);color:#fff':'border:1.5px solid var(--line)'}">${ok?I.check.replace('width="40" height="40"','width="11" height="11"'):''}</span>
+          <span style="flex:1">${t}</span>
+        </div>`).join('')}
+      <button class="btn ghost sm" style="margin-top:8px" onclick="go('#/edit-profile')">プロフィールを充実させる（写真あと1枚）</button>
+    </div>`:''}
     ${isF?`
     <div class="next-tier">
       <span class="ic">${I.trophy}</span>
@@ -1586,8 +1745,48 @@ V.editProfile = () => {
     <select class="input"><option>お相手の分も払います</option><option selected>話し合って決めたい</option><option>お互い自分の分を払う</option><option>お相手に出してもらいたい</option></select>
     <div class="label">プレーエリア</div>
     <div class="psec"><div class="chips">${m.area.map(a=>`<span class="chip">${a}</span>`).join('')}<button class="chip line" onclick="toast('エリア編集（デモ）')">＋ 編集</button></div></div>
+    <div class="label">お住まいの地域 <span class="chip line" style="font-size:9px;margin-left:4px">非公開</span></div>
+    <div style="display:flex;gap:10px">
+      <select class="input" style="flex:1" onchange="S.homeArea=this.value+(S.homeArea.split(' ')[1]||'');save()">
+        ${['千葉県','東京都','埼玉県','神奈川県','茨城県'].map(p=>`<option ${S.homeArea.startsWith(p)?'selected':''}>${p}</option>`).join('')}
+      </select>
+      <input class="input" style="flex:1.4" placeholder="市区町村（例：市川市）" value="${esc(S.homeArea.split(' ')[1]||'')}" onchange="S.homeArea=(S.homeArea.split(' ')[0]||'千葉県')+' '+this.value;save()">
+    </div>
+    <p class="muted" style="font-size:10.5px;margin-top:6px">${I.shield} お相手には表示されません。距離が近い方とのマッチングにのみ使用します</p>
     <button class="btn" style="margin-top:22px" onclick="toast('プロフィールを保存しました（デモ）');history.back()">保存する</button>
   </div>`;
+};
+
+/* ---- お誘い設定（女性・機能1） ---- */
+V.inviteSet = () => {
+  const f = S.fset;
+  const row = (key, title, sub, feeKey) => `
+    <div class="card" style="padding:14px 16px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="flex:1">
+          <b style="font-size:13px">${title}</b>
+          <div class="muted" style="font-size:10.5px">${sub}</div>
+        </div>
+        <button class="swt2 ${f[key]?'on':''}" onclick="S.fset.${key}=!S.fset.${key};save();render()"><i></i></button>
+      </div>
+      ${f[key]?`
+      <div style="display:flex;align-items:center;gap:10px;margin-top:11px">
+        <span style="font-size:11.5px;color:var(--ink-soft)">受け取る謝礼（税込）</span>
+        <select class="input" style="flex:1;padding:9px 12px" onchange="S.fset.${feeKey}=Number(this.value);save()">
+          ${[3300,5500,8800,11000,16500].map(v=>`<option value="${v}" ${f[feeKey]===v?'selected':''}>¥${v.toLocaleString()}</option>`).join('')}
+        </select>
+      </div>
+      <p class="muted" style="font-size:10px;margin-top:7px">設定額はオファー画面にそのまま表示されます（あなたの受取は表示額の100%）</p>`:''}
+    </div>`;
+  return `
+  ${appbar({title:'お誘い設定', back:true})}
+  <div class="page wrap">
+    <p class="muted" style="margin:12px 0 14px;font-size:12px">ラウンド以外のお誘い（シミュゴルフ・打ちっぱなし）を受け付けるか、金額とあわせて設定できます。OFFにするとお相手のオファー画面で選択できなくなります。</p>
+    ${row('sim','シミュゴルフのお誘い','1〜2時間・駅近・雨でもOK','simFee')}
+    ${row('range','打ちっぱなしのお誘い','1時間前後・手ぶらOK','rangeFee')}
+    <div class="notice"><span class="ic">${I.shield}</span><span>ラウンドの謝礼はランク制（現在GOLD）のため、ここでは変更できません</span></div>
+  </div>
+  ${tabbar('my')}${demoPill()}`;
 };
 
 /* ---------- router ---------- */
@@ -1611,7 +1810,7 @@ function render(){
     'notif-settings': V.notifSettings, 'blocked': V.blocked, 'card': V.card,
     'password': V.password, 'verify': V.verify,
     'articles': V.articles, 'article': ()=>V.article(arg),
-    'me': V.me, 'edit-profile': V.editProfile,
+    'me': V.me, 'edit-profile': V.editProfile, 'invite-set': V.inviteSet,
   };
   $app.innerHTML = (map[route] || V.login)();
   window.scrollTo(0,0);
