@@ -768,11 +768,25 @@ V.offer = id => {
       <div class="label">合流方法</div>
       <div class="osel" style="flex-wrap:nowrap;overflow-x:auto">${meets}</div>
     </div>
-    ${isD()&&of_.mode!=='ラウンド'?`
+    ${isD()?(()=>{
+      const vp = venuePlan(u, of_.mode||'ラウンド');
+      if(!of_.course || !vp.list.some(v=>v.n===of_.course)){}
+      return `
     <div>
-      <div class="label">場所</div>
-      <div class="card" style="padding:12px 14px;font-size:12px">${I.pin} お二人の中間エリアの提携${of_.mode==='インドアゴルフ'?'インドアゴルフ':'練習場'}から候補を提案します<br><span class="muted" style="font-size:10.5px">確定時に3候補から選べます（駅近・雨天OK）</span></div>
-    </div>`:`
+      <div class="label">${of_.mode!=='ラウンド'?'場所（候補から選択）':'ゴルフ場（候補から選択）'} <span class="chip line" style="font-size:9px;margin-left:4px">${vp.meet}</span></div>
+      ${vp.note?`<p class="muted" style="font-size:10.5px;margin:0 0 8px">${vp.note}</p>`:''}
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${vp.list.map(v=>`
+        <button class="venue-row ${of_.course===v.n?'on':''}" onclick="of_.course='${v.n.replace(/'/g,'')}';render()">
+          <span class="vn">${v.n}</span>
+          <span class="vt ${v.warnA?'warn':''}">${v.at}${v.warnA?' ⚠️許容超え':''}</span>
+          <span class="vt ${v.warnB?'warn':''}">${v.bt}${v.warnB?' ⚠️お相手の負担大':''}</span>
+          ${v.safety?`<span class="vt safety">${I.shield} 初めての方との長時間の同乗になります</span>`:''}
+        </button>`).join('')}
+      </div>
+      ${of_.mode==='ラウンド'?`<button class="btn ghost sm" style="margin-top:10px" onclick="coursePick='offer';go('#/courses')">ゴルフ場一覧から選ぶ</button>`:''}
+    </div>`;
+    })():`
     <div>
       <div class="label">ゴルフ場（候補から選択）</div>
       <div class="osel">${courses}</div>
@@ -1100,6 +1114,7 @@ function answerOffer(id, ok, fin){
     S.coins += o.reward; celebrate();
     S.fixed = S.fixed || {};
     const fx = { date:(fin&&fin.date)||o.date, course:(fin&&fin.venue)||o.course, mode:o.mode||'ラウンド', meet:(fin&&fin.meet)||o.meet, offer:true, reward:o.reward, matchedAt:Date.now() };
+    fx.tbd = tbdOf({date:fx.date, venue:fx.course, meet:fx.meet});
     S.fixed[o.from] = fx;
     let mc = S.chats.find(x=>x.id===o.from);
     if(!mc){ mc = {id:o.from, msgs:[]}; S.chats.unshift(mc); }
@@ -1147,15 +1162,26 @@ V.chat = id => {
   const u = find(id);
   const fx = (S.fixed||{})[id];
   const hasPlan = c.msgs.some(m=>m.who==='card'&&m.kind==='plan');
-  const matchCardHtml = (m) => `
+  const matchCardHtml = (mRaw) => {
+    const live = (S.fixed||{})[id] || {};
+    const m = {...mRaw, ...live};
+    const tbd = m.tbd || [];
+    const dateTxt = tbd.includes('date') ? '相談して決める' : m.date;
+    const venueTxt = tbd.includes('venue') ? '相談して決める' : m.course;
+    return `
     <div class="chatcard match">
-      <div class="cc-h"><span class="cc-ck">${I.check.replace('width="40" height="40"','width="13" height="13"')}</span> ${m.date} ${m.mode&&m.mode!=='ラウンド'?m.mode:'ラウンド'}${m.offer?'マッチ成立':'確定'}</div>
-      <div class="cc-row"><span>場所</span><b>${esc(m.course)}</b></div>
+      <div class="cc-h"><span class="cc-ck">${I.check.replace('width="40" height="40"','width="13" height="13"')}</span> ${tbd.includes('date')?'':m.date+' '}${m.mode&&m.mode!=='ラウンド'?m.mode:'ラウンド'}${m.offer?'マッチ成立':'確定'}${tbd.length?'（一部相談中）':''}</div>
+      <div class="cc-row"><span>日程</span><b style="${tbd.includes('date')?'color:var(--brass-ink)':''}">${esc(dateTxt||'')}</b></div>
+      <div class="cc-row"><span>場所</span><b style="${tbd.includes('venue')?'color:var(--brass-ink)':''}">${esc(venueTxt||'')}</b></div>
       ${m.offer?`<div class="cc-row"><span>謝礼</span><b>${Number(m.reward||0).toLocaleString()} コイン確定済み</b></div>`:''}
       <div class="cc-row"><span>安全機能</span><b>位置共有・チェックイン 当日自動ON</b></div>
-      ${hasPlan?'':`<button class="btn sm" style="width:100%;margin-top:10px" onclick="openPlanSheet('${id}')">当日の段取りを提案する</button>`}
-      ${isD() && !S.reviews[id] ? `<button class="btn ghost sm" style="width:100%;margin-top:8px" onclick="simulateAfterRound('${id}')">（デモ）ラウンド当日終了後の流れを見る</button>`:''}
+      ${tbd.length
+        ? `<button class="btn sm" style="width:100%;margin-top:10px" onclick="openSettleSheet('${id}')">相談中の項目を確定する</button>
+           <p class="muted" style="font-size:10px;margin-top:6px;text-align:center">日程・場所が確定すると段取りの提案ができます</p>`
+        : hasPlan?'':`<button class="btn sm" style="width:100%;margin-top:10px" onclick="openPlanSheet('${id}')">当日の段取りを提案する</button>`}
+      ${!tbd.length && isD() && !S.reviews[id] ? `<button class="btn ghost sm" style="width:100%;margin-top:8px" onclick="simulateAfterRound('${id}')">（デモ）ラウンド当日終了後の流れを見る</button>`:''}
     </div>`;
+  };
   const msgs = c.msgs.map((m,i)=>{
     if(m.who==='card' && m.kind==='match') return matchCardHtml(m);
     if(m.who==='card' && m.kind==='invite'){
@@ -1278,6 +1304,41 @@ V.chat = id => {
     </div>
   </div>`;
 };
+let settle = {};
+function openSettleSheet(id){
+  const u = find(id);
+  const fx = (S.fixed||{})[id] || {};
+  const tbd = fx.tbd || [];
+  settle = { id };
+  if(tbd.includes('date')) settle.date = (u.dates||[])[0];
+  if(tbd.includes('venue')) settle.venue = venuePlan(u, fx.mode||'ラウンド').list[0]?.n;
+  const html = () => `
+    <h3>相談中の項目を確定する</h3>
+    <p class="muted">チャットで相談した内容を反映しましょう。確定すると双方に共有されます</p>
+    ${tbd.includes('date')?`
+    <div class="label">日程</div>
+    <div class="opt-grid">${(u.dates||[]).map(d=>`<button class="opt ${settle.date===d?'on':''}" onclick="settle.date='${d}';window._setR()">${d}</button>`).join('')}</div>`:''}
+    ${tbd.includes('venue')?`
+    <div class="label">場所</div>
+    <div style="display:flex;flex-direction:column;gap:8px">${venuePlan(u, fx.mode||'ラウンド').list.map(v=>`
+      <button class="venue-row ${settle.venue===v.n?'on':''}" onclick="settle.venue='${v.n.replace(/'/g,'')}';window._setR()">
+        <span class="vn">${v.n}</span><span class="vt">${v.at}</span><span class="vt">${v.bt}</span>
+      </button>`).join('')}</div>`:''}
+    <button class="btn" style="margin-top:16px" onclick="settleMatch()">この内容で確定する</button>`;
+  window._setR = () => sheet(html());
+  sheet(html());
+}
+function settleMatch(){
+  const fx = (S.fixed||{})[settle.id];
+  if(!fx) return;
+  if(settle.date) fx.date = settle.date;
+  if(settle.venue) fx.course = settle.venue;
+  fx.tbd = [];
+  const c = S.chats.find(x=>x.id===settle.id);
+  if(c) c.msgs.push({who:'sys', t:`📅 ${fx.date}・${fx.course} で確定しました`});
+  save(); closeSheet(); render();
+  setTimeout(()=>toast('確定しました。段取りの提案ができます'), 250);
+}
 let planSel = {};
 function openPlanSheet(id){
   const u = find(id);
@@ -1469,9 +1530,17 @@ function respondInvite(chatId, idx){
     return;
   }
 }
+function isTBD(v){ return typeof v==='string' && v.includes('相談'); }
+function tbdOf(fin){
+  const t = [];
+  if(isTBD(fin.date)||fin.date==='別日を相談したい') t.push('date');
+  if(isTBD(fin.venue)) t.push('venue');
+  if(isTBD(fin.meet)) t.push('meet');
+  return t;
+}
 function finalizeInviteMatch(chatId, fin, srcCard){
   S.fixed = S.fixed || {};
-  const fx = { date: fin.date, course: fin.venue, mode: fin.mode, meet: fin.meet, matchedAt: Date.now() };
+  const fx = { date: fin.date, course: fin.venue, mode: fin.mode, meet: fin.meet, matchedAt: Date.now(), tbd: tbdOf(fin) };
   S.fixed[chatId] = fx;
   const c = S.chats.find(x=>x.id===chatId);
   c.msgs.push({who:'card', kind:'match', ...fx});
