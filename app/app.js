@@ -930,6 +930,9 @@ function answerOffer(id, ok){
       if(so) so.status = 'ok';
     }
     toast(`マッチ成立！ ${o.reward.toLocaleString()}コインが確定しました`);
+    save();
+    setTimeout(()=>{ go('#/chat/'+o.from); render(); }, 900);
+    return;
   }
   else toast('オファーを辞退しました');
   save(); render();
@@ -1001,13 +1004,20 @@ let planSel = {};
 function openPlanSheet(id){
   const u = find(id);
   const fx = (S.fixed||{})[id] || {};
-  planSel = { id, time:'7:40', spot: (fx.mode&&fx.mode!=='ラウンド') ? '施設受付前' : 'クラブハウス前' };
-  const spots = (fx.mode&&fx.mode!=='ラウンド') ? ['施設受付前','駅改札（施設最寄）'] : ['クラブハウス前','練習場受付','コース玄関'];
+  const isFac = fx.mode && fx.mode!=='ラウンド';
+  planSel = { id, time: isFac ? '19:00' : '7:40', spot: isFac ? '施設受付前' : 'クラブハウス前' };
+  const times = isFac
+    ? ['10:00','12:00','14:00','16:00','18:00','19:00','20:00','21:00']
+    : ['6:40','7:00','7:20','7:40','8:00','8:30','9:00'];
+  const spots = isFac
+    ? ['施設受付前','駅改札（施設最寄）','施設ビル1F入口']
+    : ['クラブハウス前','練習場受付','コース玄関'];
   const html = () => `
     <h3>当日の段取りを提案</h3>
     <p class="muted">${esc(u.name)}さんに集合の段取りを送ります。OKなら当日そのまま合流できます</p>
     <div class="label">集合時間</div>
-    <div class="opt-grid">${['7:20','7:40','8:00','8:30'].map(t=>`<button class="opt ${planSel.time===t?'on':''}" onclick="planSel.time='${t}';window._planR()">${t}</button>`).join('')}</div>
+    <div class="opt-grid">${times.map(t=>`<button class="opt ${planSel.time===t?'on':''}" onclick="planSel.time='${t}';window._planR()">${t}</button>`).join('')}</div>
+    ${isFac?`<p class="muted" style="font-size:10.5px;margin-top:6px">シミュゴルフ・打ちっぱなしは仕事帰りの夜集合もOK</p>`:''}
     <div class="label">集合場所</div>
     <div class="opt-grid">${spots.map(s=>`<button class="opt ${planSel.spot===s?'on':''}" onclick="planSel.spot='${s}';window._planR()">${s}</button>`).join('')}</div>
     <div class="notice" style="margin:14px 0 0">
