@@ -128,6 +128,12 @@ function toast(msg){
 }
 function sheet(html){
   const root = document.getElementById('sheet-root');
+  const existing = root.querySelector('.sheet');
+  if(existing){
+    existing.innerHTML = `<div class="grab"></div>${html}`;
+    existing.style.animation = 'none';
+    return;
+  }
   root.innerHTML = `<div class="sheet-bg" onclick="if(event.target===this)closeSheet()"><div class="sheet"><div class="grab"></div>${html}</div></div>`;
 }
 function closeSheet(){ document.getElementById('sheet-root').innerHTML=''; }
