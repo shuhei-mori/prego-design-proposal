@@ -483,6 +483,12 @@ function toggleLike(id){
 /* ---- 日程マッチ ---- */
 let teeSel = '7/14';
 let teeMonth = 7;
+const DEMO_TODAY = new Date(2026, 6, 8);          // デモの「今日」= 2026/7/8
+const WISH_LIMIT = new Date(2026, 6, 8 + 45);     // 45日先まで登録可 = 2026/8/22
+function inWishRange(m, d){
+  const t = new Date(2026, m-1, d);
+  return t >= DEMO_TODAY && t <= WISH_LIMIT;
+}
 const TEE_MONTHS = {
   7: { label:'JULY 2026', days:[
     { d:'7/8',  w:'WED' }, { d:'7/9', w:'THU' }, { d:'7/10', w:'FRI' },
@@ -524,15 +530,23 @@ function calHtml(){
   for(let i=0;i<first;i++) cells += `<span class="cal-day dim"></span>`;
   for(let d=1;d<=days;d++){
     const key = m + '/' + d;
+    const ok = inWishRange(m, d);
     const sel = S.myDates.includes(key);
     const has = candDays.has(key);
-    cells += `<button class="cal-day ${sel?'sel':''}" onclick="toggleMyDate('${key}')">${d}${has?'<i class="cd"></i>':''}</button>`;
+    cells += ok
+      ? `<button class="cal-day ${sel?'sel':''}" onclick="toggleMyDate('${key}')">${d}${has?'<i class="cd"></i>':''}</button>`
+      : `<span class="cal-day off">${d}</span>`;
   }
   return `
   <div class="cal">
+    <div class="cal-nav">
+      <button class="cal-arw" onclick="teeMonthShift(-1)">‹</button>
+      <b>${y}年${m}月</b>
+      <button class="cal-arw" onclick="teeMonthShift(1)">›</button>
+    </div>
     <div class="cal-week">${['日','月','火','水','木','金','土'].map((w,i)=>`<span class="${i===0?'sun':i===6?'sat':''}">${w}</span>`).join('')}</div>
     <div class="cal-grid">${cells}</div>
-    <div class="cal-foot"><span class="chip line" style="font-size:9.5px">選択中 ${S.myDates.length}日</span><span class="muted" style="font-size:10px">● はお相手やコンペがある日</span></div>
+    <div class="cal-foot"><span class="chip line" style="font-size:9.5px">選択中 ${S.myDates.length}日</span><span class="muted" style="font-size:10px">● はお相手やコンペがある日・登録は45日先（8/22）まで</span></div>
   </div>`;
 }
 function toggleMyDate(d){
@@ -544,7 +558,12 @@ V.tee = () => {
   const cand = pool().filter(u => u.dates.includes(teeSel));
   const HOSTED = { id:'ch1', date:'7/21（火）18:30', title:'MIKA & SAKI 主催 インドア練習会', course:'提携インドアA（新橋）', fmt:'2h貸切・4名', note:'初参加歓迎・レッスン強めの会', avs:['img/w1.jpg','img/w2.jpg'], left:2, host:true };
   const compe = COMPES.concat(isD()?[HOSTED]:[]).filter(c => c.date.startsWith(teeSel));
-  const dayBtns = TEE_DAYS.days.map(x => {
+  const WD = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  const stripDays = [];
+  const startD = teeMonth===7 ? 8 : 1;
+  const endD = teeMonth===8 ? 22 : new Date(2026, teeMonth, 0).getDate();
+  for(let d=startD; d<=endD; d++) stripDays.push({ d: teeMonth+'/'+d, w: WD[new Date(2026, teeMonth-1, d).getDay()] });
+  const dayBtns = stripDays.map(x => {
     const has = pool().some(u => u.dates.includes(x.d)) || COMPES.some(c=>c.date.startsWith(x.d));
     return `<button class="day ${x.d===teeSel?'sel':''} ${has?'has':''}" onclick="teeSel='${x.d}';render()">
       <div class="dw">${x.w}</div><div class="dn">${x.d.split('/')[1]}</div><div class="dot"></div></button>`;

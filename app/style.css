@@ -1006,3 +1006,9 @@ body.no-page-anim :is(.page,.pcard,.card,.mi,.thread,.chatcard,.compe,.article-c
 .hc-g img{width:44px;height:44px;border-radius:50%;object-fit:cover}
 .hc-g.on{border-color:var(--fairway);background:var(--turf-soft)}
 .hc-g.on img{outline:2px solid var(--fairway);outline-offset:1px}
+
+/* v46: カレンダー月ナビ・範囲外の日 */
+.cal-nav{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:8px}
+.cal-nav b{font-size:14px;letter-spacing:.06em}
+.cal-arw{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--fairway);font-weight:700}
+.cal-day.off{color:var(--line);pointer-events:none;display:flex;align-items:center;justify-content:center}
