@@ -75,25 +75,26 @@ const S = Object.assign({
     { id:'ro1', from:'m3', date:'7/16（木）', meet:'駅集合（五井駅 8:20）', course:'市原京急カントリークラブ', reward:17600, status:'pending' },
     { id:'ro2', from:'m2', date:'7/19（日）', meet:'現地集合', course:'大多喜城ゴルフ倶楽部', reward:17600, status:'pending' },
   ],
-  chats: null, logs: [], seenNotice: false, theme: 'a',
+  chats: null, logs: [], seenNotice: false, theme:'g',
   subActive: false, favs: {}, verified: true,
   ntf: { email:true, line:false, news:true, foot:true, like:true, msg:true },
 }, store);
 const save = () => localStorage.setItem('prego-demo', JSON.stringify(S));
 
 /* ---------- color themes (A/B/C) ---------- */
-const THEME_NAMES = { a:'A クラブハウス', b:'B ミント', c:'C オリーブ', d:'D セージ', e:'E エメラルド', f:'F ダークティール', g:'G ミント×エメラルド', '1':'1 新プラン（チケット制）' };
+const THEME_NAMES = { b:'B ミント', e:'E エメラルド', g:'G ミント×エメラルド', '1':'1 新プラン（チケット制）' };
 const isD = () => S.theme === '1';
 const qsTheme = new URLSearchParams(location.search).get('theme');
-if(S.theme==='d' && !localStorage.getItem('prego-mig-d1')){ S.theme='1'; localStorage.setItem('prego-mig-d1','1'); }
 if(qsTheme && THEME_NAMES[qsTheme]) S.theme = qsTheme;
+if(!THEME_NAMES[S.theme]) S.theme = 'g';
 function applyTheme(){
-  document.body.classList.remove('theme-b','theme-c','theme-d','theme-e','theme-f','theme-g');
-  if(['b','c','d','e','f','g'].includes(S.theme)) document.body.classList.add('theme-' + S.theme);
+  document.body.classList.remove('theme-b','theme-e','theme-g');
+  const cls = S.theme==='1' ? 'g' : S.theme;
+  if(['b','e','g'].includes(cls)) document.body.classList.add('theme-' + cls);
 }
 function setTheme(t){ S.theme = t; save(); applyTheme(); render(); }
 function cycleTheme(){
-  const _tc=['a','b','c','d','e','f','g','1']; S.theme = _tc[(_tc.indexOf(S.theme)+1) % _tc.length];
+  const _tc=['b','e','g','1']; S.theme = _tc[(_tc.indexOf(S.theme)+1) % _tc.length];
   save(); applyTheme(); render();
   toast('配色パターン ' + THEME_NAMES[S.theme]);
 }
@@ -238,7 +239,7 @@ V.login = () => `
     </div>
     <div class="theme-row">
       <span class="lbl2">配色パターン</span>
-      ${['a','b','c','d','e','f','g','1'].map(t=>`<button class="tbtn ${S.theme===t?'on':''}" onclick="setTheme('${t}')">${t.toUpperCase()}</button>`).join('')}
+      ${['b','e','g','1'].map(t=>`<button class="tbtn ${S.theme===t?'on':''}" onclick="setTheme('${t}')">${t.toUpperCase()}</button>`).join('')}
     </div>
     <div class="demo-note">DEMO PROTOTYPE — 認証・決済は動作しません</div>
   </div>
