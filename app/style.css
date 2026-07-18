@@ -927,3 +927,18 @@ body.no-page-anim .page,body.no-page-anim .pcard,body.no-page-anim .card,body.no
 .page.wrap .btn{margin-top:16px}
 .page.wrap .btn.ghost.sm{margin-top:8px}
 .page.wrap .opt-grid{margin-bottom:0}
+
+/* v28: 現行サブスク画面の再デザイン（数字・期間は現行のまま） */
+.plan2{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--paper);border:1.5px solid var(--line);border-radius:20px;padding:20px 18px;margin-top:12px;position:relative;text-align:left;transition:transform .15s var(--ease);box-shadow:var(--sh-card)}
+.plan2:active{transform:scale(.98)}
+.plan2.reco{border-color:var(--brass);box-shadow:0 8px 24px rgba(176,138,60,.18)}
+.plan2 .p2-badge{position:absolute;top:-9px;left:16px;background:linear-gradient(120deg,#C9A452,var(--brass));color:#fff;font-size:9.5px;font-weight:700;letter-spacing:.08em;border-radius:99px;padding:3px 12px}
+.plan2 .p2-l{display:flex;align-items:baseline;gap:4px}
+.plan2 .p2-l .n{font-family:var(--font-num);font-weight:300;font-size:34px;color:var(--ink);line-height:1}
+.plan2 .p2-l .u{font-size:12.5px;font-weight:700;color:var(--ink)}
+.plan2 .p2-l .save{font-size:10px;color:var(--brass-ink);background:var(--brass-soft);border-radius:99px;padding:2px 8px;margin-left:6px;white-space:nowrap}
+.plan2 .p2-r{display:flex;align-items:baseline;gap:2px;color:var(--fairway)}
+.plan2 .p2-r .yen{font-size:15px;font-weight:500;font-family:var(--font-num)}
+.plan2 .p2-r .n{font-family:var(--font-num);font-weight:300;font-size:38px;line-height:1}
+.plan2 .p2-r .u{font-size:11px;color:var(--ink-soft)}
+.p2-min{display:block;margin:16px auto 0;font-size:12.5px;font-weight:700;color:var(--ink-soft);text-decoration:underline;text-underline-offset:3px}

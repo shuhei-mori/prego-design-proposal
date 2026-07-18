@@ -822,25 +822,29 @@ function paywall(){
   </div>`);
     return;
   }
-  sheet(`<div class="paywall">
+  sheet(`<div class="paywall">${pwPlansHtml()}</div>`);
+}
+function pwPlansHtml(){
+  return `
     <div class="pw-h">14日間の無料トライアル</div>
     <ul class="pw-list">
       <li>メッセージ機能が利用可能</li>
       <li>気になる相手に直接ゴルフのお誘いが可能</li>
       <li>マッチング時の金額が30%OFF</li>
     </ul>
-    <button class="pw-plan reco" onclick="subscribe('12ヶ月プラン')">
-      <span class="pm">12ヶ月プラン<small>¥1,500お得</small></span><span class="pp">¥980<small>/月</small></span>
+    <button class="plan2 reco" onclick="subscribe('12ヶ月プラン')">
+      <span class="p2-badge">おすすめ</span>
+      <span class="p2-l"><span class="n">12</span><span class="u">ヶ月プラン</span><span class="save">¥1,500お得</span></span>
+      <span class="p2-r"><span class="yen">¥</span><span class="n">980</span><span class="u">/月</span></span>
     </button>
-    <button class="pw-plan" onclick="subscribe('3ヶ月プラン')">
-      <span class="pm">3ヶ月プラン<small>¥500お得</small></span><span class="pp">¥1,980<small>/月</small></span>
+    <button class="plan2" onclick="subscribe('3ヶ月プラン')">
+      <span class="p2-l"><span class="n">3</span><span class="u">ヶ月プラン</span><span class="save">¥500お得</span></span>
+      <span class="p2-r"><span class="yen">¥</span><span class="n">1,980</span><span class="u">/月</span></span>
     </button>
-    <button class="pw-plan" onclick="subscribe('1ヶ月プラン')">
-      <span class="pm">1ヶ月プラン</span><span class="pp">¥2,480<small>/月</small></span>
-    </button>
-    <p class="muted" style="font-size:10.5px;margin-top:10px">上記は税込価格です。サブスクリプションは選択されたプラン毎の月で自動更新され、解約はいつでも可能です。登録すると当社の利用規約とプライバシーポリシーに同意されたものとします。</p>
-  </div>`);
+    <button class="p2-min" onclick="subscribe('1ヶ月プラン')">1ヶ月プラン　¥2,480/月</button>
+    <p class="muted" style="font-size:10.5px;margin-top:12px;line-height:1.7">上記は税込価格です。サブスクリプションは選択されたプラン毎の月で自動更新され、解約はいつでも可能です。登録すると当社の利用規約とプライバシーポリシーに同意されたものとします。</p>`;
 }
+
 function subscribe(plan){
   S.subActive = true; save(); closeSheet(); render();
   celebrate();
@@ -1525,22 +1529,7 @@ V.subscription = () => {
   <div class="page wrap paywall">
     <div style="height:10px"></div>
     <p class="muted" style="text-align:center">お客様のサブスクご利用状況：<b>未加入</b></p>
-    <div class="pw-h" style="margin-top:14px">14日間の無料トライアル</div>
-    <ul class="pw-list">
-      <li>メッセージ機能が利用可能</li>
-      <li>気になる相手に直接ゴルフのお誘いが可能</li>
-      <li>マッチング時の金額が30%OFF</li>
-    </ul>
-    <button class="pw-plan reco" onclick="subscribe('12ヶ月プラン')">
-      <span class="pm">12ヶ月プラン<small>¥1,500お得</small></span><span class="pp">¥980<small>/月</small></span>
-    </button>
-    <button class="pw-plan" onclick="subscribe('3ヶ月プラン')">
-      <span class="pm">3ヶ月プラン<small>¥500お得</small></span><span class="pp">¥1,980<small>/月</small></span>
-    </button>
-    <button class="pw-plan" onclick="subscribe('1ヶ月プラン')">
-      <span class="pm">1ヶ月プラン</span><span class="pp">¥2,480<small>/月</small></span>
-    </button>
-    <p class="muted" style="font-size:10.5px">自動更新・いつでも解約可（デモのため決済は動作しません）</p>
+    ${pwPlansHtml()}
   </div>
   ${tabbar('my')}${demoPill()}`;
   return `
