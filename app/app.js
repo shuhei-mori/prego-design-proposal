@@ -227,6 +227,14 @@ function resetDemo(){
 function switchRole(){
   S.role = S.role === 'f' ? 'm' : 'f';
   S.chats = defaultChats(S.role);
+  if(S.role==='m' && S.bridgeM && S.bridgeM.msgs.length){
+    S.bridgeM.msgs.forEach(m=>{
+      let c = S.chats.find(x=>x.id===m.to);
+      if(!c){ c = {id:m.to, msgs:[]}; S.chats.unshift(c); }
+      c.msgs.push({who:'card', ...m.card});
+    });
+    S.bridgeM.msgs = [];
+  }
   if(S.role==='f' && S.bridge.msgs.length){
     let c = S.chats.find(x=>x.id==='m1');
     if(!c){ c = {id:'m1', msgs:[]}; S.chats.unshift(c); }
@@ -495,7 +503,8 @@ function toggleMyDate(d){
 }
 V.tee = () => {
   const cand = pool().filter(u => u.dates.includes(teeSel));
-  const compe = COMPES.filter(c => c.date.startsWith(teeSel));
+  const HOSTED = { id:'ch1', date:'7/21（火）18:30', title:'MIKA & SAKI 主催 シミュ練習会', course:'提携インドアA（新橋）', fmt:'2h貸切・4名', note:'初参加歓迎・レッスン強めの会', avs:['img/w1.jpg','img/w2.jpg'], left:2, host:true };
+  const compe = COMPES.concat(isD()?[HOSTED]:[]).filter(c => c.date.startsWith(teeSel));
   const dayBtns = TEE_DAYS.days.map(x => {
     const has = pool().some(u => u.dates.includes(x.d)) || COMPES.some(c=>c.date.startsWith(x.d));
     return `<button class="day ${x.d===teeSel?'sel':''} ${has?'has':''}" onclick="teeSel='${x.d}';render()">
@@ -513,8 +522,8 @@ V.tee = () => {
       <span class="arw">${I.back.replace('M15 5l-7 7 7 7','M9 5l7 7-7 7')}</span>
     </div>`).join('');
   const compeCards = compe.map(c => `
-    <a class="compe" href="#/compe/${c.id}">
-      <div class="lb">PREGO OPEN</div>
+    <a class="compe" href="#/compe/${c.id}" ${c.host?`onclick="event.preventDefault();toast('ホスト開催コンペの詳細（デモでは省略）')"`:''}>
+      <div class="lb">${c.host?'HOSTED BY 認定ゴルファー':'PREGO OPEN'}</div>
       <h4>${c.title}</h4>
       <div class="mt">${c.course}・${c.fmt}・${c.note.split('・')[0]}</div>
       <div class="ft">
@@ -925,10 +934,15 @@ function answerOffer(id, ok){
     S.fixed = S.fixed || {};
     const fx = { date:o.date, course:o.course, mode:o.mode||'ラウンド', offer:true, reward:o.reward };
     S.fixed[o.from] = fx;
+    let mc = S.chats.find(x=>x.id===o.from);
+    if(!mc){ mc = {id:o.from, msgs:[]}; S.chats.unshift(mc); }
+    mc.msgs.push({who:'card', kind:'match', ...fx});
     if(o.bridged && o.to){
       S.fixed[o.to] = fx;
       const so = S.sentOffers.find(x=>'b'+x.id===o.id);
       if(so) so.status = 'ok';
+      S.bridgeM = S.bridgeM || {msgs:[]};
+      S.bridgeM.msgs.push({to:o.to, card:{kind:'match', ...fx}});
     }
     toast(`マッチ成立！ ${o.reward.toLocaleString()}コインが確定しました`);
     save();
@@ -965,7 +979,17 @@ V.chat = id => {
   const c = S.chats.find(x=>x.id===id) || {id, msgs:[]};
   const u = find(id);
   const fx = (S.fixed||{})[id];
+  const hasPlan = c.msgs.some(m=>m.who==='card'&&m.kind==='plan');
+  const matchCardHtml = (m) => `
+    <div class="chatcard match">
+      <div class="cc-h"><span class="cc-ck">${I.check.replace('width="40" height="40"','width="13" height="13"')}</span> ${m.date} ${m.mode&&m.mode!=='ラウンド'?m.mode:'ラウンド'}${m.offer?'マッチ成立':'確定'}</div>
+      <div class="cc-row"><span>場所</span><b>${esc(m.course)}</b></div>
+      ${m.offer?`<div class="cc-row"><span>謝礼</span><b>${Number(m.reward||0).toLocaleString()} コイン確定済み</b></div>`:''}
+      <div class="cc-row"><span>安全機能</span><b>位置共有・チェックイン 当日自動ON</b></div>
+      ${hasPlan?'':`<button class="btn sm" style="width:100%;margin-top:10px" onclick="openPlanSheet('${id}')">当日の段取りを提案する</button>`}
+    </div>`;
   const msgs = c.msgs.map((m,i)=>{
+    if(m.who==='card' && m.kind==='match') return matchCardHtml(m);
     if(m.who==='card' && m.kind==='plan') return `
       <div class="chatcard ${m.mine?'mine':''}">
         <div class="cc-h">${I.cal.replace('<svg ','<svg width="15" height="15" ')} 当日の段取り提案</div>
@@ -990,15 +1014,7 @@ V.chat = id => {
       <span style="flex:1">ラウンドの約束ができたら記録しましょう<small>確定するとレビュー・安全機能・実績カウントが有効になります</small></span>
       <button class="btn sm" onclick="openFixSheet('${id}')">ラウンド確定</button>
     </div>`;
-  const hasPlan = c.msgs.some(m=>m.who==='card'&&m.kind==='plan');
-  const matchCard = fx ? `
-    <div class="chatcard match">
-      <div class="cc-h"><span class="cc-ck">${I.check.replace('width="40" height="40"','width="13" height="13"')}</span> ${fx.date} ${fx.mode&&fx.mode!=='ラウンド'?fx.mode:'ラウンド'}${fx.offer?'マッチ成立':'確定'}</div>
-      <div class="cc-row"><span>場所</span><b>${esc(fx.course)}</b></div>
-      ${fx.offer?`<div class="cc-row"><span>謝礼</span><b>${Number(fx.reward||0).toLocaleString()} コイン確定済み</b></div>`:''}
-      <div class="cc-row"><span>安全機能</span><b>位置共有・チェックイン 当日自動ON</b></div>
-      ${hasPlan?'':`<button class="btn sm" style="width:100%;margin-top:10px" onclick="openPlanSheet('${id}')">当日の段取りを提案する</button>`}
-    </div>` : '';
+  const matchCard = (fx && !c.msgs.some(m=>m.who==='card'&&m.kind==='match')) ? matchCardHtml(fx) : '';
   return `
   ${appbar({title:esc(u.name), back:true, noBell:true})}
   <div class="page nofoot" style="display:flex;flex-direction:column;min-height:calc(100dvh - 60px)">
@@ -1080,7 +1096,7 @@ function fixRound(){
   S.fixed[id] = { date, course };
   let c = S.chats.find(x=>x.id===id);
   if(!c){ c = {id, msgs:[]}; S.chats.unshift(c); }
-  c.msgs.push({who:'sys', t:`⛳ ${date}・${course} でラウンド確定`});
+  c.msgs.push({who:'card', kind:'match', date, course});
   celebrate();
   save(); closeSheet(); render();
   setTimeout(()=>toast('ラウンドを確定しました。当日の安全機能がONになります'), 250);
@@ -1213,6 +1229,15 @@ V.mypage = () => {
         </div>`).join('')}
       <button class="btn ghost sm" style="margin-top:8px" onclick="go('#/edit-profile')">プロフィールを充実させる（写真あと1枚）</button>
     </div>`:''}
+    ${isF && isD() ? `
+    <button class="card" style="margin:12px 18px 0;padding:14px 16px;width:calc(100% - 36px);text-align:left;display:flex;gap:12px;align-items:center;border:1.5px solid var(--brass)" onclick="go('#/host-compe')">
+      <span style="flex:none;width:40px;height:40px;border-radius:12px;background:var(--brass-soft);color:var(--brass-ink);display:flex;align-items:center;justify-content:center">${I.trophy}</span>
+      <span style="flex:1">
+        <b style="font-size:13px">コンペを開催して報酬を得る</b>
+        <span class="muted" style="display:block;font-size:10.5px">友人と2人で幹事OK・開催ごとに幹事報酬</span>
+      </span>
+      <span class="chip brass" style="font-size:9px">NEW</span>
+    </button>`:''}
     ${isF?`
     <div class="next-tier">
       <span class="ic">${I.trophy}</span>
@@ -1808,6 +1833,55 @@ V.inviteSet = () => {
   ${tabbar('my')}${demoPill()}`;
 };
 
+/* ---- コンペ開催（女性ホスト・機能1） ---- */
+let hc = { fmt:'シミュ練習会', date:'7/21', venue:null, cohost:true, slots:4, fee:8000 };
+V.hostCompe = () => {
+  const VENUES = {
+    'ラウンド': ['大多喜城ゴルフ倶楽部','市原京急カントリークラブ','千葉市民ゴルフ場（9H）'],
+    'シミュ練習会': ['提携インドアA（新橋・貸切2h）','提携インドアB（渋谷・貸切2h）'],
+    '打ちっぱなし会': ['ロッテ葛西ゴルフ（2打席）','提携練習場（千葉・2打席）'],
+  };
+  const venues = VENUES[hc.fmt];
+  if(!venues.includes(hc.venue)) hc.venue = venues[0];
+  const gross = hc.slots * hc.fee;
+  const hostFee = Math.round(gross * 0.3 / 100) * 100;
+  const perHost = hc.cohost ? Math.round(hostFee/2/100)*100 : hostFee;
+  return `
+  ${appbar({title:'コンペを開催する', back:true, noBell:true})}
+  <div class="page nofoot wrap">
+    <div class="notice" style="margin-top:12px"><span class="ic">${I.shield}</span><span>開催できるのは<b>認定ゴルファー</b>のみ。申請後、運営が会場・内容を確認して公開します（デモでは申請まで体験できます）</span></div>
+    <div class="label">形式</div>
+    <div class="osel" style="flex-wrap:nowrap;overflow-x:auto">${Object.keys(VENUES).map(f=>`
+      <button class="opt ${hc.fmt===f?'on':''}" onclick="hc.fmt='${f}';render()" style="flex:1;min-width:100px">${f}</button>`).join('')}</div>
+    <div class="label">日程</div>
+    <div class="opt-grid">${['7/21','7/26','7/30','8/2','8/9'].map(d=>`<button class="opt ${hc.date===d?'on':''}" onclick="hc.date='${d}';render()">${d}</button>`).join('')}</div>
+    <div class="label">会場（提携先から選択）</div>
+    <div style="display:flex;flex-direction:column;gap:8px">${venues.map(v=>`
+      <button class="opt ${hc.venue===v?'on':''}" style="border-radius:12px;text-align:left" onclick="hc.venue='${v}';render()">${v}</button>`).join('')}</div>
+    <div class="label">共同ホスト（友人と2人で幹事）</div>
+    <div class="card" style="padding:13px 15px;display:flex;align-items:center;gap:11px">
+      <div style="flex:1">
+        <b style="font-size:12.5px">友人を共同ホストに招待する</b>
+        <div class="muted" style="font-size:10.5px">2人ホストは参加率が上がります。報酬は2人でシェア。<b>PreGo未登録の友人も招待リンクから登録して参加できます</b></div>
+      </div>
+      <button class="swt2 ${hc.cohost?'on':''}" onclick="hc.cohost=!hc.cohost;render()"><i></i></button>
+    </div>
+    ${hc.cohost?`<button class="btn ghost sm" style="margin-top:8px" onclick="toast('招待リンクをコピーしました（デモ）')">${I.send} 友人に招待リンクを送る</button>`:''}
+    <div class="label">男性の募集枠・参加費</div>
+    <div style="display:flex;gap:10px">
+      <select class="input" style="flex:1" onchange="hc.slots=Number(this.value);render()">${[2,4,6,8].map(n=>`<option value="${n}" ${hc.slots===n?'selected':''}>${n}名</option>`).join('')}</select>
+      <select class="input" style="flex:1" onchange="hc.fee=Number(this.value);render()">${[5000,8000,10000,15000].map(f=>`<option value="${f}" ${hc.fee===f?'selected':''}>¥${f.toLocaleString()}</option>`).join('')}</select>
+    </div>
+    <div class="price-box">
+      <div class="row"><span>参加費合計（${hc.slots}名 × ¥${hc.fee.toLocaleString()}）</span><span class="money">¥${gross.toLocaleString()}</span></div>
+      <div class="row muted" style="font-size:11.5px"><span>└ 幹事報酬（30%）</span><span>¥${hostFee.toLocaleString()}</span></div>
+      <div class="row total"><span>あなたの受取${hc.cohost?'（2人でシェア）':''}</span><span class="money" style="color:var(--brass)">¥${perHost.toLocaleString()} <small style="font-size:10px">/人</small></span></div>
+      <p class="muted" style="font-size:10.5px;margin-top:8px">会場費・保険・キャンセル規定は運営テンプレを利用。当日は運営スタッフが1名同行します</p>
+    </div>
+    <button class="btn brass" onclick="celebrate();toast('開催申請を送信しました。審査後に公開されます（デモ）');setTimeout(()=>{go('#/mypage')},1200)">この内容で開催申請する</button>
+  </div>${demoPill()}`;
+};
+
 /* ---------- router ---------- */
 let _lastRoute = null;
 function render(){
@@ -1829,7 +1903,7 @@ function render(){
     'notif-settings': V.notifSettings, 'blocked': V.blocked, 'card': V.card,
     'password': V.password, 'verify': V.verify,
     'articles': V.articles, 'article': ()=>V.article(arg),
-    'me': V.me, 'edit-profile': V.editProfile, 'invite-set': V.inviteSet,
+    'me': V.me, 'edit-profile': V.editProfile, 'invite-set': V.inviteSet, 'host-compe': V.hostCompe,
   };
   $app.innerHTML = (map[route] || V.login)();
   window.scrollTo(0,0);
