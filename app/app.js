@@ -1005,7 +1005,7 @@ function sendOffer(id){
   if(!oc){ oc = {id, msgs:[]}; S.chats.unshift(oc); }
   oc.msgs.push({who:'card', kind:'offer', mine:true, mode:_mode, date:of_.date, course:_course, reward:_reward});
   oc.msgs.push({who:'me', t:greet, tm:'いま'});
-  S.bridge.msgs.push({card:{kind:'offer', mode:_mode, date:of_.date, course:_course, reward:_reward}});
+  S.bridge.msgs.push({card:{kind:'offer', oid:'b'+oid, mode:_mode, date:of_.date, course:_course, reward:_reward}});
   S.bridge.msgs.push({t:greet, tm:'いま'});
   save();
   $app.innerHTML = `
@@ -1051,8 +1051,19 @@ V.offers = () => {
       if(o.status!=='pending') return `
         <div class="card mcard" style="opacity:.65">
           <img class="av" src="${u.img}" style="width:46px;height:46px">
-          <div class="info"><div class="nm">${esc(u.name)}さん</div><div class="st">${o.date}・${o.status==='ok'?'承諾済み':'辞退'}</div></div>
+          <div class="info"><div class="nm">${esc(u.name)}さん</div><div class="st">${o.date}・${o.status==='ok'?'承諾済み・マッチ成立':'辞退'}</div></div>
+          ${o.status==='ok'?`<span class="cc-ck" style="width:22px;height:22px">${I.check.replace('width="40" height="40"','width="12" height="12"')}</span>`:''}
         </div>`;
+      if(isD()) return `<div class="card" style="padding:14px 16px">
+        <div style="display:flex;gap:12px;align-items:center" onclick="go('#/profile/${u.id}')">
+          <img class="av" src="${u.img}" style="width:48px;height:48px">
+          <div style="flex:1">
+            <div style="font-weight:900">${esc(u.name)}さんからオファー</div>
+            <div class="muted" style="font-size:11.5px">内容を確認して返答してください</div>
+          </div>
+        </div>
+        ${offerChecklistHtml(o)}
+      </div>`;
       return `<div class="card" style="padding:14px 16px">
         <div style="display:flex;gap:12px;align-items:center" onclick="go('#/profile/${u.id}')">
           <img class="av" src="${u.img}" style="width:48px;height:48px">
@@ -1076,13 +1087,13 @@ V.offers = () => {
   <div class="page tee-body">${inner}</div>
   ${tabbar('')}${demoPill()}`;
 };
-function answerOffer(id, ok){
+function answerOffer(id, ok, fin){
   const o = S.recvOffers.find(x=>x.id===id);
   o.status = ok?'ok':'ng';
   if(ok){
     S.coins += o.reward; celebrate();
     S.fixed = S.fixed || {};
-    const fx = { date:o.date, course:o.course, mode:o.mode||'ラウンド', offer:true, reward:o.reward, matchedAt:Date.now() };
+    const fx = { date:(fin&&fin.date)||o.date, course:(fin&&fin.venue)||o.course, mode:o.mode||'ラウンド', meet:(fin&&fin.meet)||o.meet, offer:true, reward:o.reward, matchedAt:Date.now() };
     S.fixed[o.from] = fx;
     let mc = S.chats.find(x=>x.id===o.from);
     if(!mc){ mc = {id:o.from, msgs:[]}; S.chats.unshift(mc); }
@@ -1190,7 +1201,19 @@ V.chat = id => {
         <div class="cc-row"><span>新しい会場</span><b>${esc(m.name)}</b></div>
         <div class="cc-st ${m.ok?'ok':''}">${m.ok ? I.check.replace('width="40" height="40"','width="12" height="12"')+' お相手が了承・会場を変更しました' : 'お相手の返事待ち'}</div>
       </div>`;
-    if(m.who==='card' && m.kind==='offer') return `
+    if(m.who==='card' && m.kind==='offer'){
+      const ro = m.oid ? S.recvOffers.find(x=>x.id===m.oid) : null;
+      if(!m.mine && S.role==='f' && ro && isD()) return `
+      <div class="chatcard offer">
+        <div class="cc-h">${I.invite} ${ro.status==='ok'?'オファー承諾済み・マッチ成立':'オファーが届いています'}</div>
+        ${ro.status==='pending' ? offerChecklistHtml(ro) : `
+        <div class="cc-row"><span>形式</span><b>${esc(m.mode||'ラウンド')}</b></div>
+        <div class="cc-row"><span>日程</span><b>${esc(m.date)}</b></div>
+        <div class="cc-row"><span>場所</span><b>${esc(m.course)}</b></div>
+        <div class="cc-row"><span>謝礼</span><b>${Number(m.reward||0).toLocaleString()} コイン</b></div>
+        ${offerChecklistHtml(ro)}`}
+      </div>`;
+      return `
       <div class="chatcard offer">
         <div class="cc-h">${I.invite} ${m.mine?'オファーを送信しました':'オファーが届いています'}</div>
         <div class="cc-row"><span>形式</span><b>${esc(m.mode||'ラウンド')}</b></div>
@@ -1199,6 +1222,7 @@ V.chat = id => {
         <div class="cc-row"><span>謝礼</span><b>${Number(m.reward||0).toLocaleString()} コイン</b></div>
         ${!m.mine && S.role==='f' ? `<button class="btn sm" style="width:100%;margin-top:10px" onclick="go('#/offers')">受信オファーで確認・承諾する</button>` : `<div class="cc-st">${m.mine?'お相手の承諾をお待ちください':''}</div>`}
       </div>`;
+    }
     if(m.who==='card' && m.kind==='plan') return `
       <div class="chatcard ${m.mine?'mine':''}">
         <div class="cc-h">${I.cal.replace('<svg ','<svg width="15" height="15" ')} 当日の段取り提案</div>
@@ -1305,6 +1329,84 @@ function okPlan(chatId, idx){
   c.msgs.push({who:'me', t:'OKです！その段取りでお願いします🙆‍♀️', tm:'いま'});
   save(); render();
   setTimeout(()=>toast('スケジュールに登録しました。前日にリマインドが届きます'), 250);
+}
+function offerItems(o){
+  if(!o.items){
+    o.items = {
+      mode: {v: o.mode||'ラウンド', ok:true, alt:null, lock:true},
+      date: {v: o.date, ok:true, alt:null},
+      venue:{v: o.course, ok:true, alt:null},
+      meet: {v: o.meet||'現地集合', ok:true, alt:null},
+      reward:{v: o.reward.toLocaleString()+' コイン', ok:true, alt:null, lock:true},
+    };
+  }
+  return o.items;
+}
+function offerAlts(o, k){
+  const u = find(o.from);
+  const it = offerItems(o)[k];
+  if(k==='date') return [...(u.dates||[]).filter(d=>!it.v.startsWith(d)), '別日を相談したい'];
+  if(k==='venue') return [...venuePlan(u, o.mode||'ラウンド').list.map(v=>v.n).filter(n=>n!==it.v), '相談して決めたい'];
+  if(k==='meet') return ['現地集合','送迎を希望','相談したい'].filter(x=>x!==it.v);
+  return [];
+}
+function toggleOfferItem(oid, k){
+  const o = S.recvOffers.find(x=>x.id===oid); if(!o) return;
+  const it = offerItems(o)[k];
+  if(it.lock) return;
+  it.ok = !it.ok;
+  if(!it.ok && !it.alt) it.alt = offerAlts(o, k)[0];
+  if(it.ok) it.alt = null;
+  save(); render();
+}
+function setOfferAlt(oid, k, v){
+  const o = S.recvOffers.find(x=>x.id===oid); if(!o) return;
+  offerItems(o)[k].alt = v; save();
+}
+function offerChecklistHtml(o, compact){
+  const items = offerItems(o);
+  const LB = {mode:'形式', date:'日程', venue:'会場', meet:'集合', reward:'謝礼'};
+  if(o.status==='ok') return `
+    <div class="cc-st ok" style="margin-top:8px">${I.check.replace('width="40" height="40"','width="12" height="12"')} 承諾済み・マッチ成立</div>`;
+  if(o.status==='ng') return `<div class="cc-st" style="margin-top:8px">辞退しました</div>`;
+  return `
+    <p style="font-size:10.5px;color:var(--ink-soft);margin:8px 0 4px">OKな項目はそのまま、変えたい項目はチェックを外して希望を選んでください</p>
+    ${Object.keys(items).map(k=>{
+      const it = items[k];
+      return `
+      <div class="ck-row">
+        ${it.lock
+          ? `<span class="ckb on" style="opacity:.55">${I.check.replace('width="40" height="40"','width="12" height="12"')}</span>`
+          : `<button class="ckb ${it.ok?'on':''}" onclick="toggleOfferItem('${o.id}','${k}')">${it.ok?I.check.replace('width="40" height="40"','width="12" height="12"'):''}</button>`}
+        <span class="ck-l">${LB[k]}</span>
+        ${it.ok
+          ? `<b class="ck-v" ${k==='reward'?'style="color:var(--brass)"':''}>${esc(it.v)}</b>`
+          : `<select class="input ck-sel" onchange="setOfferAlt('${o.id}','${k}',this.value)">
+              ${offerAlts(o,k).map(x=>`<option ${it.alt===x?'selected':''}>${x}</option>`).join('')}
+            </select>`}
+      </div>`;
+    }).join('')}
+    <div style="display:flex;gap:9px;margin-top:10px">
+      <button class="btn ghost sm" style="flex:1" onclick="answerOffer('${o.id}',false)">辞退</button>
+      <button class="btn sm" style="flex:2" onclick="respondOffer('${o.id}')">この内容で返答する</button>
+    </div>`;
+}
+function respondOffer(oid){
+  const o = S.recvOffers.find(x=>x.id===oid); if(!o) return;
+  const items = offerItems(o);
+  const changed = Object.keys(items).filter(k=>!items[k].ok && items[k].alt);
+  const fin = {};
+  Object.keys(items).forEach(k=>{ fin[k] = items[k].alt || items[k].v; });
+  if(!changed.length){ answerOffer(oid, true, fin); return; }
+  let c = S.chats.find(x=>x.id===o.from);
+  if(!c){ c = {id:o.from, msgs:[]}; S.chats.unshift(c); }
+  c.msgs.push({who:'me', t:'一部変更の希望を送りました（' + changed.map(k=>({date:'日程',venue:'会場',meet:'集合'})[k]).join('・') + '）', tm:'いま'});
+  save(); render();
+  toast('変更希望を送りました。お相手の返答をお待ちください');
+  setTimeout(()=>{
+    c.msgs.push({who:'them', t:'変更OKです！その内容でお願いします🙆‍♂️', tm:'いま'});
+    answerOffer(oid, true, fin);
+  }, 1400);
 }
 function invAlts(chatId, k, items){
   const u = find(chatId);
