@@ -998,3 +998,11 @@ body.no-page-anim .page,body.no-page-anim .pcard,body.no-page-anim .card,body.no
 .ck-l{flex:none;font-size:10.5px;color:var(--ink-soft);width:52px}
 .ck-v{font-size:11.5px;text-align:right;flex:1}
 .ck-sel{flex:1;padding:7px 10px;font-size:11px;border-radius:12px}
+
+/* v39: コンペ開催の女性ゲスト招待 */
+.hc-guests{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0}
+.hc-guests::-webkit-scrollbar{display:none}
+.hc-g{flex:none;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 10px;border:1.5px solid var(--line);border-radius:16px;background:var(--paper);font-size:10px;font-weight:700;color:var(--ink);transition:border-color .15s var(--ease),background .15s var(--ease)}
+.hc-g img{width:44px;height:44px;border-radius:50%;object-fit:cover}
+.hc-g.on{border-color:var(--fairway);background:var(--turf-soft)}
+.hc-g.on img{outline:2px solid var(--fairway);outline-offset:1px}

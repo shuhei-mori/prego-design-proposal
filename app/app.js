@@ -2215,7 +2215,33 @@ V.inviteSet = () => {
 };
 
 /* ---- コンペ開催（女性ホスト・機能1） ---- */
-let hc = { fmt:'インドア練習会', date:'7/21', venue:null, cohost:true, slots:4, fee:8000 };
+let hc = { fmt:'インドア練習会', date:'7/21', venue:null, cohost:true, guests:[], slots:4, fee:8000, title:'', desc:'', prize:'' };
+let hcMonth = 7;
+function hcMonthShift(){ hcMonth = hcMonth===7 ? 8 : 7; render(); }
+function hcCal(){
+  const y = 2026, m = hcMonth;
+  const first = new Date(y, m-1, 1).getDay();
+  const days = new Date(y, m, 0).getDate();
+  let cells = '';
+  for(let i=0;i<first;i++) cells += `<span class="cal-day dim"></span>`;
+  for(let d=1;d<=days;d++){
+    const key = m + '/' + d;
+    cells += `<button class="cal-day ${hc.date===key?'sel':''}" onclick="hc.date='${key}';render()">${d}</button>`;
+  }
+  return `
+  <div class="cal">
+    <div style="display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:6px;font-family:var(--font-num);font-size:12px;letter-spacing:.12em;color:var(--ink-soft)">
+      <button onclick="hcMonthShift()" style="padding:2px 8px">‹</button>${y}年${m}月<button onclick="hcMonthShift()" style="padding:2px 8px">›</button>
+    </div>
+    <div class="cal-week">${['日','月','火','水','木','金','土'].map((w,i)=>`<span class="${i===0?'sun':i===6?'sat':''}">${w}</span>`).join('')}</div>
+    <div class="cal-grid">${cells}</div>
+  </div>`;
+}
+function toggleHcGuest(id){
+  const i = hc.guests.indexOf(id);
+  i>=0 ? hc.guests.splice(i,1) : hc.guests.push(id);
+  render();
+}
 V.hostCompe = () => {
   const VENUES = {
     'ラウンド': ['大多喜城ゴルフ倶楽部','市原京急カントリークラブ','千葉市民ゴルフ場（9H）'],
@@ -2234,11 +2260,19 @@ V.hostCompe = () => {
     <div class="label">形式</div>
     <div class="osel" style="flex-wrap:nowrap;overflow-x:auto">${Object.keys(VENUES).map(f=>`
       <button class="opt ${hc.fmt===f?'on':''}" style="white-space:nowrap;flex:none" onclick="hc.fmt='${f}';render()">${f}</button>`).join('')}</div>
+    <div class="label">コンペ名</div>
+    <input class="input" placeholder="例：MIKA & SAKI インドア練習会" value="${esc(hc.title)}" onchange="hc.title=this.value">
     <div class="label">日程</div>
-    <div class="opt-grid">${['7/21','7/26','7/30','8/2','8/9'].map(d=>`<button class="opt ${hc.date===d?'on':''}" onclick="hc.date='${d}';render()">${d}</button>`).join('')}</div>
+    <div class="card" style="padding:13px 15px;margin-top:0">${hcCal()}
+      <div class="cal-foot"><span class="chip" style="font-size:10px">開催日 ${hc.date}</span></div>
+    </div>
     <div class="label">会場（提携先から選択）</div>
     <div style="display:flex;flex-direction:column;gap:8px">${venues.map(v=>`
       <button class="opt ${hc.venue===v?'on':''}" style="border-radius:12px;text-align:left" onclick="hc.venue='${v}';render()">${v}</button>`).join('')}</div>
+    <div class="label">コンペの内容</div>
+    <textarea class="input" rows="3" placeholder="例：初参加歓迎のゆるめの練習会です。前半はレッスン形式、後半はニアピン対決🏌️‍♀️" onchange="hc.desc=this.value">${esc(hc.desc)}</textarea>
+    <div class="label">表彰・景品</div>
+    <input class="input" placeholder="例：優勝＝ゴルフボール1ダース／ニアピン賞・ドラコン賞あり" value="${esc(hc.prize)}" onchange="hc.prize=this.value">
     <div class="label">共同ホスト（友人と2人で幹事）</div>
     <div class="card" style="padding:13px 15px;display:flex;align-items:center;gap:11px">
       <div style="flex:1">
@@ -2248,6 +2282,12 @@ V.hostCompe = () => {
       <button class="swt2 ${hc.cohost?'on':''}" onclick="hc.cohost=!hc.cohost;render()"><i></i></button>
     </div>
     ${hc.cohost?`<button class="btn ghost sm" style="margin-top:8px" onclick="toast('招待リンクをコピーしました（デモ）')">${I.send} 友人に招待リンクを送る</button>`:''}
+    <div class="label">女性ゲストを招待（PreGoユーザー）</div>
+    <div class="hc-guests">${WOMEN.slice(0,6).filter(w=>w.id!=='w1').map(w=>`
+      <button class="hc-g ${hc.guests.includes(w.id)?'on':''}" onclick="toggleHcGuest('${w.id}')">
+        <img src="${w.img}"><span>${esc(w.name)}</span>
+      </button>`).join('')}</div>
+    <p class="muted" style="font-size:10.5px;margin-top:6px">女性ゲストは参加無料。${hc.guests.length?`選択中 ${hc.guests.length}名に招待が届きます。`:''}<b>男性の募集枠が1名以上あるコンペのみ開催できます</b>（女性だけのコンペは不可）</p>
     <div class="label">男性の募集枠・参加費</div>
     <div style="display:flex;gap:10px">
       <select class="input" style="flex:1" onchange="hc.slots=Number(this.value);render()">${[2,4,6,8].map(n=>`<option value="${n}" ${hc.slots===n?'selected':''}>${n}名</option>`).join('')}</select>
