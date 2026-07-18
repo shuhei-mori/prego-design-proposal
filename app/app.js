@@ -856,7 +856,16 @@ function sendOffer(id){
   S.points -= _price;
   const oid = 'so'+Date.now();
   S.sentOffers.push({ id:oid, to:id, date:of_.date, meet:of_.meet, course:of_.course, mode:_mode, price:_price, status:'pending' });
-  S.recvOffers.unshift({ id:'b'+oid, from:'m1', to:id, date:of_.date, meet:of_.meet==='car'?'車送迎':'現地集合', course:_mode==='ラウンド'?of_.course:(_mode+'（提携施設）'), mode:_mode, reward:_reward, status:'pending', bridged:true });
+  const _course = _mode==='ラウンド' ? of_.course : (_mode+'（提携施設）');
+  S.recvOffers.unshift({ id:'b'+oid, from:'m1', to:id, date:of_.date, meet:of_.meet==='car'?'車送迎':'現地集合', course:_course, mode:_mode, reward:_reward, status:'pending', bridged:true });
+  const greet = `はじめまして！${of_.date}に${_mode==='ラウンド'?'ラウンド':_mode}をご一緒できたら嬉しく、オファーを送らせていただきました。ご検討よろしくお願いします！`;
+  S.chats = S.chats || defaultChats(S.role);
+  let oc = S.chats.find(x=>x.id===id);
+  if(!oc){ oc = {id, msgs:[]}; S.chats.unshift(oc); }
+  oc.msgs.push({who:'card', kind:'offer', mine:true, mode:_mode, date:of_.date, course:_course, reward:_reward});
+  oc.msgs.push({who:'me', t:greet, tm:'いま'});
+  S.bridge.msgs.push({card:{kind:'offer', mode:_mode, date:of_.date, course:_course, reward:_reward}});
+  S.bridge.msgs.push({t:greet, tm:'いま'});
   save();
   $app.innerHTML = `
     <div class="page nofoot">
@@ -990,13 +999,26 @@ V.chat = id => {
     </div>`;
   const msgs = c.msgs.map((m,i)=>{
     if(m.who==='card' && m.kind==='match') return matchCardHtml(m);
+    if(m.who==='card' && m.kind==='offer') return `
+      <div class="chatcard offer">
+        <div class="cc-h">${I.invite} ${m.mine?'オファーを送信しました':'オファーが届いています'}</div>
+        <div class="cc-row"><span>形式</span><b>${esc(m.mode||'ラウンド')}</b></div>
+        <div class="cc-row"><span>日程</span><b>${esc(m.date)}</b></div>
+        <div class="cc-row"><span>場所</span><b>${esc(m.course)}</b></div>
+        <div class="cc-row"><span>謝礼</span><b>${Number(m.reward||0).toLocaleString()} コイン</b></div>
+        ${!m.mine && S.role==='f' ? `<button class="btn sm" style="width:100%;margin-top:10px" onclick="go('#/offers')">受信オファーで確認・承諾する</button>` : `<div class="cc-st">${m.mine?'お相手の承諾をお待ちください':''}</div>`}
+      </div>`;
     if(m.who==='card' && m.kind==='plan') return `
       <div class="chatcard ${m.mine?'mine':''}">
         <div class="cc-h">${I.cal.replace('<svg ','<svg width="15" height="15" ')} 当日の段取り提案</div>
         <div class="cc-row"><span>日程</span><b>${esc(m.date||'')}</b></div>
         <div class="cc-row"><span>集合時間</span><b>${esc(m.time)}</b></div>
         <div class="cc-row"><span>集合場所</span><b>${esc(m.spot)}</b></div>
-        <div class="cc-st ${m.ok?'ok':''}">${m.ok ? I.check.replace('width="40" height="40"','width="12" height="12"')+' お相手がOKしました・スケジュール登録済み' : 'お相手の返事待ち'}</div>
+        ${m.ok
+          ? `<div class="cc-st ok">${I.check.replace('width="40" height="40"','width="12" height="12"')} ${m.mine?'お相手がOKしました・スケジュール登録済み':'OK済み・スケジュール登録済み（前日にリマインドが届きます）'}</div>`
+          : m.mine
+            ? `<div class="cc-st">お相手の返事待ち</div>`
+            : `<button class="btn sm" style="width:100%;margin-top:10px" onclick="okPlan('${id}',${i})">この段取りでOKする</button>`}
       </div>`;
     if(m.who==='sys') return `<div class="msg sys">${m.t}</div>`;
     if(m.who==='me'){
@@ -1061,13 +1083,22 @@ function sendPlan(){
   if(!c){ c = {id, msgs:[]}; S.chats.unshift(c); }
   const card = {who:'card', kind:'plan', mine:true, date:fx.date||'', time, spot, ok:false};
   c.msgs.push(card);
-  if(S.role==='m') S.bridge.msgs.push({card:{kind:'plan', date:fx.date||'', time, spot, ok:true}});
+  if(S.role==='m') S.bridge.msgs.push({card:{kind:'plan', date:fx.date||'', time, spot, ok:false}});
   save(); closeSheet(); render();
   setTimeout(()=>{
     card.ok = true;
     c.msgs.push({who:'them', t:'OKです！その段取りでお願いします🙆‍♀️', tm:'いま'});
     save(); if(location.hash==='#/chat/'+id) render();
   }, 1400);
+}
+function okPlan(chatId, idx){
+  const c = S.chats.find(x=>x.id===chatId);
+  const m = c && c.msgs[idx];
+  if(!m) return;
+  m.ok = true;
+  c.msgs.push({who:'me', t:'OKです！その段取りでお願いします🙆‍♀️', tm:'いま'});
+  save(); render();
+  setTimeout(()=>toast('スケジュールに登録しました。前日にリマインドが届きます'), 250);
 }
 let fixSel = {};
 function openFixSheet(id){

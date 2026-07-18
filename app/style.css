@@ -550,7 +550,9 @@ a{color:inherit;text-decoration:none}
 .osel{display:flex;gap:8px;flex-wrap:wrap}
 .price-box{
   background:var(--paper);border:1.5px solid var(--brass);border-radius:16px;padding:16px;
+  margin-top:16px;
 }
+.oflow .price-box{margin-top:0}
 .price-box .row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0}
 .price-box .row.total{border-top:1px dashed var(--line);margin-top:8px;padding-top:12px;font-weight:900;font-size:15px}
 .price-box .row .money{font-family:var(--font-num);font-size:16px}
@@ -905,6 +907,9 @@ body.no-page-anim .page,body.no-page-anim .pcard,body.no-page-anim .card,body.no
 /* v25: チャット内カード（マッチ成立・段取り提案） */
 .chatcard{background:var(--paper);border:1.5px solid var(--fairway);border-radius:16px;padding:13px 15px;margin:10px auto;max-width:320px;box-shadow:var(--sh-card);animation:cardIn .4s var(--ease) both}
 .chatcard.match{border-color:var(--brass)}
+.chatcard.offer{border-color:var(--brass)}
+.chatcard.offer .cc-h{color:var(--brass-ink)}
+.chatcard.offer .cc-h svg{width:15px;height:15px}
 .chatcard .cc-h{display:flex;align-items:center;gap:7px;font-weight:900;font-size:13px;margin-bottom:8px;color:var(--fairway)}
 .chatcard.match .cc-h{color:var(--brass-ink)}
 .chatcard .cc-ck{width:20px;height:20px;border-radius:50%;background:var(--brass);color:#fff;display:flex;align-items:center;justify-content:center;flex:none}
@@ -915,3 +920,10 @@ body.no-page-anim .page,body.no-page-anim .pcard,body.no-page-anim .card,body.no
 .chatcard .cc-st{margin-top:9px;font-size:10.5px;color:var(--ink-soft);display:flex;align-items:center;gap:5px}
 .chatcard .cc-st.ok{color:var(--fairway);font-weight:700}
 .chatcard .cc-st.ok svg{background:var(--fairway);color:#fff;border-radius:50%;padding:2px}
+
+/* v27: 縦リズム統一（wrap直下のカード/ボタン/通知の間隔） */
+.page.wrap .card,.page.wrap .notice{margin-top:16px}
+.page.wrap .card+.card{margin-top:8px}
+.page.wrap .btn{margin-top:16px}
+.page.wrap .btn.ghost.sm{margin-top:8px}
+.page.wrap .opt-grid{margin-bottom:0}
