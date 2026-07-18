@@ -969,3 +969,10 @@ body.no-page-anim .page,body.no-page-anim .pcard,body.no-page-anim .card,body.no
 .rv-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0 12px}
 .dot.urgent{background:#E0566F;width:9px;height:9px;box-shadow:0 0 0 3px rgba(224,86,111,.25);animation:pulse 1.6s infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(224,86,111,.25)}50%{box-shadow:0 0 0 6px rgba(224,86,111,.1)}}
+
+/* v34: 横並び選択カードの中途半端な改行を全廃（自然幅＋横スクロール） */
+.oselcard{display:flex;flex-direction:column;align-items:flex-start;gap:2px;border-radius:16px;flex:none;padding:11px 14px}
+.oselcard .t{font-weight:700;white-space:nowrap}
+.oselcard .s{font-size:9.5px;color:var(--ink-soft);white-space:nowrap}
+.osel{scrollbar-width:none}
+.osel::-webkit-scrollbar{display:none}

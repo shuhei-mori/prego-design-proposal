@@ -709,8 +709,8 @@ V.offer = id => {
   const meets = [
     {k:'onsite', l:`${I.pin} 現地集合（推奨）`, d:'各自でコースへ・バッグは宅急便OK'},
     {k:'car', l:`${I.car} 車送迎`, d:'認証ドライバーのみ'},
-  ].map(m=>`<button class="opt ${of_.meet===m.k?'on':''}" onclick="of_.meet='${m.k}';render()" style="display:flex;flex-direction:column;align-items:flex-start;border-radius:14px;flex:1;min-width:100px">
-     <span style="display:flex;gap:5px;align-items:center;font-weight:700">${m.l}</span><span style="font-size:9.5px;color:var(--ink-soft)">${m.d}</span></button>`).join('');
+  ].map(m=>`<button class="opt oselcard ${of_.meet===m.k?'on':''}" onclick="of_.meet='${m.k}';render()">
+     <span class="t" style="display:flex;gap:5px;align-items:center">${m.l}</span><span class="s">${m.d}</span></button>`).join('');
   const courses = COURSES.slice(0,3).map(c=>`<button class="opt ${of_.course===c?'on':''}" onclick="of_.course='${c}';render()">${c}</button>`).join('');
   const ready = of_.date && of_.meet && (of_.course || (isD() && of_.mode!=='ラウンド'));
   return `
@@ -727,9 +727,9 @@ V.offer = id => {
     <div>
       <div class="label">会う形式</div>
       <div class="osel" style="flex-wrap:nowrap;overflow-x:auto">${['ラウンド','インドアゴルフ','打ちっぱなし'].map(m=>`
-        <button class="opt ${of_.mode===m?'on':''}" ${okOf(m)?'':'disabled style="opacity:.4"'} onclick="of_.mode='${m}';render()" style="display:flex;flex-direction:column;align-items:flex-start;border-radius:14px;flex:1;min-width:104px">
-          <span style="font-weight:700">${m}</span>
-          <span style="font-size:9.5px;color:var(--ink-soft)">${okOf(m) ? (m==='ラウンド'?'ランク料金':'謝礼 ¥'+feeOf(m).toLocaleString()+'・本人設定') : '受付停止中'}</span>
+        <button class="opt oselcard ${of_.mode===m?'on':''}" ${okOf(m)?'':'disabled style="opacity:.4"'} onclick="of_.mode='${m}';render()">
+          <span class="t">${m}</span>
+          <span class="s">${okOf(m) ? (m==='ラウンド'?'ランク料金':'謝礼 ¥'+feeOf(m).toLocaleString()+'（本人設定）') : '受付停止中'}</span>
         </button>`).join('')}</div>
     </div>`:''}
     <div>
@@ -825,7 +825,7 @@ function inviteSheet(id){
       ${(S.role==='f'
         ? [(isD()&&inv.mode!=='ラウンド'?'費用':'プレー代')+'はご馳走いただけると嬉しいです','割り勘でお願いします','相談して決めたい']
         : [(isD()&&inv.mode!=='ラウンド'?'費用':'プレー代')+'はこちらで持ちます','割り勘でお願いします','相談して決めたい']).map((p,i)=>`
-        <button class="opt ${inv.pay===p?'on':''}" style="border-radius:12px;text-align:left" onclick="inv.pay='${p}';window._invR()">${i===0?'★ ':''}${p}${i===0?(S.role==='f'?'（希望として表示されます）':'（返信率が上がります）'):''}</button>`).join('')}
+        <button class="opt ${inv.pay===p?'on':''}" style="border-radius:12px;text-align:left" onclick="inv.pay='${p}';window._invR()">${i===0?'★ ':''}${p}${i===0?`<span style="display:inline-block">${S.role==='f'?'（希望として表示されます）':'（返信率が上がります）'}</span>`:''}</button>`).join('')}
     </div>
     <div class="notice" style="margin:14px 0 0">
       <span class="ic">${I.shield}</span>
@@ -2077,7 +2077,7 @@ V.hostCompe = () => {
     <div class="notice" style="margin-top:12px"><span class="ic">${I.shield}</span><span>開催できるのは<b>認定ゴルファー</b>のみ。申請後、運営が会場・内容を確認して公開します（デモでは申請まで体験できます）</span></div>
     <div class="label">形式</div>
     <div class="osel" style="flex-wrap:nowrap;overflow-x:auto">${Object.keys(VENUES).map(f=>`
-      <button class="opt ${hc.fmt===f?'on':''}" onclick="hc.fmt='${f}';render()" style="flex:1;min-width:100px">${f}</button>`).join('')}</div>
+      <button class="opt ${hc.fmt===f?'on':''}" style="white-space:nowrap;flex:none" onclick="hc.fmt='${f}';render()">${f}</button>`).join('')}</div>
     <div class="label">日程</div>
     <div class="opt-grid">${['7/21','7/26','7/30','8/2','8/9'].map(d=>`<button class="opt ${hc.date===d?'on':''}" onclick="hc.date='${d}';render()">${d}</button>`).join('')}</div>
     <div class="label">会場（提携先から選択）</div>
