@@ -1152,12 +1152,18 @@ V.chat = id => {
     }
     return `<div class="mrow"><div class="msg them">${esc(m.t)}<span class="tm">${m.tm}</span></div></div>`;
   }).join('');
-  const fixbar = fx ? '' : `
+  const fixbar = fx ? '' : (()=>{
+    const isWomanPartner = WOMEN.includes(u);
+    const inviteAction = (S.role==='m' && isWomanPartner && u.st==='o')
+      ? `go('#/offer/${id}')`
+      : `inviteSheet('${id}')`;
+    return `
     <div class="fixbar">
-      <span class="ic">${I.cal}</span>
-      <span style="flex:1">ラウンドの約束ができたら記録しましょう<small>確定するとレビュー・安全機能・実績カウントが有効になります</small></span>
-      <button class="btn sm" onclick="openFixSheet('${id}')">ラウンド確定</button>
+      <span class="ic">${I.invite.replace('width="17" height="17"','width="19" height="19"')}</span>
+      <span style="flex:1"><b>${esc(u.name)}さんをラウンドに誘ってみましょう</b><small>日程・会場・集合までこの流れで決まります　<u style="cursor:pointer" onclick="openFixSheet('${id}')">約束済みの方はこちら</u></small></span>
+      <button class="btn sm" onclick="${inviteAction}">誘ってみる</button>
     </div>`;
+  })();
   const matchCard = (fx && !c.msgs.some(m=>m.who==='card'&&m.kind==='match')) ? matchCardHtml(fx) : '';
   return `
   ${appbar({title:esc(u.name), back:true, noBell:true})}
