@@ -2215,7 +2215,7 @@ V.inviteSet = () => {
 };
 
 /* ---- コンペ開催（女性ホスト・機能1） ---- */
-let hc = { fmt:'インドア練習会', date:'7/21', venue:null, cohost:true, guests:[], slots:4, fee:8000, title:'', desc:'', prize:'' };
+let hc = { fmt:'インドア練習会', date:'7/21', venue:null, venueCustom:'', booked:false, cohost:true, guests:[], slots:4, fee:8000, title:'', desc:'', prize:'' };
 let hcMonth = 7;
 function hcMonthShift(){ hcMonth = hcMonth===7 ? 8 : 7; render(); }
 function hcCal(){
@@ -2248,8 +2248,12 @@ V.hostCompe = () => {
     'インドア練習会': ['提携インドアA（新橋・貸切2h）','提携インドアB（渋谷・貸切2h）'],
     '打ちっぱなし会': ['ロッテ葛西ゴルフ（2打席）','提携練習場（千葉・2打席）'],
   };
-  const venues = VENUES[hc.fmt];
-  if(!venues.includes(hc.venue)) hc.venue = venues[0];
+  const venues = VENUES[hc.fmt] || [];
+  if(hc.fmt==='ラウンド'){ if(!COURSES.includes(hc.venue)) hc.venue = COURSES[0]; }
+  else if(!venues.includes(hc.venue)) hc.venue = venues[0];
+  const totalPpl = (hc.cohost?2:1) + hc.guests.length + hc.slots;
+  const overCap = totalPpl > 8;
+  const bookedOK = hc.fmt!=='ラウンド' || hc.booked;
   const gross = hc.slots * hc.fee;
   const hostFee = Math.round(gross * 0.3 / 100) * 100;
   const perHost = hc.cohost ? Math.round(hostFee/2/100)*100 : hostFee;
@@ -2266,9 +2270,25 @@ V.hostCompe = () => {
     <div class="card" style="padding:13px 15px;margin-top:0">${hcCal()}
       <div class="cal-foot"><span class="chip" style="font-size:10px">開催日 ${hc.date}</span></div>
     </div>
+    ${hc.fmt==='ラウンド'?`
+    <div class="label">ゴルフ場（自分で選択）</div>
+    <select class="input" onchange="hc.venue=this.value;render()">
+      ${COURSES.map(c=>`<option ${hc.venue===c?'selected':''}>${c}</option>`).join('')}
+    </select>
+    <input class="input" style="margin-top:8px" placeholder="一覧にない場合はゴルフ場名を入力" value="${esc(hc.venueCustom)}" onchange="hc.venueCustom=this.value;render()">
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <a class="btn ghost sm" style="flex:1;text-align:center" href="https://gora.golf.rakuten.co.jp/" target="_blank" rel="noopener">楽天GORAで予約</a>
+      <a class="btn ghost sm" style="flex:1;text-align:center" href="https://golf-jalan.net/" target="_blank" rel="noopener">じゃらんゴルフで予約</a>
+    </div>
+    <button class="card" style="margin-top:10px;padding:13px 15px;width:100%;display:flex;gap:10px;align-items:flex-start;text-align:left;border:1.5px solid ${hc.booked?'var(--fairway)':'var(--line)'}" onclick="hc.booked=!hc.booked;render()">
+      <span class="ckb ${hc.booked?'on':''}" style="margin-top:1px">${hc.booked?I.check.replace('width="40" height="40"','width="12" height="12"'):''}</span>
+      <span style="flex:1;font-size:12px"><b>開催日のゴルフ場を予約済みです</b><span class="muted" style="display:block;font-size:10.5px">予約が済んでいないコンペは申請できません（プレー枠${(hc.cohost?2:1)+hc.guests.length+hc.slots}名分）</span></span>
+    </button>
+    `:`
     <div class="label">会場（提携先から選択）</div>
     <div style="display:flex;flex-direction:column;gap:8px">${venues.map(v=>`
       <button class="opt ${hc.venue===v?'on':''}" style="border-radius:12px;text-align:left" onclick="hc.venue='${v}';render()">${v}</button>`).join('')}</div>
+    <p class="muted" style="font-size:10.5px;margin-top:6px">提携施設のため枠は運営が確保します（予約不要）</p>`}
     <div class="label">コンペの内容</div>
     <textarea class="input" rows="3" placeholder="例：初参加歓迎のゆるめの練習会です。前半はレッスン形式、後半はニアピン対決🏌️‍♀️" onchange="hc.desc=this.value">${esc(hc.desc)}</textarea>
     <div class="label">表彰・景品</div>
@@ -2288,9 +2308,10 @@ V.hostCompe = () => {
         <img src="${w.img}"><span>${esc(w.name)}</span>
       </button>`).join('')}</div>
     <p class="muted" style="font-size:10.5px;margin-top:6px">女性ゲストは参加無料。${hc.guests.length?`選択中 ${hc.guests.length}名に招待が届きます。`:''}<b>男性の募集枠が1名以上あるコンペのみ開催できます</b>（女性だけのコンペは不可）</p>
-    <div class="label">男性の募集枠・参加費</div>
+    <div class="label">男性の募集枠・参加費 <span class="chip ${overCap?'':'line'}" style="font-size:9.5px;margin-left:4px;${overCap?'background:var(--danger-soft);color:var(--danger)':''}">合計 ${totalPpl}／8名（ホスト含む）</span></div>
+    ${overCap?`<p style="font-size:11px;color:var(--danger);font-weight:700;margin-bottom:6px">はじめてのコンペはホストを含む8名が上限です。ゲストか募集枠を減らしてください</p>`:''}
     <div style="display:flex;gap:10px">
-      <select class="input" style="flex:1" onchange="hc.slots=Number(this.value);render()">${[2,4,6,8].map(n=>`<option value="${n}" ${hc.slots===n?'selected':''}>${n}名</option>`).join('')}</select>
+      <select class="input" style="flex:1" onchange="hc.slots=Number(this.value);render()">${[2,4,6].map(n=>`<option value="${n}" ${hc.slots===n?'selected':''}>${n}名</option>`).join('')}</select>
       <select class="input" style="flex:1" onchange="hc.fee=Number(this.value);render()">${[5000,8000,10000,15000].map(f=>`<option value="${f}" ${hc.fee===f?'selected':''}>¥${f.toLocaleString()}</option>`).join('')}</select>
     </div>
     <div class="price-box">
@@ -2299,7 +2320,8 @@ V.hostCompe = () => {
       <div class="row total"><span>あなたの受取${hc.cohost?'（2人でシェア）':''}</span><span class="money" style="color:var(--brass)">¥${perHost.toLocaleString()} <small style="font-size:10px">/人</small></span></div>
       <p class="muted" style="font-size:10.5px;margin-top:8px">会場費・保険・キャンセル規定は運営テンプレを利用。当日は運営スタッフが1名同行します</p>
     </div>
-    <button class="btn brass" onclick="celebrate();toast('開催申請を送信しました。審査後に公開されます（デモ）');setTimeout(()=>{go('#/mypage')},1200)">この内容で開催申請する</button>
+    <button class="btn brass" ${(!overCap && bookedOK)?'':'disabled'} onclick="celebrate();toast('開催申請を送信しました。審査後に公開されます（デモ）');setTimeout(()=>{go('#/mypage')},1200)">この内容で開催申請する</button>
+    ${bookedOK?'':`<p class="muted" style="font-size:10.5px;text-align:center;margin-top:8px">ゴルフ場の予約完了にチェックすると申請できます</p>`}
   </div>${demoPill()}`;
 };
 
