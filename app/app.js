@@ -2317,7 +2317,7 @@ V.inviteSet = () => {
 };
 
 /* ---- コンペ開催（女性ホスト・機能1） ---- */
-let hc = { fmt:'インドア練習会', date:'7/21', venue:null, venueCustom:'', booked:false, cohost:true, cohostUser:null, guests:[], slots:4, fee:8000, title:'', desc:'', prize:'' };
+let hc = { fmt:'インドア練習会', date:'7/21', venue:null, venueCustom:'', booked:false, cohost:true, cohostUser:null, guests:[], slots:4, fee:8000, wslots:0, wfee:0, title:'', desc:'', prize:'' };
 function hcSearch(q){
   hc.cohostQ = q;
   const res = document.getElementById('hc-res');
@@ -2362,10 +2362,10 @@ V.hostCompe = () => {
   const venues = VENUES[hc.fmt] || [];
   if(hc.fmt==='ラウンド'){ if(!COURSES.includes(hc.venue)) hc.venue = COURSES[0]; }
   else if(!venues.includes(hc.venue)) hc.venue = venues[0];
-  const totalPpl = (hc.cohost?2:1) + hc.guests.length + hc.slots;
+  const totalPpl = (hc.cohost?2:1) + hc.guests.length + hc.slots + hc.wslots;
   const overCap = totalPpl > 8;
   const bookedOK = hc.fmt!=='ラウンド' || hc.booked;
-  const gross = hc.slots * hc.fee;
+  const gross = hc.slots * hc.fee + hc.wslots * hc.wfee;
   const hostFee = Math.round(gross * 0.8 / 100) * 100;
   const perHost = hc.cohost ? Math.round(hostFee/2/100)*100 : hostFee;
   return `
@@ -2432,6 +2432,12 @@ V.hostCompe = () => {
         <img src="${w.img}"><span>${esc(w.name)}</span>
       </button>`).join('')}</div>
     <p class="muted" style="font-size:10.5px;margin-top:6px">女性ゲストは参加無料。${hc.guests.length?`選択中 ${hc.guests.length}名に招待が届きます。`:''}<b>男性の募集枠が1名以上あるコンペのみ開催できます</b>（女性だけのコンペは不可）</p>
+    <div class="label">女性の募集枠・参加費 <span class="chip line" style="font-size:9px;margin-left:4px">公募</span></div>
+    <div style="display:flex;gap:10px">
+      <select class="input" style="flex:1" onchange="hc.wslots=Number(this.value);render()">${[0,2,4].map(n=>`<option value="${n}" ${hc.wslots===n?'selected':''}>${n===0?'募集しない（招待のみ）':n+'名'}</option>`).join('')}</select>
+      <select class="input" style="flex:1" ${hc.wslots===0?'disabled style="opacity:.5"':''} onchange="hc.wfee=Number(this.value);render()">${[[0,'無料'],[1000,'¥1,000'],[2000,'¥2,000'],[3000,'¥3,000']].map(([v,l])=>`<option value="${v}" ${hc.wfee===v?'selected':''}>${l}</option>`).join('')}</select>
+    </div>
+    <p class="muted" style="font-size:10.5px;margin-top:6px">公募すると女性ユーザーの日程マッチ・コンペ一覧に表示されます。招待した女性ゲストは無料のまま参加できます</p>
     <div class="label">男性の募集枠・参加費 <span class="chip ${overCap?'':'line'}" style="font-size:9.5px;margin-left:4px;${overCap?'background:var(--danger-soft);color:var(--danger)':''}">合計 ${totalPpl}／8名（ホスト含む）</span></div>
     ${overCap?`<p style="font-size:11px;color:var(--danger);font-weight:700;margin-bottom:6px">はじめてのコンペはホストを含む8名が上限です。ゲストか募集枠を減らしてください</p>`:''}
     <div style="display:flex;gap:10px">
@@ -2439,7 +2445,7 @@ V.hostCompe = () => {
       <select class="input" style="flex:1" onchange="hc.fee=Number(this.value);render()">${[5000,8000,10000,15000].map(f=>`<option value="${f}" ${hc.fee===f?'selected':''}>¥${f.toLocaleString()}</option>`).join('')}</select>
     </div>
     <div class="price-box">
-      <div class="row"><span>参加費合計（${hc.slots}名 × ¥${hc.fee.toLocaleString()}）</span><span class="money">¥${gross.toLocaleString()}</span></div>
+      <div class="row"><span>参加費合計（男性${hc.slots}名${hc.wslots?`・女性${hc.wslots}名`:''}）</span><span class="money">¥${gross.toLocaleString()}</span></div>
       <div class="row muted" style="font-size:11.5px"><span>└ 幹事報酬（80%）</span><span>¥${hostFee.toLocaleString()}</span></div>
       <div class="row muted" style="font-size:11.5px"><span>└ サービス利用料（20%）</span><span>¥${(gross-hostFee).toLocaleString()}</span></div>
       <div class="row total"><span>あなたの受取${hc.cohost?'（2人でシェア）':''}</span><span class="money" style="color:var(--brass)">¥${perHost.toLocaleString()} <small style="font-size:10px">/人</small></span></div>
