@@ -942,3 +942,8 @@ body.no-page-anim .page,body.no-page-anim .pcard,body.no-page-anim .card,body.no
 .plan2 .p2-r .n{font-family:var(--font-num);font-weight:300;font-size:38px;line-height:1}
 .plan2 .p2-r .u{font-size:11px;color:var(--ink-soft)}
 .p2-min{display:block;margin:16px auto 0;font-size:12.5px;font-weight:700;color:var(--ink-soft);text-decoration:underline;text-underline-offset:3px}
+
+/* v30: 宣言時の相手希望ヒント */
+.pay-hint{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink-soft);background:var(--turf-soft);border-radius:12px;padding:8px 12px;margin-bottom:8px}
+.pay-hint b{color:var(--fairway)}
+.pay-hint svg{flex:none}

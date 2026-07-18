@@ -15,24 +15,24 @@ const yen = n => '¥' + n.toLocaleString();
 
 /* ---------- demo users ---------- */
 const WOMEN = [
-  { id:'w1', st:'o', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, name:'MIKA',   age:29, img:'img/w1.jpg', best:92,  ave:104, tier:'GOLD',   rounds:38, rating:4.9, rc:41, hist:'5年',   area:['千葉','東京','埼玉'], dates:['7/8','7/14','7/17','7/21'], meet:'現地集合', drink:'少し飲む', style:'楽しくエンジョイ・マナー重視', reply:true,  bio:'休日はほぼゴルフ場にいます。ベスト更新が今年の目標。ラウンド後のビールまでがゴルフです🍺' },
-  { id:'w2', st:'n', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, name:'SAKI',   age:28, img:'img/w2.jpg', best:99,  ave:110, tier:'SILVER', rounds:21, rating:4.8, rc:18, hist:'3〜5年', area:['千葉','茨城'], dates:['7/14','7/19','7/26','8/2','8/9'], meet:'現地集合OK', drink:'飲む', style:'わいわい・コンペ好き', reply:true,  bio:'最近100切りしました！月2でラウンドしています。よろしくお願いします。' },
-  { id:'w3', st:'n', cert:false, sim:{ok:false,fee:8800}, rng:{ok:true,fee:5500}, name:'Emi',    age:31, img:'img/w3.jpg', best:96,  ave:108, tier:'SILVER', rounds:17, rating:4.7, rc:12, hist:'3〜5年', area:['東京','神奈川'], dates:['7/9','7/17','7/30'], meet:'現地集合', drink:'飲まない', style:'しっとり・丁寧なゴルフ', reply:false, bio:'フォームを大事にしています。レッスン週1。ご一緒する方のプレーの邪魔はしません◎' },
-  { id:'w4', st:'o', cert:false, sim:{ok:false,fee:8800}, rng:{ok:true,fee:5500}, name:'Rina',   age:26, img:'img/w4.jpg', best:118, ave:126, tier:'BRONZE', rounds:6,  rating:4.6, rc:5,  hist:'1〜3年', area:['埼玉','群馬'], dates:['7/12','7/21'], meet:'現地集合OK', drink:'少し飲む', style:'初心者歓迎でお願いします', reply:true,  bio:'ゴルフ歴2年目です。まだまだ下手ですが、一生懸命がんばります！' },
-  { id:'w5', st:'n', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, name:'manami', age:31, img:'img/w5.jpg', best:104, ave:115, tier:'SILVER', rounds:14, rating:4.8, rc:11, hist:'3〜5年', area:['千葉','埼玉','東京'], dates:['7/14','7/17','7/30'], meet:'現地集合', drink:'飲む', style:'コンペ・わいわい・楽しくゴルフ', reply:true,  bio:'平日ゴルファーです。明るく穏やかな性格。ニコニコよく笑います。' },
-  { id:'w6', st:'o', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, name:'yuka',   age:33, img:'img/w6.jpg', best:91,  ave:100, tier:'GOLD',   rounds:44, rating:5.0, rc:37, hist:'10年以上', area:['東京','千葉','神奈川'], dates:['7/10','7/19','7/27'], meet:'現地集合', drink:'少し飲む', style:'スコア重視・淡々と回りたい', reply:true,  bio:'シングル目指して練習中。ストイックに回りたい方、ぜひ。' },
-  { id:'w7', st:'o', cert:false, sim:{ok:false,fee:8800}, rng:{ok:true,fee:5500}, name:'Coco',   age:27, img:'img/w7.jpg', best:112, ave:121, tier:'BRONZE', rounds:9,  rating:4.5, rc:7,  hist:'1〜3年', area:['神奈川','静岡'], dates:['7/13','7/20'], meet:'現地集合OK', drink:'飲む', style:'エンジョイ・写真もたくさん撮りたい', reply:false, bio:'ゴルフウェア集めが趣味です。楽しく回れたら最高です🌸' },
-  { id:'w8', st:'n', cert:false, sim:{ok:false,fee:8800}, rng:{ok:true,fee:5500}, name:'Karin',  age:24, img:'img/w8.jpg', best:124, ave:132, tier:'WHITE',  rounds:2,  rating:4.4, rc:2,  hist:'1年未満', area:['東京','埼玉'], dates:['7/15','7/22'], meet:'現地集合OK', drink:'少し飲む', style:'デビューしたてです', reply:true,  bio:'先月コースデビューしました！優しく教えてくれる方だと嬉しいです。' },
-  { id:'w9', st:'o', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, name:'あんな', age:34, img:'img/w9.jpg', best:97,  ave:107, tier:'SILVER', rounds:19, rating:4.7, rc:15, hist:'5年',   area:['茨城','千葉'], dates:['7/16','7/23','7/30'], meet:'現地集合', drink:'飲む', style:'早朝スルー好き', reply:true,  bio:'朝イチスタート好きです。午後は温泉に寄って帰るのが定番コース。' },
-  { id:'w10', st:'n', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500},name:'Rio',    age:30, img:'img/w10.jpg',best:101, ave:113, tier:'SILVER', rounds:16, rating:4.6, rc:13, hist:'3〜5年', area:['千葉','東京'], dates:['7/11','7/18','7/25','8/9','8/23'], meet:'現地集合OK', drink:'飲む', style:'わいわい・コンペ好き', reply:false, bio:'夏ゴルフに向けて体力づくり中。カート乗りっぱなしにはしません(笑)' },
+  { id:'w1', st:'o', pay:'相手に出してもらいたい', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, name:'MIKA',   age:29, img:'img/w1.jpg', best:92,  ave:104, tier:'GOLD',   rounds:38, rating:4.9, rc:41, hist:'5年',   area:['千葉','東京','埼玉'], dates:['7/8','7/14','7/17','7/21'], meet:'現地集合', drink:'少し飲む', style:'楽しくエンジョイ・マナー重視', reply:true,  bio:'休日はほぼゴルフ場にいます。ベスト更新が今年の目標。ラウンド後のビールまでがゴルフです🍺' },
+  { id:'w2', st:'n', pay:'話し合って決めたい', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, name:'SAKI',   age:28, img:'img/w2.jpg', best:99,  ave:110, tier:'SILVER', rounds:21, rating:4.8, rc:18, hist:'3〜5年', area:['千葉','茨城'], dates:['7/14','7/19','7/26','8/2','8/9'], meet:'現地集合OK', drink:'飲む', style:'わいわい・コンペ好き', reply:true,  bio:'最近100切りしました！月2でラウンドしています。よろしくお願いします。' },
+  { id:'w3', st:'n', pay:'自分の分は払います', cert:false, sim:{ok:false,fee:8800}, rng:{ok:true,fee:5500}, name:'Emi',    age:31, img:'img/w3.jpg', best:96,  ave:108, tier:'SILVER', rounds:17, rating:4.7, rc:12, hist:'3〜5年', area:['東京','神奈川'], dates:['7/9','7/17','7/30'], meet:'現地集合', drink:'飲まない', style:'しっとり・丁寧なゴルフ', reply:false, bio:'フォームを大事にしています。レッスン週1。ご一緒する方のプレーの邪魔はしません◎' },
+  { id:'w4', st:'o', pay:'相手に出してもらいたい', cert:false, sim:{ok:false,fee:8800}, rng:{ok:true,fee:5500}, name:'Rina',   age:26, img:'img/w4.jpg', best:118, ave:126, tier:'BRONZE', rounds:6,  rating:4.6, rc:5,  hist:'1〜3年', area:['埼玉','群馬'], dates:['7/12','7/21'], meet:'現地集合OK', drink:'少し飲む', style:'初心者歓迎でお願いします', reply:true,  bio:'ゴルフ歴2年目です。まだまだ下手ですが、一生懸命がんばります！' },
+  { id:'w5', st:'n', pay:'相手に出してもらいたい', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, name:'manami', age:31, img:'img/w5.jpg', best:104, ave:115, tier:'SILVER', rounds:14, rating:4.8, rc:11, hist:'3〜5年', area:['千葉','埼玉','東京'], dates:['7/14','7/17','7/30'], meet:'現地集合', drink:'飲む', style:'コンペ・わいわい・楽しくゴルフ', reply:true,  bio:'平日ゴルファーです。明るく穏やかな性格。ニコニコよく笑います。' },
+  { id:'w6', st:'o', pay:'話し合って決めたい', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, name:'yuka',   age:33, img:'img/w6.jpg', best:91,  ave:100, tier:'GOLD',   rounds:44, rating:5.0, rc:37, hist:'10年以上', area:['東京','千葉','神奈川'], dates:['7/10','7/19','7/27'], meet:'現地集合', drink:'少し飲む', style:'スコア重視・淡々と回りたい', reply:true,  bio:'シングル目指して練習中。ストイックに回りたい方、ぜひ。' },
+  { id:'w7', st:'o', pay:'相手に出してもらいたい', cert:false, sim:{ok:false,fee:8800}, rng:{ok:true,fee:5500}, name:'Coco',   age:27, img:'img/w7.jpg', best:112, ave:121, tier:'BRONZE', rounds:9,  rating:4.5, rc:7,  hist:'1〜3年', area:['神奈川','静岡'], dates:['7/13','7/20'], meet:'現地集合OK', drink:'飲む', style:'エンジョイ・写真もたくさん撮りたい', reply:false, bio:'ゴルフウェア集めが趣味です。楽しく回れたら最高です🌸' },
+  { id:'w8', st:'n', pay:'自分の分は払います', cert:false, sim:{ok:false,fee:8800}, rng:{ok:true,fee:5500}, name:'Karin',  age:24, img:'img/w8.jpg', best:124, ave:132, tier:'WHITE',  rounds:2,  rating:4.4, rc:2,  hist:'1年未満', area:['東京','埼玉'], dates:['7/15','7/22'], meet:'現地集合OK', drink:'少し飲む', style:'デビューしたてです', reply:true,  bio:'先月コースデビューしました！優しく教えてくれる方だと嬉しいです。' },
+  { id:'w9', st:'o', pay:'相手に出してもらいたい', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500}, name:'あんな', age:34, img:'img/w9.jpg', best:97,  ave:107, tier:'SILVER', rounds:19, rating:4.7, rc:15, hist:'5年',   area:['茨城','千葉'], dates:['7/16','7/23','7/30'], meet:'現地集合', drink:'飲む', style:'早朝スルー好き', reply:true,  bio:'朝イチスタート好きです。午後は温泉に寄って帰るのが定番コース。' },
+  { id:'w10', st:'n', pay:'話し合って決めたい', cert:true, sim:{ok:true,fee:8800}, rng:{ok:true,fee:5500},name:'Rio',    age:30, img:'img/w10.jpg',best:101, ave:113, tier:'SILVER', rounds:16, rating:4.6, rc:13, hist:'3〜5年', area:['千葉','東京'], dates:['7/11','7/18','7/25','8/9','8/23'], meet:'現地集合OK', drink:'飲む', style:'わいわい・コンペ好き', reply:false, bio:'夏ゴルフに向けて体力づくり中。カート乗りっぱなしにはしません(笑)' },
 ];
 const MEN = [
-  { id:'m1', name:'SHU',     age:44, img:'img/m1.jpg', best:88,  ave:100, plan:'PREMIUM',  rounds:52, rating:5.0, rc:24, hist:'10年以上', area:['千葉','茨城','埼玉'], dates:['7/14','7/17','7/26','7/30','8/2','8/9','8/23'], meet:'車送迎OK', drink:'飲む', style:'楽しく・たまに真剣', bio:'月3ラウンド。車出せます。楽しく回りましょう。' },
-  { id:'m2', name:'Dai',     age:38, img:'img/m2.jpg', best:94,  ave:103, plan:'STANDARD', rounds:31, rating:4.8, rc:17, hist:'5年', area:['東京','神奈川'], dates:['7/12','7/19'], meet:'車送迎OK', drink:'少し飲む', style:'エンジョイ', bio:'ラウンド帰りの飯まで含めてゴルフだと思ってます。' },
-  { id:'m3', name:'Nori',    age:51, img:'img/m3.jpg', best:82,  ave:91,  plan:'PREMIUM',  rounds:120,rating:4.9, rc:56, hist:'20年以上', area:['千葉','茨城'], dates:['7/9','7/16','7/23'], meet:'車送迎OK', drink:'飲まない', style:'スコア重視・でも優しい', bio:'元研修生です。スイングのアドバイスもできます。' },
-  { id:'m4', name:'GOLFMAN', age:41, img:'img/m4.jpg', best:99,  ave:107, plan:'STANDARD', rounds:26, rating:4.6, rc:9,  hist:'5年', area:['埼玉','群馬'], dates:['7/13','7/20'], meet:'現地集合', drink:'飲む', style:'わいわい', bio:'コンペ大好き。ドラコンだけは負けません。' },
-  { id:'m5', name:'Ken',     age:35, img:'img/m5.jpg', best:105, ave:112, plan:'STANDARD', rounds:12, rating:4.5, rc:6,  hist:'3年', area:['東京','千葉'], dates:['7/15','7/22'], meet:'現地集合', drink:'少し飲む', style:'エンジョイ', bio:'仕事の合間にコツコツ練習中です。' },
-  { id:'m6', name:'BUMA',    age:48, img:'img/m6.jpg', best:79,  ave:94,  plan:'PREMIUM',  rounds:80, rating:4.9, rc:33, hist:'15年', area:['千葉','茨城','栃木'], dates:['7/10','7/17','7/24'], meet:'車送迎OK', drink:'飲む', style:'真剣勝負も歓迎', bio:'ベスト79。バーディ合戦しましょう。' },
+  { id:'m1', name:'SHU', pay:'お相手の分も払います',     age:44, img:'img/m1.jpg', best:88,  ave:100, plan:'PREMIUM',  rounds:52, rating:5.0, rc:24, hist:'10年以上', area:['千葉','茨城','埼玉'], dates:['7/14','7/17','7/26','7/30','8/2','8/9','8/23'], meet:'車送迎OK', drink:'飲む', style:'楽しく・たまに真剣', bio:'月3ラウンド。車出せます。楽しく回りましょう。' },
+  { id:'m2', name:'Dai', pay:'話し合って決めたい',     age:38, img:'img/m2.jpg', best:94,  ave:103, plan:'STANDARD', rounds:31, rating:4.8, rc:17, hist:'5年', area:['東京','神奈川'], dates:['7/12','7/19'], meet:'車送迎OK', drink:'少し飲む', style:'エンジョイ', bio:'ラウンド帰りの飯まで含めてゴルフだと思ってます。' },
+  { id:'m3', name:'Nori', pay:'お相手の分も払います',    age:51, img:'img/m3.jpg', best:82,  ave:91,  plan:'PREMIUM',  rounds:120,rating:4.9, rc:56, hist:'20年以上', area:['千葉','茨城'], dates:['7/9','7/16','7/23'], meet:'車送迎OK', drink:'飲まない', style:'スコア重視・でも優しい', bio:'元研修生です。スイングのアドバイスもできます。' },
+  { id:'m4', name:'GOLFMAN', pay:'お互い自分の分を払う', age:41, img:'img/m4.jpg', best:99,  ave:107, plan:'STANDARD', rounds:26, rating:4.6, rc:9,  hist:'5年', area:['埼玉','群馬'], dates:['7/13','7/20'], meet:'現地集合', drink:'飲む', style:'わいわい', bio:'コンペ大好き。ドラコンだけは負けません。' },
+  { id:'m5', name:'Ken', pay:'話し合って決めたい',     age:35, img:'img/m5.jpg', best:105, ave:112, plan:'STANDARD', rounds:12, rating:4.5, rc:6,  hist:'3年', area:['東京','千葉'], dates:['7/15','7/22'], meet:'現地集合', drink:'少し飲む', style:'エンジョイ', bio:'仕事の合間にコツコツ練習中です。' },
+  { id:'m6', name:'BUMA', pay:'お相手の分も払います',    age:48, img:'img/m6.jpg', best:79,  ave:94,  plan:'PREMIUM',  rounds:80, rating:4.9, rc:33, hist:'15年', area:['千葉','茨城','栃木'], dates:['7/10','7/17','7/24'], meet:'車送迎OK', drink:'飲む', style:'真剣勝負も歓迎', bio:'ベスト79。バーディ合戦しましょう。' },
 ];
 /* extra photos per profile (portrait + play/course shots) */
 const PHOTOS = {
@@ -658,6 +658,7 @@ V.profile = id => {
       <div class="psec"><div class="h">ゴルフ情報</div>
         <div class="spec">
           <div class="row"><span class="k">ゴルフ歴</span><span class="v">${u.hist}</span></div>
+          <div class="row"><span class="k">プレー代の希望</span><span class="v">${u.pay||'話し合って決めたい'}</span></div>
           <div class="row"><span class="k">合流方法</span><span class="v">${u.meet}</span></div>
           <div class="row"><span class="k">お酒</span><span class="v">${u.drink}</span></div>
           <div class="row"><span class="k">スタイル</span><span class="v" style="font-size:11px">${u.style}</span></div>
@@ -671,7 +672,9 @@ V.profile = id => {
         ? (u.st==='n'
           ? `<button class="btn" onclick="inviteSheet('${u.id}')">${I.invite} ラウンドに誘う（謝礼不要）</button>`
           : `<button class="btn" onclick="go('#/offer/${u.id}')">${I.invite} オファーで誘う</button>`)
-        : `<button class="btn" onclick="openChat('${u.id}')">メッセージを送る</button>`}
+        : S.role==='f' && !isWoman
+          ? `<button class="btn" onclick="inviteSheet('${u.id}')">${I.invite} ラウンドに誘う</button>`
+          : `<button class="btn" onclick="openChat('${u.id}')">メッセージを送る</button>`}
     </div>
   </div>${demoPill()}`;
 };
@@ -754,7 +757,8 @@ function inviteSheet(id){
   const myDates = me().dates || [];
   const shared = u.dates.filter(d=>myDates.includes(d));
   const dates = shared.length ? shared : u.dates;
-  inv = { id, date: dates[0], mode: (isD() && S.role==='m' && !S.subActive) ? 'シミュゴルフ' : 'ラウンド', pay: (isD() && S.role==='m' && !S.subActive) ? '費用はこちらで持ちます' : 'プレー代はこちらで持ちます' };
+  const _isF = S.role==='f';
+  inv = { id, date: dates[0], mode: 'ラウンド', pay: _isF ? 'プレー代はご馳走いただけると嬉しいです' : 'プレー代はこちらで持ちます' };
   const iSim = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12.5" rx="2"/><path d="M9 20.5h6M12 16.5v4"/><path d="M8 12.5l2.5-3.5 2 2 3-4"/></svg>';
   const iRange = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20.5c2-1 3-2.6 3-5V5l8-1.8"/><circle cx="17" cy="14" r="2.6"/><path d="M4.5 20.5h8"/></svg>';
   const MODES = [
@@ -764,25 +768,25 @@ function inviteSheet(id){
   ];
   const html = () => `
     <h3>${esc(u.name)}さんを誘う</h3>
-    <p class="muted">仲間探しスタイルの方には、サブスクだけで誘えます（謝礼不要）</p>
+    <p class="muted">${S.role==='f' ? 'お相手のプレー代の考え方はプロフィールで確認できます' : '仲間探しスタイルの方には、謝礼不要で誘えます'}</p>
     ${isD()?`
     <div class="label">会う形式 *</div>
-    <div class="mode-list">${MODES.map(([m,s,ic,tag])=>{
-      const locked = freeU && m==='ラウンド';
-      return `
-      <button class="mode-row ${inv.mode===m?'on':''}" style="${locked?'opacity:.55':''}" onclick="${locked?'paywall()':`inv.mode='${m}';inv.pay=inv.pay.replace(/^(プレー代|費用)/,'${m}'==='ラウンド'?'プレー代':'費用');window._invR()`}">
+    <div class="mode-list">${MODES.map(([m,s,ic,tag])=>`
+      <button class="mode-row ${inv.mode===m?'on':''}" onclick="inv.mode='${m}';inv.pay=inv.pay.replace(/^(プレー代|費用)/,'${m}'==='ラウンド'?'プレー代':'費用');window._invR()">
         <span class="mic">${ic}</span>
-        <span class="mtx"><span class="mt">${m}${locked?`<span class="mtag">サブスク限定</span>`:tag?`<span class="mtag">${tag}</span>`:''}</span><span class="ms">${s}</span></span>
+        <span class="mtx"><span class="mt">${m}${tag?`<span class="mtag">${tag}</span>`:''}</span><span class="ms">${s}</span></span>
         <span class="mck">${inv.mode===m?I.check.replace('width="40" height="40"','width="15" height="15"'):''}</span>
-      </button>`;}).join('')}</div>
-    ${freeU?`<p class="muted" style="font-size:10.5px;margin:2px 0 8px">無料会員はシミュゴルフ・打ちっぱなしの誘いが使えます（ラウンド誘いはサブスクで）</p>`:''}
+      </button>`).join('')}</div>
     `:''}
     <div class="label">日程${shared.length?'（お互いの空き日）':''}</div>
     <div class="opt-grid">${dates.map(d=>`<button class="opt ${inv.date===d?'on':''}" onclick="inv.date='${d}';window._invR()">${d}</button>`).join('')}</div>
     <div class="label">${isD()&&inv.mode!=='ラウンド'?'費用':'プレー代'}の宣言 *</div>
+    ${u.pay?`<div class="pay-hint">${I.pin} ${esc(u.name)}さんの希望：<b>${esc(u.pay)}</b></div>`:''}
     <div style="display:flex;flex-direction:column;gap:8px">
-      ${[(isD()&&inv.mode!=='ラウンド'?'費用':'プレー代')+'はこちらで持ちます','割り勘でお願いします','相談して決めたい'].map((p,i)=>`
-        <button class="opt ${inv.pay===p?'on':''}" style="border-radius:12px;text-align:left" onclick="inv.pay='${p}';window._invR()">${i===0?'★ ':''}${p}${i===0?'（返信率が上がります）':''}</button>`).join('')}
+      ${(S.role==='f'
+        ? [(isD()&&inv.mode!=='ラウンド'?'費用':'プレー代')+'はご馳走いただけると嬉しいです','割り勘でお願いします','相談して決めたい']
+        : [(isD()&&inv.mode!=='ラウンド'?'費用':'プレー代')+'はこちらで持ちます','割り勘でお願いします','相談して決めたい']).map((p,i)=>`
+        <button class="opt ${inv.pay===p?'on':''}" style="border-radius:12px;text-align:left" onclick="inv.pay='${p}';window._invR()">${i===0?'★ ':''}${p}${i===0?(S.role==='f'?'（希望として表示されます）':'（返信率が上がります）'):''}</button>`).join('')}
     </div>
     <div class="notice" style="margin:14px 0 0">
       <span class="ic">${I.shield}</span>
@@ -802,15 +806,15 @@ function sendInvite(){
   if(S.role==='m') S.bridge.msgs.push({sys:`⛳ ${inv.date} の${inv.mode||'ラウンド'}にお誘い（${inv.pay}）`, t:_invMsg, tm:'いま'});
   save(); closeSheet();
   go('#/chat/'+inv.id); render();
-  setTimeout(()=>toast('誘いを送りました。謝礼は発生しません'),300);
+  setTimeout(()=>toast(S.role==='f' ? '誘いを送りました' : '誘いを送りました。謝礼は発生しません'),300);
 }
 function paywall(){
   if(isD()){
     sheet(`<div class="paywall">
     <div class="pw-h">サブスクプラン（チケット制）</div>
-    <p class="muted" style="font-size:10.5px;margin-bottom:10px;text-align:center">無料でも：シミュ・打ちっぱなしの誘い／謝礼オファー（都度）／約束した相手とのメッセージ</p>
+    <p class="muted" style="font-size:10.5px;margin-bottom:10px;text-align:center">無料でも：誘い（全形式・宣言つき）／謝礼オファー（都度）／マッチ当日のメッセージ</p>
     <ul class="pw-list">
-      <li>ラウンド誘い（プレー代宣言）と新規メッセージが使い放題</li>
+      <li>新規メッセージと、マッチ翌日以降のやり取りが使い放題</li>
       <li>プレミアムは謝礼オファーチケットが毎月1枚届く（都度購入より55%お得）</li>
       <li>チケットは当月限り有効。使わないと失効します</li>
     </ul>
@@ -830,7 +834,12 @@ function paywall(){
   sheet(`<div class="paywall">${pwPlansHtml()}</div>`);
 }
 function freeMsgOK(id){
-  if((S.fixed||{})[id]) return true;
+  const fx = (S.fixed||{})[id];
+  if(fx){
+    if(!fx.matchedAt) return true;
+    const d = new Date(fx.matchedAt), n = new Date();
+    return d.getFullYear()===n.getFullYear() && d.getMonth()===n.getMonth() && d.getDate()===n.getDate();
+  }
   if(S.sentOffers.some(o=>o.to===id)) return true;
   const c = (S.chats||[]).find(x=>x.id===id);
   return !!(c && c.msgs.some(m=>m.who==='card'||m.who==='sys'));
@@ -956,7 +965,7 @@ function answerOffer(id, ok){
   if(ok){
     S.coins += o.reward; celebrate();
     S.fixed = S.fixed || {};
-    const fx = { date:o.date, course:o.course, mode:o.mode||'ラウンド', offer:true, reward:o.reward };
+    const fx = { date:o.date, course:o.course, mode:o.mode||'ラウンド', offer:true, reward:o.reward, matchedAt:Date.now() };
     S.fixed[o.from] = fx;
     let mc = S.chats.find(x=>x.id===o.from);
     if(!mc){ mc = {id:o.from, msgs:[]}; S.chats.unshift(mc); }
@@ -1139,7 +1148,7 @@ function openFixSheet(id){
 function fixRound(){
   const {id, date, course} = fixSel;
   S.fixed = S.fixed || {};
-  S.fixed[id] = { date, course };
+  S.fixed[id] = { date, course, matchedAt:Date.now() };
   let c = S.chats.find(x=>x.id===id);
   if(!c){ c = {id, msgs:[]}; S.chats.unshift(c); }
   c.msgs.push({who:'card', kind:'match', date, course});
@@ -1150,7 +1159,7 @@ function fixRound(){
 function sendMsg(id){
   const inp = document.getElementById('chat-in');
   const t = inp.value.trim(); if(!t) return;
-  if(S.role==='m' && !S.subActive && !(isD() && freeMsgOK(id))){ toast(isD()?'新しい相手へのメッセージ開始にはサブスク登録が必要です（誘い・オファーを送った相手とは無料で話せます）':'メッセージの送信にはサブスク登録が必要です'); setTimeout(paywall, 700); return; }
+  if(S.role==='m' && !S.subActive && !(isD() && freeMsgOK(id))){ toast(isD()?((S.fixed||{})[id]?'マッチ翌日以降のメッセージにはサブスク登録が必要です':'新しい相手へのメッセージ開始にはサブスク登録が必要です'):'メッセージの送信にはサブスク登録が必要です'); setTimeout(paywall, 700); return; }
   let c = S.chats.find(x=>x.id===id);
   if(!c){ c={id,msgs:[]}; S.chats.unshift(c); }
   c.msgs.push({who:'me', t, tm:'いま'});
