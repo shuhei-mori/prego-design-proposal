@@ -780,7 +780,7 @@ function inviteSheet(id){
   ];
   const html = () => `
     <h3>${esc(u.name)}さんを誘う</h3>
-    <p class="muted">${S.role==='f' ? 'お相手のプレー代の考え方はプロフィールで確認できます' : '仲間探しスタイルの方には、謝礼不要で誘えます'}</p>
+    <p class="muted">${S.role==='f' ? 'お相手のプレー代の考え方はプロフィールで確認できます' : '仲間探しスタイルの方には、謝礼不要でお誘いできます'}</p>
     ${isD()?`
     <div class="label">会う形式 *</div>
     <div class="mode-list">${MODES.map(([m,s,ic,tag])=>`
