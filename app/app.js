@@ -204,7 +204,15 @@ function demoPill(){
   return `<div class="pill-row">
     <button class="demo-pill" onclick="switchRole()">${r}<span class="sw">⇄ 切替</span></button>
     <button class="demo-pill theme" onclick="cycleTheme()">配色 <span class="tletter">${S.theme.toUpperCase()}</span></button>
+    <button class="demo-pill" style="padding:10px 14px" onclick="resetDemo()">↺</button>
   </div>`;
+}
+function resetDemo(){
+  if(!confirm('デモを最初の状態に戻しますか？（オファー・チャット・保存内容がリセットされます）')) return;
+  const t = S.theme;
+  localStorage.removeItem('prego-demo');
+  location.href = location.pathname + '?theme=' + t + '#/login';
+  location.reload();
 }
 function switchRole(){
   S.role = S.role === 'f' ? 'm' : 'f';
