@@ -81,6 +81,7 @@ const S = Object.assign({
   bridge: { msgs: [], note: null }, fixed: {},
   myMob: null, myWish: 'nice', limitMin: 120, calOpen: true,
   unreadIds: null, seenNtf: false,
+  reco: null,
   reviewDue: null, reviews: {},
   subActive: false, favs: {}, verified: true,
   ntf: { email:true, line:false, news:true, foot:true, like:true, msg:true },
@@ -476,6 +477,7 @@ V.home = () => {
             : 'プレー希望日を登録するとマッチ率が3倍になります →'}</span>
     </div>
     <div class="filters">
+      ${isD()?`<button class="chip" style="background:linear-gradient(120deg,#C9A452,var(--brass));color:#fff" onclick="go('#/reco')">♥ おすすめ</button>`:''}
       <button class="chip ${!S.hf?'':'line'}" onclick="S.hf=null;save();render()">すべて</button>
       ${isM?`
       <button class="chip ${S.hf==='n'?'':'line'}" onclick="S.hf='n';save();render()">仲間探し（謝礼不要）</button>
@@ -1330,6 +1332,12 @@ V.chat = id => {
         <button class="btn sm" style="width:100%;margin-top:10px" onclick="respondInvite('${id}',${i})">この内容で返答する</button>
       </div>`;
     }
+    if(m.who==='card' && m.kind==='mutual') return `
+      <div class="chatcard match">
+        <div class="cc-h"><span class="cc-ck">${I.check.replace('width="40" height="40"','width="13" height="13"')}</span> いいねが一致しました！</div>
+        <p style="font-size:11.5px;color:var(--ink-soft);margin:2px 0 8px">お互いに「あり」でした🎉 気持ちが通じているうちに誘ってみましょう</p>
+        <button class="btn sm" style="width:100%" onclick="${S.role==='m' && WOMEN.includes(u) && u.st==='o' ? `go('#/offer/${id}')` : `inviteSheet('${id}')`}">${I.invite} さっそく誘ってみる</button>
+      </div>`;
     if(m.who==='card' && m.kind==='review'){
       const done = !!S.reviews[id];
       return done ? `
@@ -2519,6 +2527,122 @@ V.editProfile = () => {
   </div>`;
 };
 
+/* ---- 今日のおすすめ（スワイプデッキ・機能1） ---- */
+const RECO_LIKED_YOU = ['w2','w7','w9','m2','m6'];
+function recoInit(){
+  if(!S.reco) S.reco = { left: 10, done: [], likes: [] };
+}
+function recoQueue(){
+  recoInit();
+  return pool().filter(u => !S.reco.done.includes(u.id));
+}
+function recoDist(u){
+  const n = parseInt(String(u.id).replace(/\D/g,''))||1;
+  return 20 + (n*13)%55;
+}
+function recoAct(kind){
+  recoInit();
+  const q = recoQueue();
+  const u = q[0]; if(!u || S.reco.left<=0) return;
+  if(kind==='invite'){
+    if(S.role==='m' && WOMEN.includes(u) && u.st==='o'){ go('#/offer/'+u.id); return; }
+    inviteSheet(u.id); return;
+  }
+  S.reco.done.push(u.id);
+  S.reco.left--;
+  if(kind==='like'){
+    S.reco.likes.push(u.id);
+    if(RECO_LIKED_YOU.includes(u.id)){
+      let c = S.chats.find(x=>x.id===u.id);
+      if(!c){ c = {id:u.id, msgs:[]}; S.chats.unshift(c); }
+      c.msgs.push({who:'card', kind:'mutual'});
+      initUnread(); if(!S.unreadIds.includes(u.id)) S.unreadIds.push(u.id);
+      celebrate();
+      save(); render();
+      setTimeout(()=>toast(`${u.name}さんと いいねが一致しました！`), 400);
+      return;
+    }
+    setTimeout(()=>toast('いいねを送りました。お相手に通知されます'), 150);
+  }
+  save(); render();
+}
+function recoSwipeOut(el, kind){
+  const t = kind==='like' ? 'translate(120%, -6%) rotate(14deg)' : kind==='pass' ? 'translate(-120%, -6%) rotate(-14deg)' : 'translate(0,-120%)';
+  el.style.transition = 'transform .3s ease, opacity .3s ease';
+  el.style.transform = t; el.style.opacity = '0';
+  setTimeout(()=>recoAct(kind), 280);
+}
+function bindReco(){
+  const el = document.getElementById('reco-card');
+  if(!el || el._bound) return;
+  el._bound = true;
+  let sx=0, sy=0, dx=0, dy=0, drag=false;
+  const start = (x,y)=>{ sx=x; sy=y; drag=true; el.style.transition='none'; };
+  const move = (x,y)=>{
+    if(!drag) return;
+    dx=x-sx; dy=y-sy;
+    el.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx/18}deg)`;
+    el.style.opacity = String(1 - Math.min(Math.abs(dx)/400, .3));
+  };
+  const end = ()=>{
+    if(!drag) return; drag=false;
+    if(dx>80) return recoSwipeOut(el,'like');
+    if(dx<-80) return recoSwipeOut(el,'pass');
+    if(dy<-80) return recoAct('invite');
+    el.style.transition='transform .25s var(--ease), opacity .2s';
+    el.style.transform=''; el.style.opacity='1';
+    dx=0; dy=0;
+  };
+  el.addEventListener('touchstart', e=>start(e.touches[0].clientX, e.touches[0].clientY), {passive:true});
+  el.addEventListener('touchmove', e=>move(e.touches[0].clientX, e.touches[0].clientY), {passive:true});
+  el.addEventListener('touchend', end);
+  el.addEventListener('pointerdown', e=>{ if(e.pointerType==='mouse'){ start(e.clientX, e.clientY); e.preventDefault(); } });
+  window.addEventListener('pointermove', e=>{ if(e.pointerType==='mouse') move(e.clientX, e.clientY); });
+  window.addEventListener('pointerup', e=>{ if(e.pointerType==='mouse') end(); });
+}
+V.reco = () => {
+  recoInit();
+  const q = recoQueue();
+  const u = q[0];
+  if(!u || S.reco.left<=0) return `
+  ${appbar({title:'今日のおすすめ', back:true, noBell:true})}
+  <div class="page nofoot" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70dvh;padding:0 32px;text-align:center">
+    <div style="font-size:40px;margin-bottom:12px">⛳</div>
+    <b style="font-size:16px">本日のおすすめは終了です</b>
+    <p class="muted" style="margin-top:8px">明日また10人ご紹介します。<br>日程マッチで「行ける日が合う相手」も探せます</p>
+    <button class="btn" style="margin-top:20px;max-width:280px" onclick="go('#/tee')">日程マッチを見る</button>
+  </div>${demoPill()}`;
+  const shared = (u.dates||[]).filter(d=>S.myDates.includes(d));
+  const isWoman = WOMEN.includes(u);
+  const next = q[1];
+  return `
+  ${appbar({title:'今日のおすすめ', back:true, noBell:true})}
+  <div class="page nofoot reco-stage">
+    <div class="reco-count"><span class="chip line" style="font-size:10px">残り ${S.reco.left}人</span><span class="muted" style="font-size:10px">左右スワイプ or ボタンで判定・上スワイプで誘う</span></div>
+    <div class="reco-deck">
+      ${next?`<div class="reco-card back"><img src="${next.img}"></div>`:''}
+      <div class="reco-card" id="reco-card">
+        <img src="${u.img}" draggable="false">
+        <div class="reco-grad"></div>
+        <div class="reco-info">
+          <div class="rn">${esc(u.name)} <span class="ra">${u.age}</span> ${isD()&&u.cert!==undefined?(u.cert?'<span class="chip brass" style="font-size:8.5px">認定</span>':''):''}</div>
+          <div class="rr">
+            <span>⛳ Best ${u.best}・Ave ${u.ave}</span>
+            <span>💰 ${esc(u.pay||'話し合って決めたい')}</span>
+            <span>🚗 車で約${recoDist(u)}分圏</span>
+          </div>
+          ${shared.length?`<div class="rd">📅 ${shared.slice(0,3).join('・')} お互い空いています</div>`:''}
+        </div>
+      </div>
+    </div>
+    <div class="reco-acts">
+      <button class="ra-btn pass" onclick="recoSwipeOut(document.getElementById('reco-card'),'pass')">✕<small>なし</small></button>
+      <button class="ra-btn go" onclick="recoAct('invite')">⛳<small>誘う</small></button>
+      <button class="ra-btn like" onclick="recoSwipeOut(document.getElementById('reco-card'),'like')">♥<small>あり</small></button>
+    </div>
+  </div>${demoPill()}`;
+};
+
 /* ---- お誘い設定（女性・機能1） ---- */
 V.inviteSet = () => {
   const f = S.fset;
@@ -2722,11 +2846,12 @@ function render(){
     'notif-settings': V.notifSettings, 'blocked': V.blocked, 'card': V.card,
     'password': V.password, 'verify': V.verify,
     'articles': V.articles, 'article': ()=>V.article(arg),
-    'me': V.me, 'edit-profile': V.editProfile, 'invite-set': V.inviteSet, 'host-compe': V.hostCompe,
+    'me': V.me, 'edit-profile': V.editProfile, 'invite-set': V.inviteSet, 'host-compe': V.hostCompe, 'reco': V.reco,
   };
   $app.innerHTML = (map[route] || V.login)();
   window.scrollTo(0,0);
   window.scrollTo(0, _sy);
+  if(route==='reco') setTimeout(bindReco, 0);
   countUp();
   if(route==='roundlog'){ document.fonts ? document.fonts.ready.then(drawFrame) : drawFrame(); setTimeout(drawFrame,300); }
 }
