@@ -82,6 +82,7 @@ const S = Object.assign({
   myMob: null, myWish: 'nice', limitMin: 120, calOpen: true,
   unreadIds: null, seenNtf: false,
   reco: null,
+  myStyle: 'o', paused: false,
   reviewDue: null, reviews: {},
   subActive: false, favs: {}, verified: true,
   ntf: { email:true, line:false, news:true, foot:true, like:true, msg:true },
@@ -464,6 +465,12 @@ V.home = () => {
   return `
   ${appbar({brand:true})}
   <div class="page">
+    ${isD() && S.paused ? `
+    <div class="notice warn" style="cursor:pointer" onclick="togglePause()">
+      <span class="ic">${I.bell}</span>
+      <span><b>休止中です。</b>お相手の検索・おすすめに表示されていません</span>
+      <span class="go">再開 →</span>
+    </div>`:''}
     ${isD() && S.reviewDue ? `
     <div class="notice warn" style="cursor:pointer" onclick="openReview('${S.reviewDue.id}')">
       <span class="ic">${I.star.replace('width="14" height="14"','width="17" height="17"')}</span>
@@ -489,6 +496,14 @@ V.home = () => {
   </div>
   ${tabbar('home')}${demoPill()}`;
 };
+function togglePause(){
+  if(S.paused){ S.paused=false; save(); render(); setTimeout(()=>toast('活動を再開しました。お相手の検索・おすすめに再び表示されます'),200); return; }
+  sheet(`
+    <h3>活動を休止しますか？</h3>
+    <p class="muted" style="font-size:12.5px;line-height:1.8">休止中は、お相手の検索・おすすめ・日程マッチにあなたが表示されなくなります。受信済みのメッセージはいつでも確認できます。再開はワンタップです。</p>
+    <button class="btn" style="margin-top:16px" onclick="S.paused=true;save();closeSheet();render();setTimeout(()=>toast('休止しました。再開するまで相手に表示されません'),200)">休止する</button>
+    <button class="btn ghost" style="margin-top:10px" onclick="closeSheet()">キャンセル</button>`);
+}
 function toggleLike(id){
   S.likes[id] = !S.likes[id]; save(); render();
   if(S.likes[id]) toast('いいねしました');
@@ -2031,6 +2046,11 @@ V.points = () => {
     return `
     ${appbar({title:'コイン', back:true})}
     <div class="page">
+      <button class="card" style="margin:14px 18px 0;padding:13px 15px;width:calc(100% - 36px);display:flex;align-items:center;gap:11px;text-align:left" onclick="go('#/invite-set')">
+        <span style="flex:none;width:36px;height:36px;border-radius:12px;background:var(--turf-soft);color:var(--fairway);display:flex;align-items:center;justify-content:center">${I.gear}</span>
+        <span style="flex:1"><b style="font-size:12.5px">お誘い設定</b><span class="muted" style="display:block;font-size:10.5px">スタイル・受付・謝礼金額の変更</span></span>
+        <span class="arw" style="color:var(--fairway)">${I.back.replace('M15 5l-7 7 7 7','M9 5l7 7-7 7')}</span>
+      </button>
       <div class="balance">
         <div class="k">CURRENT BALANCE</div>
         <div class="v"><span data-count="${S.coins}">0</span><small>コイン</small></div>
@@ -2197,6 +2217,7 @@ V.settings = () => `
       <button class="srow" onclick="go('#/notif-settings')"><span class="ic">${I.bell}</span>通知設定<span class="arw">›</span></button>
       <button class="srow" onclick="go('#/blocked')"><span class="ic">${I.shield}</span>ブロック中<span class="arw">›</span></button>
       ${S.role==='m'?`<button class="srow" onclick="go('#/subscription')"><span class="ic">${I.coin}</span>サブスクリプション<span class="tag2">${S.subActive?'利用中':'未加入'}</span></button>`:''}
+      ${isD()?`<button class="srow" onclick="togglePause()"><span class="ic">${I.bell}</span>${S.paused?'休止中（タップで再開）':'休止する'}<span class="tag2">${S.paused?'停止中':''}</span></button>`:''}
       <button class="srow" onclick="go('#/card')"><span class="ic">${I.coin}</span>クレジットカード情報の更新<span class="arw">›</span></button>
       <button class="srow" onclick="go('#/password')"><span class="ic">${I.gear}</span>パスワード更新<span class="arw">›</span></button>
       <button class="srow" onclick="go('#/verify')"><span class="ic">${I.shield}</span>本人確認<span class="tag2">${S.verified?'認証済':'要登録'}</span></button>
@@ -2525,6 +2546,12 @@ V.editProfile = () => {
     <select class="input"><option>お相手の分も払います</option><option selected>話し合って決めたい</option><option>お互い自分の分を払う</option><option>お相手に出してもらいたい</option></select>
     <div class="label">プレーエリア</div>
     <div class="psec"><div class="chips">${m.area.map(a=>`<span class="chip">${a}</span>`).join('')}<button class="chip line" onclick="toast('エリア編集（デモ）')">＋ 編集</button></div></div>
+    ${isD()&&S.role==='f'?`
+    <button class="notice warn" style="margin:16px 0 0;width:100%;cursor:pointer" onclick="go('#/invite-set')">
+      <span class="ic">${I.gear.replace('width="20" height="20"','width="17" height="17"')}</span>
+      <span>スタイル（仲間探し／おもてなし）と謝礼はお誘い設定で変更できます</span>
+      <span class="go">開く →</span>
+    </button>`:''}
     ${isD()?`
     <div class="label">移動手段</div>
     ${S.role==='f'?`
@@ -2733,6 +2760,16 @@ V.footprints = () => {
 };
 
 /* ---- お誘い設定（女性・機能1） ---- */
+function styleGuardOff(key){
+  const on = { rnd: S.fset.rnd!==false, sim: !!S.fset.sim, range: !!S.fset.range };
+  if(!on[key]) return true; // OFF→ONは常に可
+  const cnt = (on.rnd?1:0)+(on.sim?1:0)+(on.range?1:0);
+  if(cnt<=1){
+    toast('すべてのお誘いをOFFにはできません。お休みしたい場合は設定の「休止」をご利用ください');
+    return false;
+  }
+  return true;
+}
 V.inviteSet = () => {
   const f = S.fset;
   const row = (key, title, sub, feeKey) => `
@@ -2742,7 +2779,7 @@ V.inviteSet = () => {
           <b style="font-size:13px">${title}</b>
           <div class="muted" style="font-size:10.5px">${sub}</div>
         </div>
-        <button class="swt2 ${f[key]?'on':''}" onclick="S.fset.${key}=!S.fset.${key};save();render()"><i></i></button>
+        <button class="swt2 ${f[key]?'on':''}" onclick="if(!S.fset.${key}||styleGuardOff('${key}')){S.fset.${key}=!S.fset.${key};save();render()}"><i></i></button>
       </div>
       ${f[key]?`
       <div style="display:flex;align-items:center;gap:10px;margin-top:11px">
@@ -2753,22 +2790,38 @@ V.inviteSet = () => {
       </div>
       <p class="muted" style="font-size:10px;margin-top:7px">設定額はオファー画面にそのまま表示されます（あなたの受取は表示額の100%）</p>`:''}
     </div>`;
+  const styleCard = `
+    <div class="card" style="padding:14px 16px;margin:12px 0 14px">
+      <b style="font-size:13px">あなたのスタイル</b>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        ${[['n','仲間探し','謝礼なし・割り勘前提で誘いを受ける'],['o','おもてなし','謝礼つきオファーを受け付ける']].map(([k,t,s])=>`
+        <button class="venue-row ${S.myStyle===k?'on':''}" style="flex:1" onclick="S.myStyle='${k}';save();render()">
+          <span class="vn">${t}</span><span class="vt">${s}</span>
+        </button>`).join('')}
+      </div>
+      ${S.myStyle==='n'
+        ? `<p class="muted" style="font-size:10.5px;margin-top:9px">謝礼つきオファーは届かなくなります。プレー代宣言つきの誘いのみ受け取ります。<b>おもてなしに切り替えると、認定・ランクに応じた謝礼を受け取れます</b></p>`
+        : `<p class="muted" style="font-size:10.5px;margin-top:9px">プロフィールに「おもてなし」バッジが表示され、謝礼つきオファーが届きます（変更は月1回まで・本番仕様）</p>`}
+    </div>`;
   return `
   ${appbar({title:'お誘い設定', back:true})}
   <div class="page wrap">
-    <p class="muted" style="margin:12px 0 14px;font-size:12px">ラウンド以外のお誘い（インドアゴルフ・打ちっぱなし）を受け付けるか、金額とあわせて設定できます。OFFにするとお相手のオファー画面で選択できなくなります。</p>
+    ${S.paused?`<div class="notice warn" style="margin:12px 0 0"><span class="ic">${I.bell}</span><span><b>休止中です。</b>お相手の検索・おすすめに表示されていません</span><span class="go" onclick="S.paused=false;save();render()">再開 →</span></div>`:''}
+    ${styleCard}
+    ${S.myStyle==='n' ? '' : `<p class="muted" style="margin:0 0 14px;font-size:12px">受け付けるお誘いの種類と金額を設定できます。OFFにするとお相手のオファー画面で選択できなくなります。</p>`}
+    ${S.myStyle==='n' ? '' : `
     <div class="card" style="padding:14px 16px;margin-bottom:10px">
       <div style="display:flex;align-items:center;gap:10px">
         <div style="flex:1">
           <b style="font-size:13px">ラウンドのお誘い</b>
           <div class="muted" style="font-size:10.5px">謝礼はランク制（現在GOLD ¥17,600）のため金額は変更できません</div>
         </div>
-        <button class="swt2 ${S.fset.rnd!==false?'on':''}" onclick="S.fset.rnd=(S.fset.rnd===false);save();render()"><i></i></button>
+        <button class="swt2 ${S.fset.rnd!==false?'on':''}" onclick="if(S.fset.rnd===false||styleGuardOff('rnd')){S.fset.rnd=(S.fset.rnd===false);save();render()}"><i></i></button>
       </div>
       ${S.fset.rnd===false?`<p class="muted" style="font-size:10px;margin-top:8px">OFFの間、お相手のオファー画面でラウンドは「受付停止中」になります</p>`:''}
     </div>
     ${row('sim','インドアゴルフのお誘い','1〜2時間・駅近・雨でもOK','simFee')}
-    ${row('range','打ちっぱなしのお誘い','1時間前後・手ぶらOK','rangeFee')}
+    ${row('range','打ちっぱなしのお誘い','1時間前後・手ぶらOK','rangeFee')}`}
   </div>
   ${tabbar('my')}${demoPill()}`;
 };
