@@ -467,7 +467,7 @@ V.home = () => {
   <div class="page">
     ${isD() && S.paused ? `
     <div class="notice warn" style="cursor:pointer" onclick="togglePause()">
-      <span class="ic">${I.bell}</span>
+      <span class="ic">${I.bell.replace('width="21" height="21"','width="17" height="17"')}</span>
       <span><b>休止中です。</b>お相手の検索・おすすめに表示されていません</span>
       <span class="go">再開 →</span>
     </div>`:''}
@@ -2217,7 +2217,7 @@ V.settings = () => `
       <button class="srow" onclick="go('#/notif-settings')"><span class="ic">${I.bell}</span>通知設定<span class="arw">›</span></button>
       <button class="srow" onclick="go('#/blocked')"><span class="ic">${I.shield}</span>ブロック中<span class="arw">›</span></button>
       ${S.role==='m'?`<button class="srow" onclick="go('#/subscription')"><span class="ic">${I.coin}</span>サブスクリプション<span class="tag2">${S.subActive?'利用中':'未加入'}</span></button>`:''}
-      ${isD()?`<button class="srow" onclick="togglePause()"><span class="ic">${I.bell}</span>${S.paused?'休止中（タップで再開）':'休止する'}<span class="tag2">${S.paused?'停止中':''}</span></button>`:''}
+      ${isD()?`<button class="srow" onclick="togglePause()"><span class="ic">${I.bell.replace('width="21" height="21"','width="18" height="18"')}</span>${S.paused?'休止中（タップで再開）':'休止する'}<span class="tag2">${S.paused?'停止中':''}</span></button>`:''}
       <button class="srow" onclick="go('#/card')"><span class="ic">${I.coin}</span>クレジットカード情報の更新<span class="arw">›</span></button>
       <button class="srow" onclick="go('#/password')"><span class="ic">${I.gear}</span>パスワード更新<span class="arw">›</span></button>
       <button class="srow" onclick="go('#/verify')"><span class="ic">${I.shield}</span>本人確認<span class="tag2">${S.verified?'認証済':'要登録'}</span></button>
@@ -2806,7 +2806,7 @@ V.inviteSet = () => {
   return `
   ${appbar({title:'お誘い設定', back:true})}
   <div class="page wrap">
-    ${S.paused?`<div class="notice warn" style="margin:12px 0 0"><span class="ic">${I.bell}</span><span><b>休止中です。</b>お相手の検索・おすすめに表示されていません</span><span class="go" onclick="S.paused=false;save();render()">再開 →</span></div>`:''}
+    ${S.paused?`<div class="notice warn" style="margin:12px 0 0"><span class="ic">${I.bell.replace('width="21" height="21"','width="17" height="17"')}</span><span><b>休止中です。</b>お相手の検索・おすすめに表示されていません</span><span class="go" onclick="S.paused=false;save();render()">再開 →</span></div>`:''}
     ${styleCard}
     ${S.myStyle==='n' ? '' : `<p class="muted" style="margin:0 0 14px;font-size:12px">受け付けるお誘いの種類と金額を設定できます。OFFにするとお相手のオファー画面で選択できなくなります。</p>`}
     ${S.myStyle==='n' ? '' : `
