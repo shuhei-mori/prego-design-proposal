@@ -251,6 +251,7 @@ function switchRole(){
     });
     S.bridgeM.msgs = [];
   }
+  ensureOfferCards();
   if(S.role==='f' && S.bridge.msgs.length){
     let c = S.chats.find(x=>x.id==='m1');
     if(!c){ c = {id:'m1', msgs:[]}; S.chats.unshift(c); }
@@ -1180,6 +1181,10 @@ V.offers = () => {
         </div>
       </div>`;
   }).join('');
+  const _want = isM ? 'w' : 'm';
+  let _seenDirty = false;
+  (S.recvOffers||[]).forEach(o=>{ if(String(o.from).startsWith(_want) && o.status==='pending' && !o.seen){ o.seen=true; _seenDirty=true; } });
+  if(_seenDirty) save();
   const recvRows = (S.recvOffers||[]).filter(o=>String(o.from).startsWith(isM?'w':'m')).map(o=>{
     const u = find(o.from); if(!u) return '';
     if(o.status!=='pending') return `
@@ -1261,6 +1266,7 @@ function answerOffer(id, ok, fin){
 
 /* ---- messages ---- */
 V.messages = () => {
+  ensureOfferCards();
   initUnread();
   const rows = (S.chats||[]).map((c,i)=>{
     const u = find(c.id); const last = c.msgs[c.msgs.length-1] || {};
@@ -1281,6 +1287,24 @@ V.messages = () => {
   <div class="page">${rows || '<div class="empty"><div class="big">—</div>メッセージはまだありません</div>'}</div>
   ${tabbar('msg')}${demoPill()}`;
 };
+function ensureOfferCards(){
+  if(!S.chats) return;
+  const want = S.role==='f' ? 'm' : 'w';
+  (S.recvOffers||[]).forEach(o=>{
+    if(!String(o.from).startsWith(want)) return;
+    let c = S.chats.find(x=>x.id===o.from);
+    if(!c){ c = {id:o.from, msgs:[]}; S.chats.unshift(c); }
+    if(!c.msgs.some(m=>m.kind==='offer' && m.oid===o.id)){
+      c.msgs.push({who:'card', kind:'offer', oid:o.id, mode:o.mode||'ラウンド', date:o.date, course:o.course, reward:o.reward});
+      initUnread();
+      if(!S.unreadIds.includes(o.from)) S.unreadIds.push(o.from);
+    }
+  });
+}
+function offerBadgeCount(){
+  const want = S.role==='f' ? 'm' : 'w';
+  return (S.recvOffers||[]).filter(o=>o.status==='pending' && !o.seen && String(o.from).startsWith(want)).length;
+}
 function initUnread(){
   if(S.unreadIds) return;
   S.unreadIds = (S.chats||[]).filter(c=>{
@@ -1291,7 +1315,10 @@ function initUnread(){
 function markRead(id){
   initUnread();
   const i = S.unreadIds.indexOf(id);
-  if(i>=0){ S.unreadIds.splice(i,1); save(); }
+  let dirty = i>=0;
+  if(i>=0) S.unreadIds.splice(i,1);
+  (S.recvOffers||[]).forEach(o=>{ if(o.from===id && !o.seen){ o.seen=true; dirty=true; } });
+  if(dirty) save();
 }
 function openChat(id){
   if(!S.chats.find(c=>c.id===id)){ S.chats.unshift({id, msgs:[]}); save(); }
@@ -1929,6 +1956,7 @@ V.compe = id => {
 
 /* ---- mypage ---- */
 V.mypage = () => {
+  ensureOfferCards();
   const m = me();
   const isF = S.role==='f';
   const tier = TIERS[m.tier||'GOLD'];
@@ -1936,7 +1964,7 @@ V.mypage = () => {
   const menu = [
     ['プロフィール', I.user, ()=>`go('#/me')`],
     [isF?'コイン':'ポイント', I.coin, ()=>`go('#/points')`],
-    ['オファー', I.invite, ()=>`go('#/offers')`, isF?'2':''],
+    ['オファー', I.invite, ()=>`go('#/offers')`, offerBadgeCount()||''],
     ['ラウンド録', I.camera, ()=>`go('#/roundlog')`],
     ['フレーム', I.trophy, ()=>`go('#/frames')`],
     ['ゴルフ場', I.pin, ()=>`coursePick=null;go('#/courses')`],
