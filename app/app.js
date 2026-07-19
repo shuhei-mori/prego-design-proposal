@@ -954,8 +954,11 @@ function openInviteConfirm(){
     ['宣言', inv.pay],
   ];
   const html = () => `
-    <h3>この内容で${esc(u.name)}さんに送ります</h3>
-    ${rows.map(([k,v])=>`<div class="cc-row"><span>${k}</span><b>${esc(v)}</b></div>`).join('')}
+    <h3>内容の確認</h3>
+    <p class="muted">この内容で${esc(u.name)}さんに送ります</p>
+    <div class="sum-box">
+      ${rows.map(([k,v])=>`<div class="sum-row"><span>${k}</span><b>${esc(v)}</b></div>`).join('')}
+    </div>
     <button class="card" style="margin-top:14px;padding:12px 14px;width:100%;display:flex;gap:10px;align-items:center;text-align:left;border:1.5px solid ${invAgree?'var(--fairway)':'var(--line)'}" onclick="invAgree=!invAgree;window._icR()">
       <span class="ckb ${invAgree?'on':''}">${invAgree?I.check.replace('width="40" height="40"','width="12" height="12"'):''}</span>
       <span style="flex:1;font-size:11.5px">注意事項に同意します<span class="muted" style="display:block;font-size:10px">宣言した内容はあとから変更できません。無断キャンセル・迷惑行為はアカウント停止の対象です</span></span>

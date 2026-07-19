@@ -1096,3 +1096,10 @@ select.input{appearance:none;-webkit-appearance:none;background-image:url("data:
 .sc-l{font-size:9px;font-weight:700;color:var(--ink-soft)}
 .sc-note{font-size:9px;color:var(--ink-soft);text-align:right;margin-top:8px}
 .sc-note b{color:var(--brass-ink)}
+
+/* v64: 確認シートのサマリー行（cc-rowのカード外崩れを修正） */
+.sum-box{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:4px 16px;margin-top:12px}
+.sum-row{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
+.sum-row:last-child{border-bottom:none}
+.sum-row span{color:var(--ink-soft);font-size:11px;flex:none}
+.sum-row b{text-align:right;color:var(--ink)}
