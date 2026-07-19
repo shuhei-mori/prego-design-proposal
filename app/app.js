@@ -175,6 +175,7 @@ const I = {
   trophy:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v6a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 5M17 6h3a3 3 0 0 1-3 5"/></svg>',
   car:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15l1.5-5A2 2 0 0 1 7.4 8.5h9.2a2 2 0 0 1 1.9 1.5L20 15"/><rect x="3" y="15" width="18" height="4.5" rx="1.5"/><circle cx="7.2" cy="19.5" r="1.3"/><circle cx="16.8" cy="19.5" r="1.3"/></svg>',
   train:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="5" y="3" width="14" height="14" rx="3"/><path d="M5 11h14M9 21l1.5-3M15 21l-1.5-3"/><circle cx="9" cy="14" r=".6" fill="currentColor"/><circle cx="15" cy="14" r=".6" fill="currentColor"/></svg>',
+  sliders:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 7h2.8M11.2 7h8.8M4 12h8.8M17.2 12h2.8M4 17h4.8M13.2 17h6.8"/><circle cx="9" cy="7" r="2.2"/><circle cx="15" cy="12" r="2.2"/><circle cx="11" cy="17" r="2.2"/></svg>',
   shield:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 2.8v5.4c0 4.6-3 8-7 9.8-4-1.8-7-5.2-7-9.8V5.8z"/><path d="M9 12l2 2 4-4.2"/></svg>',
 };
 
@@ -1939,11 +1940,11 @@ V.mypage = () => {
     ['ラウンド録', I.camera, ()=>`go('#/roundlog')`],
     ['フレーム', I.trophy, ()=>`go('#/frames')`],
     ['ゴルフ場', I.pin, ()=>`coursePick=null;go('#/courses')`],
-    ...(isF && isD() ? [['お誘い設定', I.gear, ()=>`go('#/invite-set')`]] : []),
+    ...(isF && isD() ? [['お誘い設定', I.sliders, ()=>`go('#/invite-set')`]] : []),
     ['ヘルプ', I.bell, ()=>`go('#/help')`],
     ['記事', I.flag.replace('viewBox','width="23" height="23" viewBox'), ()=>`go('#/articles')`],
     ['設定', I.gear, ()=>`go('#/settings')`],
-  ].map(x=>`<button class="mi" onclick="${x[2]()}">${x[1]}${x[0]}${x[3]?`<span class="bd">${x[3]}件</span>`:''}</button>`).join('');
+  ].map(x=>`<button class="mi" onclick="${x[2]()}">${x[1]}${x[0]}${x[3]?`<span class="bd">${x[3]}</span>`:''}</button>`).join('');
   const myBellDot = (isD()&&S.reviewDue) || !S.seenNtf;
   return `
   <div class="page">
@@ -2047,7 +2048,7 @@ V.points = () => {
     ${appbar({title:'コイン', back:true})}
     <div class="page">
       <button class="card" style="margin:14px 18px 0;padding:13px 15px;width:calc(100% - 36px);display:flex;align-items:center;gap:11px;text-align:left" onclick="go('#/invite-set')">
-        <span style="flex:none;width:36px;height:36px;border-radius:12px;background:var(--turf-soft);color:var(--fairway);display:flex;align-items:center;justify-content:center">${I.gear}</span>
+        <span style="flex:none;width:36px;height:36px;border-radius:12px;background:var(--turf-soft);color:var(--fairway);display:flex;align-items:center;justify-content:center">${I.sliders}</span>
         <span style="flex:1"><b style="font-size:12.5px">お誘い設定</b><span class="muted" style="display:block;font-size:10.5px">スタイル・受付・謝礼金額の変更</span></span>
         <span class="arw" style="color:var(--fairway)">${I.back.replace('M15 5l-7 7 7 7','M9 5l7 7-7 7')}</span>
       </button>
@@ -2548,7 +2549,7 @@ V.editProfile = () => {
     <div class="psec"><div class="chips">${m.area.map(a=>`<span class="chip">${a}</span>`).join('')}<button class="chip line" onclick="toast('エリア編集（デモ）')">＋ 編集</button></div></div>
     ${isD()&&S.role==='f'?`
     <button class="notice warn" style="margin:16px 0 0;width:100%;cursor:pointer" onclick="go('#/invite-set')">
-      <span class="ic">${I.gear.replace('width="20" height="20"','width="17" height="17"')}</span>
+      <span class="ic">${I.sliders.replace('width="21" height="21"','width="17" height="17"')}</span>
       <span>スタイル（仲間探し／おもてなし）と謝礼はお誘い設定で変更できます</span>
       <span class="go">開く →</span>
     </button>`:''}
