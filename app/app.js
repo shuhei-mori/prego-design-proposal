@@ -2540,6 +2540,13 @@ function recoDist(u){
   const n = parseInt(String(u.id).replace(/\D/g,''))||1;
   return 20 + (n*13)%55;
 }
+function recoDistLabel(u){
+  const m = recoDist(u);
+  if(m <= 30) return '車で30分圏内';
+  if(m <= 45) return '車で45分圏内';
+  if(m <= 60) return '車で1時間圏内';
+  return '車で1時間超';
+}
 function recoAct(kind){
   recoInit();
   const q = recoQueue();
@@ -2625,11 +2632,14 @@ V.reco = () => {
         <img src="${u.img}" draggable="false">
         <div class="reco-grad"></div>
         <div class="reco-info">
-          <div class="rn">${esc(u.name)} <span class="ra">${u.age}</span> ${isD()&&u.cert!==undefined?(u.cert?'<span class="chip brass" style="font-size:8.5px">認定</span>':''):''}</div>
+          <div class="rn">${esc(u.name)} <span class="ra">${u.age}</span>
+            ${isWoman&&u.st?(u.st==='o'?'<span class="chip brass" style="font-size:8.5px">おもてなし</span>':'<span class="chip" style="font-size:8.5px;background:rgba(255,255,255,.9);color:var(--fairway-deep)">仲間探し</span>'):''}
+            ${isD()&&u.cert?'<span class="chip brass" style="font-size:8.5px">認定</span>':''}
+          </div>
           <div class="rr">
             <span>⛳ Best ${u.best}・Ave ${u.ave}</span>
             <span>💰 ${esc(u.pay||'話し合って決めたい')}</span>
-            <span>🚗 車で約${recoDist(u)}分圏</span>
+            <span>🚗 ${recoDistLabel(u)}</span>
           </div>
           ${shared.length?`<div class="rd">📅 ${shared.slice(0,3).join('・')} お互い空いています</div>`:''}
         </div>
