@@ -1929,9 +1929,7 @@ V.mypage = () => {
         <img src="${m.img}">
       </span>
       <div class="nm">${esc(m.name)} ${isF?tierBadge(m.tier):(S.subActive?'<span class="chip brass" style="font-size:9px">サブスク会員</span>':'<span class="chip line" style="font-size:9px">無料会員</span>')}</div>
-      <div class="meta" style="gap:8px">
-        <div class="m"><div class="v" style="display:flex;align-items:center;gap:6px"><span style="color:var(--brass-bright);letter-spacing:2px;font-size:15px">${'★'.repeat(Math.round(m.rating))}</span><span>${m.rating.toFixed(1)}</span></div><div class="k">レビュー ${m.rc}件</div></div>
-      </div>
+
     </div>
     ${isD() ? (()=>{
       recoInit();
@@ -1939,23 +1937,30 @@ V.mypage = () => {
       const likedIds = [...new Set([...(S.reco.likes||[]), ...Object.keys(S.likes||{}).filter(k=>S.likes[k] && find(k))])];
       const mutual = likedMe.filter(id => likedIds.includes(id));
       const foot = isF ? 450 : 244;
+      const ic = svg => svg.replace(/width="\d+" height="\d+" /,'').replace('<svg ','<svg width="19" height="19" ');
+      const mutualIc = `<span class="sc-dbl">${ic(I.heart)}${ic(I.heart)}</span>`;
+      const cell = (icon, n, plus, label, act) => `
+        <button class="sc-cell" onclick="${act}">
+          <span class="sc-ic">${icon}</span>
+          <span class="sc-n">${n}${plus?`<sup>+${plus}</sup>`:''}</span>
+          <span class="sc-l">${label}</span>
+        </button>`;
       return `
-    <div class="react-card">
-      <div class="rc-grid four">
-        <button class="rc-cell" onclick="go('#/roundlog')">
-          <span class="rc-i">⛳</span><span class="rc-n">${m.rounds}</span><span class="rc-l">ラウンド</span><span class="rc-new">+2</span>
-        </button>
-        <button class="rc-cell" onclick="go('#/footprints')">
-          <span class="rc-i">👀</span><span class="rc-n">${foot}</span><span class="rc-l">足あと</span><span class="rc-new">+3</span>
-        </button>
-        <button class="rc-cell" onclick="go('#/likes')">
-          <span class="rc-i">♥</span><span class="rc-n">${likedMe.length}</span><span class="rc-l">いいね</span><span class="rc-new">+1</span>
-        </button>
-        <button class="rc-cell" onclick="go('#/likes')">
-          <span class="rc-i">🤝</span><span class="rc-n">${mutual.length}</span><span class="rc-l">相互いいね</span>${mutual.length?'<span class="rc-new">NEW</span>':''}
-        </button>
+    <div class="stats-card">
+      <button class="sc-rating" onclick="toast('レビュー一覧（デモでは省略）')">
+        <span class="sc-star">${I.star.replace('width="14" height="14"','width="19" height="19"')}</span>
+        <span class="sc-rv">${m.rating.toFixed(1)}</span>
+        <span class="sc-rc">レビュー ${m.rc}件</span>
+        <span class="arw" style="margin-left:auto;color:var(--ink-soft)">${I.back.replace('M15 5l-7 7 7 7','M9 5l7 7-7 7').replace('width="20" height="20"','width="14" height="14"')}</span>
+      </button>
+      <div class="sc-hr"></div>
+      <div class="sc-grid">
+        ${cell(ic(I.flag), m.rounds, 2, 'ラウンド', `go('#/roundlog')`)}
+        ${cell(ic(I.foot), foot, 3, '足あと', `go('#/footprints')`)}
+        ${cell(ic(I.heart), likedMe.length, 1, 'いいね', `go('#/likes')`)}
+        ${cell(mutualIc, mutual.length, 0, '相互いいね', `go('#/likes')`)}
       </div>
-      <p class="muted" style="font-size:9.5px;margin-top:7px;text-align:right">数字は合計・<span style="color:var(--brass-ink);font-weight:700">＋◯</span> は今週の新着</p>
+      <p class="sc-note">数字は合計・<b>＋◯</b> は今週の新着</p>
     </div>`;})() : ''}
     ${isF && isD() ? `
     <div class="card" style="margin:16px 18px 0;padding:14px 16px">

@@ -1065,3 +1065,23 @@ select.input{appearance:none;-webkit-appearance:none;background-image:url("data:
 .rc-cell .rc-n{font-family:var(--font-num);font-weight:500;font-size:22px;line-height:1.1;color:var(--fairway-deep)}
 .rc-cell .rc-l{font-size:9.5px;font-weight:700;color:var(--ink-soft)}
 .rc-cell .rc-new{position:absolute;top:6px;right:8px;background:linear-gradient(120deg,#C9A452,var(--brass));color:#fff;font-size:8px;font-weight:700;border-radius:99px;padding:1px 6px}
+
+/* v59: マイページ統計カード（レーティング統合・細線アイコン） */
+.stats-card{margin:16px 18px 0;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:4px 15px 11px;box-shadow:var(--sh-card)}
+.sc-rating{display:flex;align-items:center;gap:8px;width:100%;padding:11px 0 9px;text-align:left}
+.sc-star{color:var(--brass-bright)}
+.sc-star svg path{fill:currentColor;stroke:none}
+.sc-rv{font-family:var(--font-num);font-weight:400;font-size:26px;line-height:1;color:var(--ink)}
+.sc-rc{font-size:10.5px;color:var(--ink-soft);margin-left:2px}
+.sc-hr{height:1px;background:var(--line)}
+.sc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;padding-top:10px}
+.sc-cell{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 0;border-radius:12px;transition:background .15s var(--ease)}
+.sc-cell:active{background:var(--turf-soft)}
+.sc-ic{color:var(--fairway);height:20px;display:flex;align-items:center}
+.sc-dbl{display:flex;align-items:center}
+.sc-dbl svg:last-child{margin-left:-9px;opacity:.55}
+.sc-n{font-family:var(--font-num);font-weight:500;font-size:19px;line-height:1.1;color:var(--ink)}
+.sc-n sup{font-family:var(--font-ui);font-size:8.5px;font-weight:700;color:var(--brass-ink);margin-left:2px;vertical-align:super}
+.sc-l{font-size:9px;font-weight:700;color:var(--ink-soft)}
+.sc-note{font-size:9px;color:var(--ink-soft);text-align:right;margin-top:8px}
+.sc-note b{color:var(--brass-ink)}
