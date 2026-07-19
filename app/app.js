@@ -1909,6 +1909,7 @@ V.mypage = () => {
   const foot = (isF?MEN:WOMEN).slice(0,4);
   const menu = [
     ['プロフィール', I.user, ()=>`go('#/me')`],
+    ...(isD() ? [['いいね', I.heart.replace('width="17" height="17"','width="21" height="21"'), ()=>`go('#/likes')`]] : []),
     [isF?'コイン':'ポイント', I.coin, ()=>`go('#/points')`],
     [isF?'受信オファー':'オファー状況', I.invite, ()=>`go('#/offers')`, isF?'2':''],
     ['ラウンド録', I.camera, ()=>`go('#/roundlog')`],
@@ -2584,7 +2585,11 @@ function bindReco(){
   if(!el || el._bound) return;
   el._bound = true;
   let sx=0, sy=0, dx=0, dy=0, drag=false;
-  const start = (x,y)=>{ sx=x; sy=y; drag=true; el.style.transition='none'; };
+  const EDGE = 36;
+  const start = (x,y)=>{
+    if(x < EDGE || x > window.innerWidth - EDGE) return; // 画面端はブラウザの戻る/進むに譲る
+    sx=x; sy=y; drag=true; el.style.transition='none';
+  };
   const move = (x,y)=>{
     if(!drag) return;
     dx=x-sx; dy=y-sy;
@@ -2651,6 +2656,34 @@ V.reco = () => {
       <button class="ra-btn like" onclick="recoSwipeOut(document.getElementById('reco-card'),'like')">♥<small>あり</small></button>
     </div>
   </div>`;
+};
+
+/* ---- いいね一覧（機能1） ---- */
+V.likes = () => {
+  recoInit();
+  const likedIds = [...new Set([...(S.reco.likes||[]), ...Object.keys(S.likes||{}).filter(k=>S.likes[k] && find(k))])];
+  const likedMe = RECO_LIKED_YOU.filter(id => find(id) && (S.role==='m' ? id.startsWith('w') : id.startsWith('m')));
+  const row = (u, mutual) => `
+    <button class="card mcard" style="width:100%;text-align:left" onclick="go('#/profile/${u.id}')">
+      <img class="av" src="${u.img}" style="width:48px;height:48px">
+      <div class="info">
+        <div class="nm">${esc(u.name)} <span class="ag">${u.age}</span> ${mutual?'<span class="chip brass" style="font-size:8.5px">相互いいね</span>':''}</div>
+        <div class="st"><span>Best <b>${u.best}</b></span><span>${recoDistLabel(u)}</span></div>
+      </div>
+      <span class="arw" style="color:var(--fairway)">${I.back.replace('M15 5l-7 7 7 7','M9 5l7 7-7 7')}</span>
+    </button>`;
+  const likedRows = likedIds.map(id => row(find(id), likedMe.includes(id))).join('');
+  const likedMeRows = likedMe.map(id => row(find(id), likedIds.includes(id))).join('');
+  return `
+  ${appbar({title:'いいね', back:true})}
+  <div class="page tee-body">
+    <div class="sec-h" style="padding:4px 2px 0"><span class="t">あなたに「あり」した人</span><span class="s">${likedMe.length}人</span></div>
+    ${likedMeRows || '<p class="muted" style="font-size:12px;padding:8px 2px">まだいません。おすすめでスワイプしてみましょう</p>'}
+    <div class="sec-h" style="padding:12px 2px 0"><span class="t">あなたが「あり」した人</span><span class="s">${likedIds.length}人</span></div>
+    ${likedRows || '<p class="muted" style="font-size:12px;padding:8px 2px">まだいません</p>'}
+    <button class="btn" style="margin-top:8px" onclick="go('#/reco')">♥ 今日のおすすめを見る</button>
+  </div>
+  ${tabbar('')}${demoPill()}`;
 };
 
 /* ---- お誘い設定（女性・機能1） ---- */
@@ -2856,7 +2889,7 @@ function render(){
     'notif-settings': V.notifSettings, 'blocked': V.blocked, 'card': V.card,
     'password': V.password, 'verify': V.verify,
     'articles': V.articles, 'article': ()=>V.article(arg),
-    'me': V.me, 'edit-profile': V.editProfile, 'invite-set': V.inviteSet, 'host-compe': V.hostCompe, 'reco': V.reco,
+    'me': V.me, 'edit-profile': V.editProfile, 'invite-set': V.inviteSet, 'host-compe': V.hostCompe, 'reco': V.reco, 'likes': V.likes,
   };
   $app.innerHTML = (map[route] || V.login)();
   window.scrollTo(0,0);
