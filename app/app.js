@@ -68,6 +68,7 @@ const ARTICLES = [
 const store = JSON.parse(localStorage.getItem('prego-demo') || '{}');
 const S = Object.assign({
   role: null,            // 'm' | 'f'
+  fid: 'w1',             // female demo persona: 'w1'=MIKA / 'w2'=SAKI
   likes: {}, follows: {},
   points: 30000,         // male points
   coins: 17600,          // female coins
@@ -118,7 +119,7 @@ const defaultChats = role => role === 'm' ? [
 
 /* ---------- helpers ---------- */
 const $app = document.getElementById('app');
-const me = () => S.role === 'f' ? { ...WOMEN[0], name:'みどり', tier:'GOLD' } : MEN[0];
+const me = () => S.role === 'f' ? { ...(WOMEN.find(w=>w.id===(S.fid||'w1'))||WOMEN[0]) } : MEN[0];
 const pool = () => S.role === 'f' ? MEN : WOMEN;
 const find = id => [...WOMEN, ...MEN].find(u => u.id === id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -223,9 +224,11 @@ function ringStyle(tk){
   return `background:${c}`;
 }
 function demoPill(){
-  const r = S.role === 'f' ? '女性デモ：みどり' : '男性デモ：SHU';
+  const r = S.role === 'f' ? '女性デモ：'+me().name : '男性デモ：SHU';
+  const other = (S.fid||'w1')==='w1' ? 'SAKI' : 'MIKA';
   return `<div class="pill-row">
     <button class="demo-pill" onclick="switchRole()">${r}<span class="sw">⇄ 切替</span></button>
+    ${S.role==='f'?`<button class="demo-pill" onclick="switchFemale()"><span class="sw">⇄</span> ${other}</button>`:''}
     <button class="demo-pill theme" onclick="cycleTheme()">配色 <span class="tletter">${S.theme.toUpperCase()}</span></button>
     <button class="demo-pill" style="padding:10px 14px" onclick="resetDemo()">↺</button>
   </div>`;
@@ -237,42 +240,77 @@ function resetDemo(){
   location.href = location.pathname + '?theme=' + t + '#/login';
   location.reload();
 }
+function saveFState(){
+  S.fstate = S.fstate || {};
+  S.fstate[S.fid||'w1'] = { chats:S.chats, unread:S.unreadIds, fixedM1:(S.fixed||{}).m1||null, reviewDue:S.reviewDue||null };
+}
+function loadFState(){
+  const st = (S.fstate||{})[S.fid||'w1'];
+  S.chats = (st && st.chats) || defaultChats('f');
+  S.unreadIds = st ? st.unread : null;
+  S.fixed = S.fixed || {};
+  if(st && st.fixedM1) S.fixed.m1 = st.fixedM1; else delete S.fixed.m1;
+  S.reviewDue = st ? st.reviewDue : null;
+}
 function switchRole(){
-  S.role = S.role === 'f' ? 'm' : 'f';
-  S.chats = defaultChats(S.role);
-  S.unreadIds = null;
-  if(S.role==='m' && S.bridgeM && S.bridgeM.msgs.length){
-    S.bridgeM.msgs.forEach(m=>{
-      let c = S.chats.find(x=>x.id===m.to);
-      if(!c){ c = {id:m.to, msgs:[]}; S.chats.unshift(c); }
-      const ri = c.msgs.findIndex(x=>x.kind==='review');
-      if(m.card.kind!=='review' && ri>=0) c.msgs.splice(ri, 0, {who:'card', ...m.card});
-      else c.msgs.push({who:'card', ...m.card});
-    });
-    S.bridgeM.msgs = [];
+  if(S.role==='f'){
+    saveFState();
+    S.role = 'm';
+    S.chats = S.mchats || defaultChats('m');
+    S.unreadIds = S.munread || null;
+    S.reviewDue = S.mrev || null;
+    if(S.bridgeM && S.bridgeM.msgs.length){
+      S.bridgeM.msgs.forEach(m=>{
+        let c = S.chats.find(x=>x.id===m.to);
+        if(!c){ c = {id:m.to, msgs:[]}; S.chats.unshift(c); }
+        const ri = c.msgs.findIndex(x=>x.kind==='review');
+        if(m.card.kind!=='review' && ri>=0) c.msgs.splice(ri, 0, {who:'card', ...m.card});
+        else c.msgs.push({who:'card', ...m.card});
+      });
+      S.bridgeM.msgs = [];
+    }
+  } else {
+    S.mchats = S.chats; S.munread = S.unreadIds; S.mrev = S.reviewDue||null;
+    S.role = 'f';
+    loadFState();
+    mergeBridgeF();
   }
   ensureOfferCards();
-  if(S.role==='f' && S.bridge.msgs.length){
-    let c = S.chats.find(x=>x.id==='m1');
-    if(!c){ c = {id:'m1', msgs:[]}; S.chats.unshift(c); }
-    if(S.bridge.to) c.msgs.push({who:'sys', t:`（デモ）男性デモで${S.bridge.to}さん宛てに行った操作を、あなた（みどり）宛てとして再現しています`});
-    S.bridge.msgs.forEach(m=>{
-      if(m.reviewDue) S.reviewDue = { id:'m1' };
-      if(m.card){
-        const cc = {who:'card', ...m.card};
-        if(m.card.to){ cc.bridgedTo = m.card.to; delete cc.to; }
-        const ri = c.msgs.findIndex(x=>x.kind==='review');
-        if(cc.kind!=='review' && ri>=0) c.msgs.splice(ri, 0, cc); else c.msgs.push(cc);
-        return;
-      }
-      if(m.sys) c.msgs.push({who:'sys', t:m.sys});
-      if(m.t) c.msgs.push({who:'them', t:m.t, tm:m.tm});
-    });
-    S.bridge.msgs = []; S.bridge.to = null;
-    initUnread(); if(!S.unreadIds.includes('m1')) S.unreadIds.push('m1');
-    S.chats = [c, ...S.chats.filter(x=>x!==c)];
-  }
-  save(); toast(S.role==='f' ? '女性デモ（みどり）に切替えました' : '男性デモ（SHU）に切替えました');
+  save(); toast(S.role==='f' ? `女性デモ（${me().name}）に切替えました` : '男性デモ（SHU）に切替えました');
+  go('#/home'); render();
+}
+function mergeBridgeF(){
+  const fid = S.fid||'w1';
+  const mine = (S.bridge.msgs||[]).filter(m=>!m.tid || m.tid===fid);
+  if(!mine.length) return;
+  let c = S.chats.find(x=>x.id==='m1');
+  if(!c){ c = {id:'m1', msgs:[]}; S.chats.unshift(c); }
+  c.msgs.push({who:'sys', t:`（デモ）男性デモでSHUさんが${me().name}さん宛てに行った操作を再現しています`});
+  mine.forEach(m=>{
+    if(m.reviewDue) S.reviewDue = { id:'m1' };
+    if(m.card){
+      const cc = {who:'card', ...m.card};
+      if(m.card.to){ cc.bridgedTo = m.card.to; delete cc.to; }
+      if(cc.kind==='offer' && cc.oid && c.msgs.some(x=>x.kind==='offer' && x.oid===cc.oid)) return;
+      const ri = c.msgs.findIndex(x=>x.kind==='review');
+      if(cc.kind!=='review' && ri>=0) c.msgs.splice(ri, 0, cc); else c.msgs.push(cc);
+      return;
+    }
+    if(m.sys) c.msgs.push({who:'sys', t:m.sys});
+    if(m.t) c.msgs.push({who:'them', t:m.t, tm:m.tm});
+  });
+  S.bridge.msgs = (S.bridge.msgs||[]).filter(m=>m.tid && m.tid!==fid);
+  S.bridge.to = null;
+  initUnread(); if(!S.unreadIds.includes('m1')) S.unreadIds.push('m1');
+  S.chats = [c, ...S.chats.filter(x=>x!==c)];
+}
+function switchFemale(){
+  saveFState();
+  S.fid = (S.fid||'w1')==='w1' ? 'w2' : 'w1';
+  loadFState();
+  mergeBridgeF();
+  ensureOfferCards();
+  save(); toast(`女性デモ（${me().name}）に切替えました`);
   go('#/home'); render();
 }
 
@@ -323,13 +361,14 @@ function demoLogin(){
   <p class="muted">体験したい側を選んでください（あとで切替できます）</p>
   <div class="role-pick">
     <button class="rp" onclick="pickRole('m')"><img src="img/m1.jpg"><div class="nm">SHU（44）</div><div class="rl">男性ゴルファー・プレミアム会員</div></button>
-    <button class="rp" onclick="pickRole('f')"><img src="img/w1.jpg"><div class="nm">みどり（29）</div><div class="rl">女性ゴルファー・GOLDランク</div></button>
+    <button class="rp" onclick="pickRole('f','w1')"><img src="img/w1.jpg"><div class="nm">MIKA（29）</div><div class="rl">女性ゴルファー・GOLDランク</div></button>
+    <button class="rp" onclick="pickRole('f','w2')"><img src="img/w2.jpg"><div class="nm">SAKI（28）</div><div class="rl">女性ゴルファー・SILVERランク</div></button>
   </div>`);
 }
-function pickRole(r){
-  S.role = r; S.chats = defaultChats(r); save();
+function pickRole(r, fid){
+  S.role = r; if(fid) S.fid = fid; S.chats = defaultChats(r); save();
   closeSheet(); go('#/home'); render();
-  setTimeout(()=>toast(r==='m'?'ようこそ、SHUさん':'ようこそ、みどりさん'), 300);
+  setTimeout(()=>toast(`ようこそ、${r==='m'?'SHU':me().name}さん`), 300);
 }
 
 /* ---- signup (demo wizard / 実アプリ準拠) ---- */
@@ -1000,7 +1039,7 @@ function sendInvite(){
       pay:  {v: inv.pay, ok:true, alt:null},
     };
     c.msgs.push({who:'card', kind:'invite', mine:true, items, st:'wait'});
-    if(S.role==='m') S.bridge.msgs.push({card:{kind:'invite', to:inv.id, items:JSON.parse(JSON.stringify(items)), st:'wait'}});
+    if(S.role==='m') S.bridge.msgs.push({tid:inv.id, card:{kind:'invite', to:inv.id, items:JSON.parse(JSON.stringify(items)), st:'wait'}});
   } else {
     c.msgs.push({who:'sys', t:`${inv.date} の${inv.mode||'ラウンド'}にお誘い（${inv.pay}）`});
     if(inv.venue) c.msgs.push({who:'sys', t:`会場候補：${inv.venue}（${inv.meet||'現地集合'}）`});
@@ -1009,7 +1048,7 @@ function sendInvite(){
   if(isTBD(inv.pay)) c.msgs.push({who:'sys', t:'費用は「相談して決める」設定です。このチャットで話し合って決めましょう'});
   const _invMsg = `はじめまして！${inv.date}に${inv.mode&&inv.mode!=='ラウンド'?inv.mode:'ラウンド'}をご一緒できたら嬉しいです。${inv.pay}。`;
   c.msgs.push({who:'me', t:_invMsg, tm:'いま'});
-  if(S.role==='m') S.bridge.msgs.push({sys:`${inv.date} の${inv.mode||'ラウンド'}にお誘い（${inv.pay}）`+(inv.venue?`\n会場候補：${inv.venue}（${inv.meet||'現地集合'}）`:''), t:_invMsg, tm:'いま'});
+  if(S.role==='m') S.bridge.msgs.push({tid:inv.id, sys:`${inv.date} の${inv.mode||'ラウンド'}にお誘い（${inv.pay}）`+(inv.venue?`\n会場候補：${inv.venue}（${inv.meet||'現地集合'}）`:''), t:_invMsg, tm:'いま'});
   save(); closeSheet();
   go('#/chat/'+inv.id); render();
   setTimeout(()=>toast(S.role==='f' ? '誘いを送りました' : '誘いを送りました。謝礼は発生しません'),300);
@@ -1153,8 +1192,8 @@ function sendOffer(id){
   if(!oc){ oc = {id, msgs:[]}; S.chats.unshift(oc); }
   oc.msgs.push({who:'card', kind:'offer', mine:true, mode:_mode, date:of_.date, course:_course, reward:_reward});
   oc.msgs.push({who:'me', t:greet, tm:'いま'});
-  S.bridge.msgs.push({card:{kind:'offer', oid:'b'+oid, mode:_mode, date:of_.date, course:_course, reward:_reward}});
-  S.bridge.msgs.push({t:greet, tm:'いま'});
+  S.bridge.msgs.push({tid:id, card:{kind:'offer', oid:'b'+oid, mode:_mode, date:of_.date, course:_course, reward:_reward}});
+  S.bridge.msgs.push({tid:id, t:greet, tm:'いま'});
   save();
   $app.innerHTML = `
     <div class="page nofoot">
@@ -1193,11 +1232,10 @@ V.offers = () => {
         </div>
       </div>`;
   }).join('');
-  const _want = isM ? 'w' : 'm';
   let _seenDirty = false;
-  (S.recvOffers||[]).forEach(o=>{ if(String(o.from).startsWith(_want) && o.status==='pending' && !o.seen){ o.seen=true; _seenDirty=true; } });
+  (S.recvOffers||[]).forEach(o=>{ if(offerVisible(o) && o.status==='pending' && !o.seen){ o.seen=true; _seenDirty=true; } });
   if(_seenDirty) save();
-  const recvRows = (S.recvOffers||[]).filter(o=>String(o.from).startsWith(isM?'w':'m')).map(o=>{
+  const recvRows = (S.recvOffers||[]).filter(o=>offerVisible(o)).map(o=>{
     const u = find(o.from); if(!u) return '';
     if(o.status!=='pending') return `
       <div class="card mcard" style="opacity:.65">
@@ -1299,11 +1337,16 @@ V.messages = () => {
   <div class="page">${rows || '<div class="empty"><div class="big">—</div>メッセージはまだありません</div>'}</div>
   ${tabbar('msg')}${demoPill()}`;
 };
+function offerVisible(o){
+  const want = S.role==='f' ? 'm' : 'w';
+  if(!String(o.from).startsWith(want)) return false;
+  if(S.role==='f' && o.to && o.to!==(S.fid||'w1')) return false;
+  return true;
+}
 function ensureOfferCards(){
   if(!S.chats) return;
-  const want = S.role==='f' ? 'm' : 'w';
   (S.recvOffers||[]).forEach(o=>{
-    if(!String(o.from).startsWith(want)) return;
+    if(!offerVisible(o)) return;
     let c = S.chats.find(x=>x.id===o.from);
     if(!c){ c = {id:o.from, msgs:[]}; S.chats.unshift(c); }
     if(!c.msgs.some(m=>m.kind==='offer' && m.oid===o.id)){
@@ -1314,8 +1357,7 @@ function ensureOfferCards(){
   });
 }
 function offerBadgeCount(){
-  const want = S.role==='f' ? 'm' : 'w';
-  return (S.recvOffers||[]).filter(o=>o.status==='pending' && !o.seen && String(o.from).startsWith(want)).length;
+  return (S.recvOffers||[]).filter(o=>o.status==='pending' && !o.seen && offerVisible(o)).length;
 }
 function initUnread(){
   if(S.unreadIds) return;
@@ -1329,7 +1371,7 @@ function markRead(id){
   const i = S.unreadIds.indexOf(id);
   let dirty = i>=0;
   if(i>=0) S.unreadIds.splice(i,1);
-  (S.recvOffers||[]).forEach(o=>{ if(o.from===id && !o.seen){ o.seen=true; dirty=true; } });
+  (S.recvOffers||[]).forEach(o=>{ if(o.from===id && offerVisible(o) && !o.seen){ o.seen=true; dirty=true; } });
   if(dirty) save();
 }
 function openChat(id){
@@ -1573,7 +1615,7 @@ function sendPlan(){
   if(!c){ c = {id, msgs:[]}; S.chats.unshift(c); }
   const card = {who:'card', kind:'plan', mine:true, date:fx.date||'', time, spot, ok:false};
   c.msgs.push(card);
-  if(S.role==='m') S.bridge.msgs.push({card:{kind:'plan', date:fx.date||'', time, spot, ok:false}});
+  if(S.role==='m') S.bridge.msgs.push({tid:id, card:{kind:'plan', date:fx.date||'', time, spot, ok:false}});
   save(); closeSheet(); render();
   setTimeout(()=>{
     card.ok = true;
@@ -1796,7 +1838,7 @@ function submitReview(){
   S.reviewDue = null;
   const _c = S.chats.find(x=>x.id===id);
   if(_c && !_c.msgs.some(m=>m.who==='sys' && m.t.includes('お疲れ様でした'))) _c.msgs.push({who:'sys', t:'ラウンドお疲れ様でした。'});
-  if(S.role==='m') S.bridge.msgs.push({card:{kind:'review'}, reviewDue:true});
+  if(S.role==='m') S.bridge.msgs.push({tid:id, card:{kind:'review'}, reviewDue:true});
   save(); closeSheet();
   go('#/chat/'+id); render();
   setTimeout(()=>toast('評価を送信しました。お相手の評価が開示されました'), 300);
@@ -1822,7 +1864,7 @@ function sendAltVenue(id, name){
   if(!c){ c = {id, msgs:[]}; S.chats.unshift(c); }
   const card = {who:'card', kind:'venue', mine:true, name, ok:false};
   c.msgs.push(card);
-  if(S.role==='m') S.bridge.msgs.push({card:{kind:'venue', name, ok:true}});
+  if(S.role==='m') S.bridge.msgs.push({tid:id, card:{kind:'venue', name, ok:true}});
   save(); closeSheet(); render();
   setTimeout(()=>{
     card.ok = true;
@@ -1894,7 +1936,7 @@ function sendMsg(id){
   let c = S.chats.find(x=>x.id===id);
   if(!c){ c={id,msgs:[]}; S.chats.unshift(c); }
   c.msgs.push({who:'me', t, tm:'いま'});
-  if(S.role==='m') S.bridge.msgs.push({t, tm:'いま'});
+  if(S.role==='m') S.bridge.msgs.push({tid:id, t, tm:'いま'});
   save(); render();
   setTimeout(()=>{
     c.msgs.push({who:'them', t:'（デモ自動返信）ありがとうございます！楽しみにしています⛳', tm:'いま'});
