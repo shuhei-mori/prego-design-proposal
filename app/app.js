@@ -795,7 +795,7 @@ V.offer = id => {
   const meets = [
     {k:'onsite', l:`${I.pin} 現地集合${!_wantPickup?'（推奨）':''}`, d:'各自でコースへ・バッグは宅急便OK'},
     {k:'car', l:`${I.car} 車送迎${_wantPickup?'（推奨・お相手の希望）':''}`, d:'認証ドライバーのみ'},
-  ].map(m=>`<button class="opt oselcard ${of_.meet===m.k?'on':''}" onclick="of_.meet='${m.k}';render()">
+  ].map(m=>`<button class="opt oselcard ${of_.meet===m.k?'on':''}" onclick="if(of_.meet!=='${m.k}'){of_.meet='${m.k}';of_.course=null};render()">
      <span class="t" style="display:flex;gap:5px;align-items:center">${m.l}</span><span class="s">${m.d}</span></button>`).join('');
   const courses = COURSES.slice(0,3).map(c=>`<button class="opt ${of_.course===c?'on':''}" onclick="of_.course='${c}';render()">${c}</button>`).join('');
   const ready = of_.date && of_.meet && (of_.course || (isD() && of_.mode!=='ラウンド'));
@@ -1058,10 +1058,22 @@ function venuePlan(u, mode, meetPref){
   const fm = male ? mobOf(u) : myMobV();
   const mk = (n, at, bt, warnA, warnB, safety) => ({n, at, bt, warnA:!!warnA, warnB:!!warnB, safety:!!safety});
   if(mode !== 'ラウンド'){
+    const fwN = male ? wishOf(u) : (S.myWish || 'nice');
+    const pickupN = mm==='M1' && (meetPref ? meetPref==='car' : fwN==='need');
+    if(pickupN){
+      const srcP = mode==='インドアゴルフ'
+        ? [['ステップゴルフ 船橋（お相手の生活圏）',55,10],['GOLFBASE 津田沼（お相手の生活圏）',60,15],['アコーディア・ガーデン 渋谷（中間）',45,25]]
+        : [['船橋カントリー練習場（お相手の生活圏）',50,10],['ロッテ葛西ゴルフ（中間）',45,20],['明治神宮外苑ゴルフ練習場（中間）',55,30]];
+      return { meet:'送迎', note:'送迎のため、施設はお相手の生活圏を優先しています',
+        list: srcP.map(([n,d,r]) => mk(n,
+          male ? `あなた（送迎）：総運転 約${d}分` : `お相手（送迎）：総運転 約${d}分`,
+          male ? `お相手：送迎のため移動負担なし（同乗 約${r}分）` : `あなた：送迎のため移動負担なし（同乗 約${r}分）`,
+          male && d>limMin(), false, r>60)) };
+    }
     const src = mode==='インドアゴルフ'
       ? [['GOLFBASE 新橋（インドア）',25,30],['アコーディア・ガーデン 渋谷（インドア）',30,35],['ステップゴルフ 船橋（インドア）',40,20]]
       : [['ロッテ葛西ゴルフ（打ちっぱなし）',35,30],['明治神宮外苑ゴルフ練習場',30,40],['船橋カントリー練習場',45,20]];
-    return { meet:'現地集合', note:'駅近施設のため現地集合でスムーズです',
+    return { meet:'現地集合', note: meetPref==='car' && mm!=='M1' ? '車をお持ちでないため、現地集合の候補を表示しています' : '駅近施設のため現地集合でスムーズです',
       list: src.map(([n,x,y]) => mk(n, `あなた 約${x}分`, `お相手 約${y}分`, x>limMin(), y>120)) };
   }
   const fw = male ? wishOf(u) : (S.myWish || 'nice');
