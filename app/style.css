@@ -1050,3 +1050,15 @@ select.input{appearance:none;-webkit-appearance:none;background-image:url("data:
 /* v55: マイページのお知らせベル */
 .my-bell{position:absolute;top:14px;right:16px;color:var(--on-brand);z-index:5}
 .my-bell .dot{position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:#C96A4A}
+
+/* v56: あなたへの反応カード */
+.react-card{margin:16px 18px 0;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:13px 15px;box-shadow:var(--sh-card)}
+.react-card .rc-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.react-card .rc-h b{font-size:13px}
+.rc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.rc-cell{position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:10px 4px;border-radius:12px;background:var(--turf-soft);transition:transform .15s var(--ease)}
+.rc-cell:active{transform:scale(.96)}
+.rc-cell .rc-i{font-size:15px}
+.rc-cell .rc-n{font-family:var(--font-num);font-weight:500;font-size:22px;line-height:1.1;color:var(--fairway-deep)}
+.rc-cell .rc-l{font-size:9.5px;font-weight:700;color:var(--ink-soft)}
+.rc-cell .rc-new{position:absolute;top:6px;right:8px;background:linear-gradient(120deg,#C9A452,var(--brass));color:#fff;font-size:8px;font-weight:700;border-radius:99px;padding:1px 6px}

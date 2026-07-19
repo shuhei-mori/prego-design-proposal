@@ -1936,6 +1936,27 @@ V.mypage = () => {
         <div class="m"><div class="v">${isF?450:244}</div><div class="k">足あと</div></div>
       </div>
     </div>
+    ${isD() ? (()=>{
+      recoInit();
+      const likedMe = RECO_LIKED_YOU.filter(id => find(id) && (S.role==='m' ? id.startsWith('w') : id.startsWith('m')));
+      const likedIds = [...new Set([...(S.reco.likes||[]), ...Object.keys(S.likes||{}).filter(k=>S.likes[k] && find(k))])];
+      const mutual = likedMe.filter(id => likedIds.includes(id));
+      const foot = isF ? 450 : 244;
+      return `
+    <div class="react-card">
+      <div class="rc-h"><b>あなたへの反応</b><span class="muted" style="font-size:10px">今週</span></div>
+      <div class="rc-grid">
+        <button class="rc-cell" onclick="toast('足あと一覧はこの下に表示されています');window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})">
+          <span class="rc-i">👀</span><span class="rc-n">${foot}</span><span class="rc-l">足あと</span><span class="rc-new">+3</span>
+        </button>
+        <button class="rc-cell" onclick="go('#/likes')">
+          <span class="rc-i">♥</span><span class="rc-n">${likedMe.length}</span><span class="rc-l">いいね</span><span class="rc-new">+1</span>
+        </button>
+        <button class="rc-cell" onclick="go('#/likes')">
+          <span class="rc-i">🤝</span><span class="rc-n">${mutual.length}</span><span class="rc-l">相互いいね</span>${mutual.length?'<span class="rc-new">NEW</span>':''}
+        </button>
+      </div>
+    </div>`;})() : ''}
     ${isF && isD() ? `
     <div class="card" style="margin:16px 18px 0;padding:14px 16px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px">
