@@ -80,6 +80,7 @@ const S = Object.assign({
   fset: { sim:true, simFee:8800, range:true, rangeFee:5500 },
   bridge: { msgs: [], note: null }, fixed: {},
   myMob: null, myWish: 'nice', limitMin: 120, calOpen: true,
+  unreadIds: null, seenNtf: false,
   reviewDue: null, reviews: {},
   subActive: false, favs: {}, verified: true,
   ntf: { email:true, line:false, news:true, foot:true, like:true, msg:true },
@@ -178,7 +179,8 @@ const I = {
 /* ---------- shared UI parts ---------- */
 function appbar(o = {}){
   const back = o.back ? `<button class="side back" onclick="history.back()">${I.back}</button>` : `<span class="side"></span>`;
-  const bell = o.noBell ? `<span class="side"></span>` : `<button class="side bell" onclick="${isD()&&S.reviewDue?`openReview('${S.reviewDue.id}')`:`go('#/notifications')`}">${I.bell}<span class="dot${isD()&&S.reviewDue?' urgent':''}"></span></button>`;
+  const showDot = (isD()&&S.reviewDue) || !S.seenNtf;
+  const bell = o.noBell ? `<span class="side"></span>` : `<button class="side bell" onclick="${isD()&&S.reviewDue?`openReview('${S.reviewDue.id}')`:`go('#/notifications')`}">${I.bell}${showDot?`<span class="dot${isD()&&S.reviewDue?' urgent':''}"></span>`:''}</button>`;
   const mid = o.brand ? `<span class="ttl" style="display:flex;justify-content:center;align-items:center"><span class="brand-logo" role="img" aria-label="PreGo"></span></span>` : `<span class="ttl">${o.title||''}</span>`;
   return `<header class="appbar ${o.green?'green':''}">${back}${mid}${bell}</header>`;
 }
@@ -189,7 +191,7 @@ function tabbar(cur){
     ${t('home', I.home, 'ホーム', '#/home')}
     ${t('tee', I.cal, '日程マッチ', '#/tee')}
     ${t('feed', I.flag, 'フィード', '#/feed')}
-    ${t('msg', I.msg, 'メッセージ', '#/messages', true)}
+    ${t('msg', I.msg, 'メッセージ', '#/messages', (S.unreadIds||[]).length>0)}
     ${t('my', I.user, 'マイページ', '#/mypage')}
   </nav>`;
 }
@@ -235,6 +237,7 @@ function resetDemo(){
 function switchRole(){
   S.role = S.role === 'f' ? 'm' : 'f';
   S.chats = defaultChats(S.role);
+  S.unreadIds = null;
   if(S.role==='m' && S.bridgeM && S.bridgeM.msgs.length){
     S.bridgeM.msgs.forEach(m=>{
       let c = S.chats.find(x=>x.id===m.to);
@@ -262,6 +265,7 @@ function switchRole(){
       if(m.t) c.msgs.push({who:'them', t:m.t, tm:m.tm});
     });
     S.bridge.msgs = []; S.bridge.to = null;
+    initUnread(); if(!S.unreadIds.includes('m1')) S.unreadIds.push('m1');
     S.chats = [c, ...S.chats.filter(x=>x!==c)];
   }
   save(); toast(S.role==='f' ? '女性デモ（みどり）に切替えました' : '男性デモ（SHU）に切替えました');
@@ -832,6 +836,11 @@ V.offer = id => {
         <span class="vn">相談して決める</span>
         <span class="vt">マッチ後にチャットで話し合って確定します</span>
       </button>
+      ${of_.mode!=='ラウンド'?`
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <a class="btn ghost sm" style="flex:1;text-align:center" href="https://www.google.com/maps/search/${of_.mode==='インドアゴルフ'?'インドアゴルフ':'ゴルフ練習場'}" target="_blank" rel="noopener">${I.pin} 他の施設を探す</a>
+      </div>
+      <input class="input" style="margin-top:8px" placeholder="見つけた施設名を入力（候補になければ）" onchange="of_.course=this.value;render()">`:''}
       ${of_.mode==='ラウンド'?`<button class="btn ghost sm" style="margin-top:10px" onclick="coursePick='offer';go('#/courses')">ゴルフ場一覧から選ぶ</button>`:''}
       ${of_.course && of_.course!=='相談して決める' ? (()=>{ const sv=vp.list.find(v=>v.n===of_.course); return sv?`<p class="muted" style="font-size:10.5px;margin-top:8px">${I.pin} 選択中：${sv.n}　${sv.at}　${sv.bt}</p>`:''; })() : ''}
     </div>`;
@@ -908,6 +917,11 @@ function inviteSheet(id){
           <span class="vt ${v.warnB?'warn':''}">${v.bt}${v.warnB?' ⚠️お相手の負担大':''}</span>
           ${v.safety?`<span class="vt safety">${I.shield} 初めての方との長時間の同乗になります</span>`:''}
         </button>`).join('')}
+        ${inv.mode!=='ラウンド'?`
+        <div style="display:flex;gap:8px">
+          <a class="btn ghost sm" style="flex:1;text-align:center" href="https://www.google.com/maps/search/${inv.mode==='インドアゴルフ'?'インドアゴルフ':'ゴルフ練習場'}" target="_blank" rel="noopener">${I.pin} 他の施設を探す</a>
+        </div>
+        <input class="input" placeholder="見つけた施設名を入力（候補になければ）" value="${inv.venue&&!vp.list.some(v=>v.n===inv.venue)?esc(inv.venue):''}" onchange="inv.venue=this.value;window._invR()">`:''}
       </div>`;
     })() : ''}
     <div class="label">${isD()&&inv.mode!=='ラウンド'?'費用':'プレー代'}の宣言 *</div>
@@ -1219,15 +1233,19 @@ function answerOffer(id, ok, fin){
 
 /* ---- messages ---- */
 V.messages = () => {
+  initUnread();
   const rows = (S.chats||[]).map((c,i)=>{
-    const u = find(c.id); const last = c.msgs[c.msgs.length-1];
+    const u = find(c.id); const last = c.msgs[c.msgs.length-1] || {};
+    const CARD_PV = {match:'✅ マッチが成立しました', invite:'⛳ お誘いが届いています', offer:'⛳ オファーのやり取り', plan:'📋 当日の段取り', venue:'📍 会場変更の希望', review:'⭐ 評価のお願い'};
+    const pv = last.who==='card' ? (CARD_PV[last.kind]||'カード') : (last.t || '');
+    const tm = (last.tm||'').split(' ')[0];
     return `<button class="thread" style="width:100%;text-align:left" onclick="go('#/chat/${c.id}')">
       <img class="av" src="${u.img}" style="width:52px;height:52px">
       <div class="info">
-        <div class="nm">${esc(u.name)}<span class="tm">${last.tm.split(' ')[0]}</span></div>
-        <div class="pv">${esc(last.t)}</div>
+        <div class="nm">${esc(u.name)}<span class="tm">${tm}</span></div>
+        <div class="pv">${esc(pv)}</div>
       </div>
-      ${i===0?'<span class="nd"></span>':''}
+      ${(S.unreadIds||[]).includes(c.id)?'<span class="nd"></span>':''}
     </button>`;
   }).join('');
   return `
@@ -1235,11 +1253,24 @@ V.messages = () => {
   <div class="page">${rows || '<div class="empty"><div class="big">—</div>メッセージはまだありません</div>'}</div>
   ${tabbar('msg')}${demoPill()}`;
 };
+function initUnread(){
+  if(S.unreadIds) return;
+  S.unreadIds = (S.chats||[]).filter(c=>{
+    const last = c.msgs[c.msgs.length-1];
+    return last && (last.who==='them' || last.who==='card' && !last.mine);
+  }).map(c=>c.id);
+}
+function markRead(id){
+  initUnread();
+  const i = S.unreadIds.indexOf(id);
+  if(i>=0){ S.unreadIds.splice(i,1); save(); }
+}
 function openChat(id){
   if(!S.chats.find(c=>c.id===id)){ S.chats.unshift({id, msgs:[]}); save(); }
   go('#/chat/'+id);
 }
 V.chat = id => {
+  markRead(id);
   const c = S.chats.find(x=>x.id===id) || {id, msgs:[]};
   const u = find(id);
   const fx = (S.fixed||{})[id];
@@ -1735,28 +1766,50 @@ function openFixSheet(id){
   const myDates = me().dates || [];
   const shared = u.dates.filter(d=>myDates.includes(d));
   const dates = shared.length ? shared : u.dates;
-  fixSel = { id, date: dates[0], course: COURSES[0] };
-  sheet(`
-    <h3>ラウンド確定</h3>
-    <p class="muted">${esc(u.name)}さんとのラウンドを記録します（あとで変更できます）</p>
+  fixSel = { id, mode:'ラウンド', date: dates[0], course: null };
+  const html = () => {
+    const vp = isD() ? venuePlan(u, fixSel.mode) : null;
+    const vlist = vp ? vp.list.map(v=>v.n) : COURSES;
+    if(!fixSel.course || !(vlist.includes(fixSel.course) || fixSel.course==='相談して決める')) fixSel.course = vlist[0];
+    return `
+    <h3>予定の確定</h3>
+    <p class="muted">${esc(u.name)}さんとの約束を記録します（あとで変更できます）</p>
+    ${isD()?`
+    <div class="label">会う形式</div>
+    <div class="opt-grid">${['ラウンド','インドアゴルフ','打ちっぱなし'].map(m=>`<button class="opt ${fixSel.mode===m?'on':''}" onclick="fixSel.mode='${m}';fixSel.course=null;window._fxR()">${m}</button>`).join('')}</div>`:''}
     <div class="label">日程${shared.length?'（お互いの空き日）':''}</div>
-    <div class="opt-grid">${dates.map(d=>`<button class="opt ${fixSel.date===d?'on':''}" onclick="fixSel.date='${d}';this.parentNode.querySelectorAll('.opt').forEach(o=>o.classList.remove('on'));this.classList.add('on')">${d}</button>`).join('')}</div>
-    <div class="label">ゴルフ場</div>
-    <select class="input" onchange="fixSel.course=this.value">${COURSES.map(c=>`<option>${c}</option>`).join('')}</select>
+    <div class="opt-grid">${dates.map(d=>`<button class="opt ${fixSel.date===d?'on':''}" onclick="fixSel.date='${d}';window._fxR()">${d}</button>`).join('')}</div>
+    <div class="label">${fixSel.mode==='ラウンド'?'ゴルフ場':'施設'}</div>
+    ${isD()?`
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${vp.list.map(v=>`
+      <button class="venue-row ${fixSel.course===v.n?'on':''}" onclick="fixSel.course='${v.n.replace(/'/g,'')}';window._fxR()">
+        <span class="vn">${v.n}</span><span class="vt">${v.at}</span><span class="vt">${v.bt}</span>
+      </button>`).join('')}
+      <button class="venue-row ${fixSel.course==='相談して決める'?'on':''}" onclick="fixSel.course='相談して決める';window._fxR()">
+        <span class="vn">相談して決める</span><span class="vt">チャットで話し合って後から確定できます</span>
+      </button>
+    </div>`:`
+    <select class="input" onchange="fixSel.course=this.value">${COURSES.map(c=>`<option>${c}</option>`).join('')}</select>`}
     <div class="notice" style="margin:16px 0 0">
       <span class="ic">${I.shield}</span>
       <span>確定すると当日の位置共有・到着チェックイン・SOSが有効になります</span>
     </div>
-    <button class="btn" style="margin-top:16px" onclick="fixRound()">この内容で確定する</button>
+    <button class="btn" style="margin-top:16px" onclick="fixRound()">この内容で確定する</button>`;
+  };
+  window._fxR = () => sheet(html());
+  sheet(html());
+  return;
+  sheet(`
   `);
 }
 function fixRound(){
-  const {id, date, course} = fixSel;
+  const {id, date, course, mode} = fixSel;
   S.fixed = S.fixed || {};
-  S.fixed[id] = { date, course, matchedAt:Date.now() };
+  S.fixed[id] = { date, course, mode: mode||'ラウンド', matchedAt:Date.now(), tbd: isTBD(course)?['venue']:[] };
   let c = S.chats.find(x=>x.id===id);
   if(!c){ c = {id, msgs:[]}; S.chats.unshift(c); }
-  c.msgs.push({who:'card', kind:'match', date, course});
+  c.msgs.push({who:'card', kind:'match', ...S.fixed[id]});
   celebrate();
   save(); closeSheet(); render();
   setTimeout(()=>toast('ラウンドを確定しました。当日の安全機能がONになります'), 250);
@@ -2664,7 +2717,7 @@ function render(){
     'profile': ()=>V.profile(arg), 'offer': ()=>V.offer(arg), 'offers': V.offers,
     'compe': ()=>V.compe(arg), 'mypage': V.mypage, 'points': V.points,
     'roundlog': V.roundlog, 'frames': V.frames,
-    'settings': V.settings, 'subscription': V.subscription, 'notifications': V.notifications,
+    'settings': V.settings, 'subscription': V.subscription, 'notifications': ()=>{ S.seenNtf=true; save(); return V.notifications(); },
     'contact': V.contact, 'help': V.help, 'courses': V.courses, 'base': V.base,
     'notif-settings': V.notifSettings, 'blocked': V.blocked, 'card': V.card,
     'password': V.password, 'verify': V.verify,
