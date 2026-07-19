@@ -1999,15 +1999,6 @@ V.mypage = () => {
       </div>
     </div>`}
     <div class="menu">${menu}</div>
-    <div class="sec wrap">
-      <div class="sec-h"><span class="t">足あと</span><span class="s">あなたに興味がある人</span><a class="more" href="#/home">すべて見る</a></div>
-      ${foot.map(u=>`
-        <button class="thread" style="width:100%;border-radius:14px;margin-bottom:8px;border:1px solid var(--line);text-align:left" onclick="go('#/profile/${u.id}')">
-          <img class="av" src="${u.img}" style="width:44px;height:44px">
-          <div class="info"><div class="nm">${esc(u.name)}</div><div class="pv">昨日 ${['23:47','16:56','10:12','08:03'][foot.indexOf(u)]}</div></div>
-          <span style="color:var(--ink-soft)">${I.foot}</span>
-        </button>`).join('')}
-    </div>
   </div>
   ${tabbar('my')}${demoPill()}`;
 };
