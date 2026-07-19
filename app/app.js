@@ -1928,7 +1928,7 @@ V.mypage = () => {
       <span class="avatar-ring" style="${isF?ringStyle(m.tier):'background:rgba(250,248,242,.3)'};display:block">
         <img src="${m.img}">
       </span>
-      <div class="nm">${esc(m.name)} ${isF?tierBadge(m.tier):(S.subActive?'<span class="chip brass" style="font-size:9px">サブスク会員</span>':'<span class="chip line" style="font-size:9px">無料会員</span>')}</div>
+      <div class="nm">${esc(m.name)} ${isF?tierBadge(m.tier):(S.subActive?'<span class="chip brass" style="font-size:9px">サブスク会員</span>':'')}</div>
 
     </div>
     ${isD() ? (()=>{
