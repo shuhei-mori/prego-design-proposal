@@ -1965,13 +1965,13 @@ V.mypage = () => {
     ['プロフィール', I.user, ()=>`go('#/me')`],
     [isF?'コイン':'ポイント', I.coin, ()=>`go('#/points')`],
     ['オファー', I.invite, ()=>`go('#/offers')`, offerBadgeCount()||''],
+    ['設定', I.gear, ()=>`go('#/settings')`],
+    ...(isF && isD() ? [['お誘い設定', I.sliders, ()=>`go('#/invite-set')`]] : []),
+    ['ヘルプ', I.bell, ()=>`go('#/help')`],
     ['ラウンド録', I.camera, ()=>`go('#/roundlog')`],
     ['フレーム', I.trophy, ()=>`go('#/frames')`],
     ['ゴルフ場', I.pin, ()=>`coursePick=null;go('#/courses')`],
-    ...(isF && isD() ? [['お誘い設定', I.sliders, ()=>`go('#/invite-set')`]] : []),
-    ['ヘルプ', I.bell, ()=>`go('#/help')`],
     ['記事', I.flag.replace('viewBox','width="23" height="23" viewBox'), ()=>`go('#/articles')`],
-    ['設定', I.gear, ()=>`go('#/settings')`],
   ].map(x=>`<button class="mi" onclick="${x[2]()}">${x[1]}${x[0]}${x[3]?`<span class="bd">${x[3]}</span>`:''}</button>`).join('');
   const myBellDot = (isD()&&S.reviewDue) || !S.seenNtf;
   return `
