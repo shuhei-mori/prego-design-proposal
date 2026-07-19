@@ -1920,9 +1920,11 @@ V.mypage = () => {
     ['記事', I.flag.replace('viewBox','width="23" height="23" viewBox'), ()=>`go('#/articles')`],
     ['設定', I.gear, ()=>`go('#/settings')`],
   ].map(x=>`<button class="mi" onclick="${x[2]()}">${x[1]}${x[0]}${x[3]?`<span class="bd">${x[3]}件</span>`:''}</button>`).join('');
+  const myBellDot = (isD()&&S.reviewDue) || !S.seenNtf;
   return `
   <div class="page">
     <div class="my-head">
+      <button class="my-bell" onclick="${isD()&&S.reviewDue?`openReview('${S.reviewDue&&S.reviewDue.id}')`:`go('#/notifications')`}">${I.bell}${myBellDot?`<span class="dot${isD()&&S.reviewDue?' urgent':''}"></span>`:''}</button>
       <span class="avatar-ring" style="${isF?ringStyle(m.tier):'background:rgba(250,248,242,.3)'};display:block">
         <img src="${m.img}">
       </span>

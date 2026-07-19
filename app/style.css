@@ -1046,3 +1046,7 @@ select.input{appearance:none;-webkit-appearance:none;background-image:url("data:
 .ra-btn.pass{color:var(--ink-soft);border:1.5px solid var(--line)}
 .ra-btn.like{color:#FF7A93;border:1.5px solid #FFD3DC}
 .ra-btn.go{color:#fff;background:var(--fairway);width:64px;height:64px}
+
+/* v55: マイページのお知らせベル */
+.my-bell{position:absolute;top:14px;right:16px;color:var(--on-brand);z-index:5}
+.my-bell .dot{position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:#C96A4A}
