@@ -1153,57 +1153,64 @@ function sendOffer(id){
 /* ---- offers list ---- */
 V.offers = () => {
   const isM = S.role==='m';
-  let inner = '';
-  if(isM){
-    inner = S.sentOffers.length ? S.sentOffers.map(o=>{
-      const u = find(o.to);
-      return `<div class="card mcard">
-        <img class="av" src="${u.img}" style="width:46px;height:46px">
+  const sentRows = (S.sentOffers||[]).map(o=>{
+    const u = find(o.to); if(!u) return '';
+    return `
+      <div class="card mcard">
+        <span class="ring" style="${ringStyle(u.tier||'BRONZE')};width:46px;height:46px"><img class="av" src="${u.img}" style="width:100%;height:100%;border:2px solid #fff"></span>
         <div class="info">
-          <div class="nm">${esc(u.name)}さん <span class="chip brass" style="font-size:9px">承諾待ち</span></div>
-          <div class="st">${o.date}・${esc(o.course||'')}</div>
-        </div></div>`;
-    }).join('') : `<div class="empty"><div class="big">—</div>送信したオファーはまだありません</div>`;
-  } else {
-    inner = S.recvOffers.map(o=>{
-      const u = find(o.from);
-      if(o.status!=='pending') return `
-        <div class="card mcard" style="opacity:.65">
-          <img class="av" src="${u.img}" style="width:46px;height:46px">
-          <div class="info"><div class="nm">${esc(u.name)}さん</div><div class="st">${o.date}・${o.status==='ok'?'承諾済み・マッチ成立':'辞退'}</div></div>
-          ${o.status==='ok'?`<span class="cc-ck" style="width:22px;height:22px">${I.check.replace('width="40" height="40"','width="12" height="12"')}</span>`:''}
-        </div>`;
-      if(isD()) return `<div class="card" style="padding:14px 16px">
-        <div style="display:flex;gap:12px;align-items:center" onclick="go('#/profile/${u.id}')">
-          <img class="av" src="${u.img}" style="width:48px;height:48px">
-          <div style="flex:1">
-            <div style="font-weight:900">${esc(u.name)}さんからオファー</div>
-            <div class="muted" style="font-size:11.5px">内容を確認して返答してください</div>
-          </div>
-        </div>
-        ${offerChecklistHtml(o)}
-      </div>`;
-      return `<div class="card" style="padding:14px 16px">
-        <div style="display:flex;gap:12px;align-items:center" onclick="go('#/profile/${u.id}')">
-          <img class="av" src="${u.img}" style="width:48px;height:48px">
-          <div style="flex:1">
-            <div style="font-weight:900">${esc(u.name)}さんからオファー</div>
-            <div class="muted" style="font-size:11.5px">${o.date}・${esc(o.course)}・${esc(o.meet)}</div>
-          </div>
-        </div>
-        <div class="price-box" style="margin-top:12px;padding:12px 14px">
-          <div class="row"><span>受け取れる謝礼</span><span class="money" style="color:var(--brass)">${o.reward.toLocaleString()} コイン</span></div>
-        </div>
-        <div style="display:flex;gap:9px;margin-top:12px">
-          <button class="btn ghost sm" style="flex:1" onclick="answerOffer('${o.id}',false)">辞退</button>
-          <button class="btn sm" style="flex:2" onclick="answerOffer('${o.id}',true)">承諾してマッチ成立</button>
+          <div class="nm">${esc(u.name)}さん ${o.status==='ok'?'<span class="chip brass" style="font-size:9px">マッチ成立</span>':'<span class="chip line" style="font-size:9px">承諾待ち</span>'}</div>
+          <div class="st">${o.date}・${esc(o.mode||'ラウンド')}${o.course?'・'+esc(o.course):''}</div>
         </div>
       </div>`;
-    }).join('');
-  }
+  }).join('');
+  const recvRows = (S.recvOffers||[]).filter(o=>String(o.from).startsWith(isM?'w':'m')).map(o=>{
+    const u = find(o.from); if(!u) return '';
+    if(o.status!=='pending') return `
+      <div class="card mcard" style="opacity:.65">
+        <img class="av" src="${u.img}" style="width:46px;height:46px">
+        <div class="info"><div class="nm">${esc(u.name)}さん</div><div class="st">${o.date}・${o.status==='ok'?'承諾済み・マッチ成立':'辞退'}</div></div>
+        ${o.status==='ok'?`<span class="cc-ck" style="width:22px;height:22px">${I.check.replace('width="40" height="40"','width="12" height="12"')}</span>`:''}
+      </div>`;
+    if(isD()) return `<div class="card" style="padding:14px 16px">
+      <div style="display:flex;gap:12px;align-items:center" onclick="go('#/profile/${u.id}')">
+        <img class="av" src="${u.img}" style="width:48px;height:48px">
+        <div style="flex:1">
+          <div style="font-weight:900">${esc(u.name)}さんからオファー</div>
+          <div class="muted" style="font-size:11.5px">内容を確認して返答してください</div>
+        </div>
+      </div>
+      ${offerChecklistHtml(o)}
+    </div>`;
+    return `<div class="card" style="padding:14px 16px">
+      <div style="display:flex;gap:12px;align-items:center" onclick="go('#/profile/${u.id}')">
+        <img class="av" src="${u.img}" style="width:48px;height:48px">
+        <div style="flex:1">
+          <div style="font-weight:900">${esc(u.name)}さんからオファー</div>
+          <div class="muted" style="font-size:11.5px">${o.date}・${esc(o.course)}・${esc(o.meet)}</div>
+        </div>
+      </div>
+      <div class="price-box" style="margin-top:12px;padding:12px 14px">
+        <div class="row"><span>受け取れる謝礼</span><span class="money" style="color:var(--brass)">${o.reward.toLocaleString()} コイン</span></div>
+      </div>
+      <div style="display:flex;gap:9px;margin-top:12px">
+        <button class="btn ghost sm" style="flex:1" onclick="answerOffer('${o.id}',false)">辞退</button>
+        <button class="btn sm" style="flex:2" onclick="answerOffer('${o.id}',true)">承諾してマッチ成立</button>
+      </div>
+    </div>`;
+  }).join('');
+  const recvSection = isM
+    ? (recvRows || `<p class="muted" style="font-size:12px;padding:6px 2px 2px">受信したオファー・お誘いはまだありません。届くとここに表示されます</p>`)
+    : (recvRows || `<p class="muted" style="font-size:12px;padding:6px 2px 2px">受信したオファーはまだありません</p>`);
+  const sentSection = sentRows || `<p class="muted" style="font-size:12px;padding:6px 2px 2px">送信したオファーはまだありません</p>`;
   return `
-  ${appbar({title: isM?'オファー状況':'受信オファー', back:true})}
-  <div class="page tee-body">${inner}</div>
+  ${appbar({title:'オファー', back:true})}
+  <div class="page tee-body">
+    <div class="sec-h" style="padding:4px 2px 0"><span class="t">受信</span></div>
+    ${recvSection}
+    <div class="sec-h" style="padding:12px 2px 0"><span class="t">送信</span></div>
+    ${sentSection}
+  </div>
   ${tabbar('')}${demoPill()}`;
 };
 function answerOffer(id, ok, fin){
@@ -1912,9 +1919,8 @@ V.mypage = () => {
   const foot = (isF?MEN:WOMEN).slice(0,4);
   const menu = [
     ['プロフィール', I.user, ()=>`go('#/me')`],
-    ...(isD() ? [['いいね', I.heart.replace('width="17" height="17"','width="21" height="21"'), ()=>`go('#/likes')`]] : []),
     [isF?'コイン':'ポイント', I.coin, ()=>`go('#/points')`],
-    [isF?'受信オファー':'オファー状況', I.invite, ()=>`go('#/offers')`, isF?'2':''],
+    ['オファー', I.invite, ()=>`go('#/offers')`, isF?'2':''],
     ['ラウンド録', I.camera, ()=>`go('#/roundlog')`],
     ['フレーム', I.trophy, ()=>`go('#/frames')`],
     ['ゴルフ場', I.pin, ()=>`coursePick=null;go('#/courses')`],
