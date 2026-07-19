@@ -2611,7 +2611,7 @@ V.reco = () => {
     <b style="font-size:16px">本日のおすすめは終了です</b>
     <p class="muted" style="margin-top:8px">明日また10人ご紹介します。<br>日程マッチで「行ける日が合う相手」も探せます</p>
     <button class="btn" style="margin-top:20px;max-width:280px" onclick="go('#/tee')">日程マッチを見る</button>
-  </div>${demoPill()}`;
+  </div>`;
   const shared = (u.dates||[]).filter(d=>S.myDates.includes(d));
   const isWoman = WOMEN.includes(u);
   const next = q[1];
@@ -2640,7 +2640,7 @@ V.reco = () => {
       <button class="ra-btn go" onclick="recoAct('invite')">⛳<small>誘う</small></button>
       <button class="ra-btn like" onclick="recoSwipeOut(document.getElementById('reco-card'),'like')">♥<small>あり</small></button>
     </div>
-  </div>${demoPill()}`;
+  </div>`;
 };
 
 /* ---- お誘い設定（女性・機能1） ---- */
