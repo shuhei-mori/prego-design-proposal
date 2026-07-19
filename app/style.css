@@ -973,8 +973,10 @@ body.no-page-anim :is(.page,.pcard,.card,.mi,.thread,.chatcard,.compe,.article-c
 
 /* v34: 横並び選択カードの中途半端な改行を全廃（自然幅＋横スクロール） */
 .oselcard{display:flex;flex-direction:column;align-items:flex-start;gap:2px;border-radius:16px;flex:none;padding:11px 14px}
-.oselcard .t{font-weight:700;white-space:nowrap}
-.oselcard .s{font-size:9.5px;color:var(--ink-soft);white-space:nowrap}
+.oselcard .t{font-weight:700}
+.oselcard .s{font-size:9.5px;color:var(--ink-soft)}
+.osel.vcol{flex-direction:column}
+.osel.vcol .oselcard{width:100%;text-align:left}
 .osel{scrollbar-width:none}
 .osel::-webkit-scrollbar{display:none}
 

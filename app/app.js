@@ -873,7 +873,7 @@ V.offer = id => {
     </div>
     <div>
       <div class="label">合流方法</div>
-      <div class="osel" style="flex-wrap:nowrap;overflow-x:auto">${meets}</div>
+      <div class="osel vcol">${meets}</div>
     </div>
     ${isD()?(()=>{
       const vp = venuePlan(u, of_.mode||'ラウンド', of_.meet);
@@ -2968,7 +2968,7 @@ V.hostCompe = () => {
   <div class="page nofoot wrap">
     <div class="notice" style="margin-top:12px"><span class="ic">${I.shield}</span><span>開催できるのは<b>認定ゴルファー</b>のみ。申請後、運営が会場・内容を確認して公開します（デモでは申請まで体験できます）</span></div>
     <div class="label">形式</div>
-    <div class="osel" style="flex-wrap:nowrap;overflow-x:auto">${Object.keys(VENUES).map(f=>`
+    <div class="osel">${Object.keys(VENUES).map(f=>`
       <button class="opt ${hc.fmt===f?'on':''}" style="white-space:nowrap;flex:none" onclick="hc.fmt='${f}';render()">${f}</button>`).join('')}</div>
     <div class="label">コンペ名</div>
     <input class="input" placeholder="例：MIKA & SAKI インドア練習会" value="${esc(hc.title)}" onchange="hc.title=this.value">
