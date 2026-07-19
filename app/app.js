@@ -2660,9 +2660,11 @@ V.reco = () => {
             ${isWoman&&u.st?(u.st==='o'?'<span class="chip brass" style="font-size:8.5px">おもてなし</span>':'<span class="chip line" style="font-size:8.5px">仲間探し</span>'):''}
             ${isD()&&u.cert?'<span class="chip brass" style="font-size:8.5px">認定</span>':''}
           </div>
-          <div class="rrow">${I.flag.replace('<svg ','<svg width="15" height="15" ')}<span>Best <b>${u.best}</b>・Ave <b>${u.ave}</b></span></div>
-          <div class="rrow">${I.coin.replace('width="20" height="20"','width="15" height="15"')}<span>${esc(u.pay||'話し合って決めたい')}</span></div>
-          <div class="rrow">${I.car.replace('width="18" height="18"','width="15" height="15"')}<span>${recoDistLabel(u)}</span></div>
+          <div class="rmeta">
+            <span class="rm">${I.flag.replace('<svg ','<svg width="13" height="13" ')}<b>${u.best}</b> / <b>${u.ave}</b></span>
+            <span class="rm">${I.coin.replace('width="20" height="20"','width="13" height="13"')}${esc(u.pay||'話し合って決めたい')}</span>
+            <span class="rm">${I.car.replace('width="18" height="18"','width="13" height="13"')}${recoDistLabel(u).replace('車で','')}</span>
+          </div>
           ${shared.length?`<div class="rd2">${I.cal.replace('<svg ','<svg width="13" height="13" ')} ${shared.slice(0,3).join('・')} お互い空いています</div>`:''}
         </div>
       </div>
