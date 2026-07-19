@@ -922,82 +922,138 @@ V.offer = id => {
 let inv = {};
 function inviteSheet(id){
   if(S.role==='m' && !S.subActive && !isD()){ paywall(); return; }
-  const freeU = isD() && S.role==='m' && !S.subActive;
+  initInv(id);
+  go('#/invite/'+id);
+}
+function initInv(id){
   const u = find(id);
   const myDates = me().dates || [];
   const shared = u.dates.filter(d=>myDates.includes(d));
   const dates = shared.length ? shared : u.dates;
-  const _isF = S.role==='f';
-  inv = { id, date: dates[0], mode: 'ラウンド', pay: _isF ? 'プレー代はご馳走いただけると嬉しいです' : 'プレー代はこちらで持ちます' };
-  const iSim = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12.5" rx="2"/><path d="M9 20.5h6M12 16.5v4"/><path d="M8 12.5l2.5-3.5 2 2 3-4"/></svg>';
-  const iRange = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20.5c2-1 3-2.6 3-5V5l8-1.8"/><circle cx="17" cy="14" r="2.6"/><path d="M4.5 20.5h8"/></svg>';
-  const MODES = [
-    ['ラウンド','ゴルフ場で18ホール・1日', I.flag.replace('<svg ','<svg width="21" height="21" '), ''],
-    ['インドアゴルフ','シミュレーションゴルフ・1〜2時間・駅近・雨でもOK', iSim, 'はじめまして向き'],
-    ['打ちっぱなし','1時間・手ぶらOK・気軽', iRange, 'はじめまして向き'],
-  ];
-  const html = () => `
-    <h3>${esc(u.name)}さんを誘う</h3>
-    <p class="muted">${S.role==='f' ? 'お相手のプレー代の考え方はプロフィールで確認できます' : '仲間探しスタイルの方には、謝礼不要でお誘いできます'}</p>
-    ${isD()?`
-    <div class="label">会う形式 *</div>
-    <div class="mode-list">${MODES.map(([m,s,ic,tag])=>`
-      <button class="mode-row ${inv.mode===m?'on':''}" onclick="inv.mode='${m}';inv.pay=inv.pay.replace(/^(プレー代|費用)/,'${m}'==='ラウンド'?'プレー代':'費用');window._invR()">
-        <span class="mic">${ic}</span>
-        <span class="mtx"><span class="mt">${m}${tag?`<span class="mtag">${tag}</span>`:''}</span><span class="ms">${s}</span></span>
-        <span class="mck">${inv.mode===m?I.check.replace('width="40" height="40"','width="15" height="15"'):''}</span>
-      </button>`).join('')}</div>
-    `:''}
-    <div class="label">日程${shared.length?'（お互いの空き日）':''}</div>
-    <div class="opt-grid">${dates.map(d=>`<button class="opt ${inv.date===d?'on':''}" onclick="inv.date='${d}';window._invR()">${d}</button>`).join('')}</div>
-    ${isD() ? (()=>{
-      const vp = venuePlan(u, inv.mode||'ラウンド');
-      if(!inv.venue || !vp.list.some(v=>v.n===inv.venue)) inv.venue = vp.list[0]?.n || null;
-      inv.meet = vp.meet;
-      if(vp.meet==='不成立') return `
-      <div class="label">会場候補と移動負担</div>
+  inv = { id, date: dates[0], mode: 'ラウンド', pay: S.role==='f' ? 'プレー代はご馳走いただけると嬉しいです' : 'プレー代はこちらで持ちます' };
+}
+V.invite = id => {
+  const u = find(id); if(!u) return V.home();
+  if(inv.id !== id) initInv(id);
+  const myDates = me().dates || [];
+  const shared = u.dates.filter(d=>myDates.includes(d));
+  const dateOpts = (shared.length?shared:u.dates).map(d =>
+    `<button class="opt ${inv.date===d?'on':''}" onclick="inv.date='${d}';render()">${d}（${TEE_DAYS.find(x=>x.d===d)?.w||'-'}）</button>`).join('');
+  const okOf = m => m==='ラウンド' ? (u.rnd?.ok!==false) : m==='インドアゴルフ' ? (u.sim?.ok!==false) : (u.rng?.ok!==false);
+  const _wantPickup = isD() && S.role==='m' && wishOf(u)!=='no' && myMobV()==='M1';
+  if(isD() && !inv.meetSel) inv.meetSel = _wantPickup ? 'car' : 'onsite';
+  const meets = [
+    {k:'onsite', l:`${I.pin} 現地集合${!_wantPickup?'（推奨）':''}`, d:'各自でコースへ・バッグは宅急便OK'},
+    {k:'car', l:`${I.car} 車送迎${_wantPickup?'（推奨・お相手の希望）':''}`, d:'認証ドライバーのみ'},
+  ].map(m=>`<button class="opt oselcard ${inv.meetSel===m.k?'on':''}" onclick="if(inv.meetSel!=='${m.k}'){inv.meetSel='${m.k}';inv.venue=null;inv.customV=false};render()">
+     <span class="t" style="display:flex;gap:5px;align-items:center">${m.l}</span><span class="s">${m.d}</span></button>`).join('');
+  const MICONS = {
+    'ラウンド': I.flag.replace('<svg ','<svg width="21" height="21" '),
+    'インドアゴルフ': '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12.5" rx="2"/><path d="M9 20.5h6M12 16.5v4"/><path d="M8 12.5l2.5-3.5 2 2 3-4"/></svg>',
+    '打ちっぱなし': '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20.5c2-1 3-2.6 3-5V5l8-1.8"/><circle cx="17" cy="14" r="2.6"/><path d="M4.5 20.5h8"/></svg>',
+  };
+  const MDESCS = { 'ラウンド':'ゴルフ場で18ホール・1日', 'インドアゴルフ':'シミュレーションゴルフ・1〜2時間・駅近・雨でもOK', '打ちっぱなし':'1時間・手ぶらOK・気軽' };
+  const MTAGS = { 'インドアゴルフ':'はじめまして向き', '打ちっぱなし':'はじめまして向き' };
+  const modeList = ['ラウンド','インドアゴルフ','打ちっぱなし'].map(m=>{
+    const ok = okOf(m);
+    return `
+        <button class="mode-row ${inv.mode===m?'on':''}" style="${ok?'':'opacity:.5'}" onclick="${ok?`inv.mode='${m}';inv.pay=inv.pay.replace(/^(プレー代|費用)/,'${m}'==='ラウンド'?'プレー代':'費用');inv.venue=null;inv.customV=false;render()`:''}">
+          <span class="mic">${MICONS[m]}</span>
+          <span class="mtx"><span class="mt">${m}${ok?(MTAGS[m]?`<span class="mtag">${MTAGS[m]}</span>`:''):'<span class="mtag" style="background:var(--danger-soft);color:var(--danger)">受付停止中</span>'}</span>
+          <span class="ms">${ok?MDESCS[m]:'お相手が受付を停止しています'}</span></span>
+          <span class="mck">${inv.mode===m?I.check.replace('width="40" height="40"','width="15" height="15"'):''}</span>
+        </button>`;}).join('');
+  let venueSec = '';
+  if(isD()){
+    const vp = venuePlan(u, inv.mode||'ラウンド', inv.meetSel);
+    if(vp.meet==='不成立'){
+      inv.meet = '不成立'; inv.venue = null;
+      venueSec = `
+    <div>
+      <div class="label">${inv.mode!=='ラウンド'?'場所（候補から選択）':'ゴルフ場（候補から選択）'}</div>
       <div class="notice" style="margin:0 0 8px;background:var(--danger-soft);color:var(--danger)">
         <span class="ic">${I.car}</span>
         <span>${vp.note}。送迎ができないため、このラウンドは成立が難しい組み合わせです</span>
       </div>
       <div style="display:flex;gap:8px">
-        <button class="btn sm" style="flex:1.4" onclick="inv.mode='インドアゴルフ';inv.pay=inv.pay.replace(/^プレー代/,'費用');window._invR()">インドアゴルフに切り替える</button>
+        <button class="btn sm" style="flex:1.4" onclick="inv.mode='インドアゴルフ';inv.pay=inv.pay.replace(/^プレー代/,'費用');inv.venue=null;inv.customV=false;render()">インドアゴルフに切り替える</button>
         <button class="btn ghost sm" style="flex:1" onclick="toast('クラブバス直結コース（デモでは省略）')">クラブバス直結を見る</button>
-      </div>`;
-      return `
-      <div class="label">会場候補と移動負担 <span class="chip line" style="font-size:9px;margin-left:4px">${vp.meet}</span></div>
+      </div>
+    </div>`;
+    } else {
+      const known = v => v==='相談して決める' || vp.list.some(x=>x.n===v);
+      if(!inv.customV && (!inv.venue || !known(inv.venue))) inv.venue = vp.list[0]?.n || null;
+      inv.meet = vp.meet;
+      venueSec = `
+    <div>
+      <div class="label">${inv.mode!=='ラウンド'?'場所（候補から選択）':'ゴルフ場（候補から選択）'} <span class="chip line" style="font-size:9px;margin-left:4px">${vp.meet}</span></div>
       ${vp.note?`<p class="muted" style="font-size:10.5px;margin:0 0 8px">${vp.note}</p>`:''}
       <div style="display:flex;flex-direction:column;gap:8px">
         ${vp.list.map(v=>`
-        <button class="venue-row ${inv.venue===v.n?'on':''}" onclick="inv.venue='${v.n}';window._invR()">
+        <button class="venue-row ${inv.venue===v.n?'on':''}" onclick="inv.venue='${v.n.replace(/'/g,'')}';inv.customV=false;render()">
           <span class="vn">${v.n}</span>
           <span class="vt ${v.warnA?'warn':''}">${v.at}${v.warnA?' ⚠️許容超え':''}</span>
           <span class="vt ${v.warnB?'warn':''}">${v.bt}${v.warnB?' ⚠️お相手の負担大':''}</span>
           ${v.safety?`<span class="vt safety">${I.shield} 初めての方との長時間の同乗になります</span>`:''}
         </button>`).join('')}
-        ${inv.mode!=='ラウンド'?`
-        <div style="display:flex;gap:8px">
-          <a class="btn ghost sm" style="flex:1;text-align:center" href="https://www.google.com/maps/search/${inv.mode==='インドアゴルフ'?'インドアゴルフ':'ゴルフ練習場'}" target="_blank" rel="noopener">${I.pin} 他の施設を探す</a>
-        </div>
-        <input class="input" placeholder="見つけた施設名を入力（候補になければ）" value="${inv.venue&&!vp.list.some(v=>v.n===inv.venue)?esc(inv.venue):''}" onchange="inv.venue=this.value;window._invR()">`:''}
-      </div>`;
-    })() : ''}
-    <div class="label">${isD()&&inv.mode!=='ラウンド'?'費用':'プレー代'}の宣言 *</div>
-    ${u.pay?`<div class="pay-hint">${I.pin} ${esc(u.name)}さんの希望：<b>${esc(u.pay)}</b></div>`:''}
-    <div style="display:flex;flex-direction:column;gap:8px">
-      ${(S.role==='f'
-        ? [(isD()&&inv.mode!=='ラウンド'?'費用':'プレー代')+'はご馳走いただけると嬉しいです','割り勘でお願いします','相談して決めたい']
-        : [(isD()&&inv.mode!=='ラウンド'?'費用':'プレー代')+'はこちらで持ちます','割り勘でお願いします','相談して決めたい']).map((p,i)=>`
-        <button class="opt ${inv.pay===p?'on':''}" style="border-radius:12px;text-align:left" onclick="inv.pay='${p}';window._invR()">${i===0?'★ ':''}${p}${i===0?`<span style="display:inline-block">${S.role==='f'?'（希望として表示されます）':'（返信率が上がります）'}</span>`:''}</button>`).join('')}
+      </div>
+      <button class="venue-row ${inv.venue==='相談して決める'?'on':''}" style="margin-top:8px" onclick="inv.venue='相談して決める';inv.customV=false;render()">
+        <span class="vn">相談して決める</span>
+        <span class="vt">マッチ後にチャットで話し合って確定します</span>
+      </button>
+      ${inv.mode!=='ラウンド'?`
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <a class="btn ghost sm" style="flex:1;text-align:center" href="https://www.google.com/maps/search/${inv.mode==='インドアゴルフ'?'インドアゴルフ':'ゴルフ練習場'}" target="_blank" rel="noopener">${I.pin} 他の施設を探す</a>
+      </div>
+      <input class="input" style="margin-top:8px" placeholder="見つけた施設名を入力（候補になければ）" value="${inv.customV?esc(inv.venue||''):''}" onchange="inv.venue=this.value;inv.customV=true;render()">`:''}
+      ${inv.mode==='ラウンド'?`<button class="btn ghost sm" style="margin-top:10px" onclick="coursePick='invite';go('#/courses')">ゴルフ場一覧から選ぶ</button>`:''}
+    </div>`;
+    }
+  }
+  const payLbl = isD()&&inv.mode!=='ラウンド' ? '費用' : 'プレー代';
+  const payOpts = (S.role==='f'
+    ? [payLbl+'はご馳走いただけると嬉しいです','割り勘でお願いします','相談して決めたい']
+    : [payLbl+'はこちらで持ちます','割り勘でお願いします','相談して決めたい']).map((p,i)=>`
+    <button class="opt ${inv.pay===p?'on':''}" style="border-radius:12px;text-align:left" onclick="inv.pay='${p}';render()">${i===0?'★ ':''}${p}${i===0?`<span style="display:inline-block">${S.role==='f'?'（希望として表示されます）':'（返信率が上がります）'}</span>`:''}</button>`).join('');
+  const hasTier = !!TIERS[u.tier];
+  return `
+  ${appbar({title:`${esc(u.name)}さんをラウンドに誘う`, back:true, noBell:true})}
+  <div class="page nofoot oflow">
+    <div class="card" style="padding:13px 15px;display:flex;gap:12px;align-items:center">
+      <span class="ring" style="${hasTier?ringStyle(u.tier):'background:var(--line)'};width:52px;height:52px"><img class="av" src="${u.img}" style="width:100%;height:100%;border:2px solid #fff"></span>
+      <div style="flex:1">
+        <div style="font-weight:900">${esc(u.name)} <span class="muted">${u.age}</span> ${hasTier?tierBadge(u.tier,true):''}</div>
+        <div class="muted" style="font-size:11px">Best ${u.best}・${u.area.slice(0,2).join('・')}</div>
+      </div>
     </div>
-    <div class="notice" style="margin:14px 0 0">
+    ${S.role==='m'?`<p class="muted" style="font-size:11px;margin:0">仲間探しスタイルの方には、謝礼不要でお誘いできます</p>`:`<p class="muted" style="font-size:11px;margin:0">お相手のプレー代の考え方はプロフィールで確認できます</p>`}
+    ${isD()?`
+    <div>
+      <div class="label">会う形式</div>
+      <div class="mode-list">${modeList}</div>
+    </div>`:''}
+    <div>
+      <div class="label">${isD()&&inv.mode!=='ラウンド'?'日程':'ラウンド日'}${shared.length?'（ハイライト＝お互い空いている日）':''}</div>
+      <div class="osel">${dateOpts}</div>
+    </div>
+    ${isD()?`
+    <div>
+      <div class="label">合流方法</div>
+      <div class="osel vcol">${meets}</div>
+    </div>`:''}
+    ${venueSec}
+    <div>
+      <div class="label">${payLbl}の宣言</div>
+      ${u.pay?`<div class="pay-hint">${I.pin} ${esc(u.name)}さんの希望：<b>${esc(u.pay)}</b></div>`:''}
+      <div style="display:flex;flex-direction:column;gap:8px">${payOpts}</div>
+    </div>
+    <div class="notice" style="margin:0">
       <span class="ic">${I.shield}</span>
       <span>宣言した内容はお相手に表示され、あとから変更できません</span>
     </div>
-    <button class="btn" style="margin-top:14px" onclick="openInviteConfirm()">内容を確認する</button>`;
-  window._invR = () => sheet(html());
-  sheet(html());
-}
+    <button class="btn" onclick="openInviteConfirm()">内容を確認する</button>
+  </div>${demoPill()}`;
+};
 let invAgree = false;
 function openInviteConfirm(){
   const u = find(inv.id);
@@ -1020,7 +1076,7 @@ function openInviteConfirm(){
       <span style="flex:1;font-size:11.5px">注意事項に同意します<span class="muted" style="display:block;font-size:10px">宣言した内容はあとから変更できません。無断キャンセル・迷惑行為はアカウント停止の対象です</span></span>
     </button>
     <div style="display:flex;gap:9px;margin-top:14px">
-      <button class="btn ghost sm" style="flex:1" onclick="window._invR()">修正する</button>
+      <button class="btn ghost sm" style="flex:1" onclick="closeSheet()">修正する</button>
       <button class="btn sm" style="flex:2" ${invAgree?'':'disabled'} onclick="sendInvite()">送信する</button>
     </div>`;
   window._icR = () => sheet(html());
@@ -2467,6 +2523,7 @@ V.courses = () => {
 };
 function pickCourse(n){
   if(coursePick==='offer') of_.course = n;
+  if(coursePick==='invite'){ inv.venue = n; inv.customV = false; }
   coursePick = null;
   history.back();
   setTimeout(()=>toast(`${n} を選択しました`), 300);
@@ -3063,7 +3120,7 @@ function render(){
     '': V.login, 'login': V.login, 'signup': V.signup, 'forgot': V.forgot,
     'home': V.home, 'tee': V.tee, 'miss': V.miss, 'feed': V.feed,
     'messages': V.messages, 'chat': ()=>V.chat(arg),
-    'profile': ()=>V.profile(arg), 'offer': ()=>V.offer(arg), 'offers': V.offers,
+    'profile': ()=>V.profile(arg), 'offer': ()=>V.offer(arg), 'offers': V.offers, 'invite': ()=>V.invite(arg),
     'compe': ()=>V.compe(arg), 'mypage': V.mypage, 'points': V.points,
     'roundlog': V.roundlog, 'frames': V.frames,
     'settings': V.settings, 'subscription': V.subscription, 'notifications': ()=>{ S.seenNtf=true; save(); return V.notifications(); },
