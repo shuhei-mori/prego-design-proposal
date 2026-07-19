@@ -1929,11 +1929,8 @@ V.mypage = () => {
         <img src="${m.img}">
       </span>
       <div class="nm">${esc(m.name)} ${isF?tierBadge(m.tier):(S.subActive?'<span class="chip brass" style="font-size:9px">サブスク会員</span>':'<span class="chip line" style="font-size:9px">無料会員</span>')}</div>
-      <div class="meta">
-        <div class="m"><div class="v">${m.best}</div><div class="k">BEST</div></div>
-        <div class="m"><div class="v">${m.rounds}</div><div class="k">ROUNDS</div></div>
-        <div class="m"><div class="v">${m.rating}</div><div class="k">RATING</div></div>
-        <div class="m"><div class="v">${isF?450:244}</div><div class="k">足あと</div></div>
+      <div class="meta" style="gap:8px">
+        <div class="m"><div class="v" style="display:flex;align-items:center;gap:6px"><span style="color:var(--brass-bright);letter-spacing:2px;font-size:15px">${'★'.repeat(Math.round(m.rating))}</span><span>${m.rating.toFixed(1)}</span></div><div class="k">レビュー ${m.rc}件</div></div>
       </div>
     </div>
     ${isD() ? (()=>{
@@ -1944,9 +1941,11 @@ V.mypage = () => {
       const foot = isF ? 450 : 244;
       return `
     <div class="react-card">
-      <div class="rc-h"><b>あなたへの反応</b><span class="muted" style="font-size:10px">今週</span></div>
-      <div class="rc-grid">
-        <button class="rc-cell" onclick="toast('足あと一覧はこの下に表示されています');window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})">
+      <div class="rc-grid four">
+        <button class="rc-cell" onclick="go('#/roundlog')">
+          <span class="rc-i">⛳</span><span class="rc-n">${m.rounds}</span><span class="rc-l">ラウンド</span><span class="rc-new">+2</span>
+        </button>
+        <button class="rc-cell" onclick="go('#/footprints')">
           <span class="rc-i">👀</span><span class="rc-n">${foot}</span><span class="rc-l">足あと</span><span class="rc-new">+3</span>
         </button>
         <button class="rc-cell" onclick="go('#/likes')">
@@ -1956,6 +1955,7 @@ V.mypage = () => {
           <span class="rc-i">🤝</span><span class="rc-n">${mutual.length}</span><span class="rc-l">相互いいね</span>${mutual.length?'<span class="rc-new">NEW</span>':''}
         </button>
       </div>
+      <p class="muted" style="font-size:9.5px;margin-top:7px;text-align:right">数字は合計・<span style="color:var(--brass-ink);font-weight:700">＋◯</span> は今週の新着</p>
     </div>`;})() : ''}
     ${isF && isD() ? `
     <div class="card" style="margin:16px 18px 0;padding:14px 16px">
@@ -2709,6 +2709,27 @@ V.likes = () => {
   ${tabbar('')}${demoPill()}`;
 };
 
+/* ---- 足あと一覧（機能1） ---- */
+V.footprints = () => {
+  const list = (S.role==='f' ? MEN : WOMEN).slice(0,6);
+  const times = ['いま','2時間前','昨日 23:47','昨日 16:56','7/16 10:12','7/15 08:03'];
+  return `
+  ${appbar({title:'足あと', back:true})}
+  <div class="page tee-body">
+    <p class="muted" style="font-size:11.5px;padding:4px 2px 0">あなたのプロフィールを見た人です。気になる人には足あとを返してみましょう</p>
+    ${list.map((u,i)=>`
+    <button class="card mcard" style="width:100%;text-align:left" onclick="go('#/profile/${u.id}')">
+      <img class="av" src="${u.img}" style="width:48px;height:48px">
+      <div class="info">
+        <div class="nm">${esc(u.name)} <span class="ag">${u.age}</span></div>
+        <div class="st"><span>${times[i]}</span><span>${recoDistLabel(u)}</span></div>
+      </div>
+      <span style="color:var(--ink-soft)">${I.foot}</span>
+    </button>`).join('')}
+  </div>
+  ${tabbar('')}${demoPill()}`;
+};
+
 /* ---- お誘い設定（女性・機能1） ---- */
 V.inviteSet = () => {
   const f = S.fset;
@@ -2912,7 +2933,7 @@ function render(){
     'notif-settings': V.notifSettings, 'blocked': V.blocked, 'card': V.card,
     'password': V.password, 'verify': V.verify,
     'articles': V.articles, 'article': ()=>V.article(arg),
-    'me': V.me, 'edit-profile': V.editProfile, 'invite-set': V.inviteSet, 'host-compe': V.hostCompe, 'reco': V.reco, 'likes': V.likes,
+    'me': V.me, 'edit-profile': V.editProfile, 'invite-set': V.inviteSet, 'host-compe': V.hostCompe, 'reco': V.reco, 'likes': V.likes, 'footprints': V.footprints,
   };
   $app.innerHTML = (map[route] || V.login)();
   window.scrollTo(0,0);
