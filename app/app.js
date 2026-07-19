@@ -2834,7 +2834,7 @@ V.inviteSet = () => {
     </div>`;
   return `
   ${appbar({title:'お誘い設定', back:true})}
-  <div class="page wrap">
+  <div class="page wrap" style="padding-bottom:calc(var(--tab-h) + 72px)">
     ${S.paused?`<div class="notice warn" style="margin:12px 0 0"><span class="ic">${I.bell.replace('width="21" height="21"','width="17" height="17"')}</span><span><b>休止中です。</b>お相手の検索・おすすめに表示されていません</span><span class="go" onclick="S.paused=false;save();render()">再開 →</span></div>`:''}
     ${styleCard}
     ${S.myStyle==='n' ? '' : `<p class="muted" style="margin:0 0 14px;font-size:12px">受け付けるお誘いの種類と金額を設定できます。OFFにするとお相手のオファー画面で選択できなくなります。</p>`}
