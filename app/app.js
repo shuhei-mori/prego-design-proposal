@@ -477,7 +477,7 @@ V.home = () => {
             : 'プレー希望日を登録するとマッチ率が3倍になります →'}</span>
     </div>
     <div class="filters">
-      ${isD()?`<button class="chip" style="background:linear-gradient(120deg,#C9A452,var(--brass));color:#fff" onclick="go('#/reco')">♥ おすすめ</button>`:''}
+      ${isD()?`<button class="chip" style="background:linear-gradient(120deg,#C9A452,var(--brass));color:#fff" onclick="go('#/reco')" >${I.heart.replace('width="17" height="17"','width="13" height="13"').replace('<svg ','<svg style="vertical-align:-2px;margin-right:3px" ')} おすすめ</button>`:''}
       <button class="chip ${!S.hf?'':'line'}" onclick="S.hf=null;save();render()">すべて</button>
       ${isM?`
       <button class="chip ${S.hf==='n'?'':'line'}" onclick="S.hf='n';save();render()">仲間探し（謝礼不要）</button>
@@ -982,14 +982,14 @@ function sendInvite(){
     c.msgs.push({who:'card', kind:'invite', mine:true, items, st:'wait'});
     if(S.role==='m') S.bridge.msgs.push({card:{kind:'invite', to:inv.id, items:JSON.parse(JSON.stringify(items)), st:'wait'}});
   } else {
-    c.msgs.push({who:'sys', t:`⛳ ${inv.date} の${inv.mode||'ラウンド'}にお誘い（${inv.pay}）`});
-    if(inv.venue) c.msgs.push({who:'sys', t:`📍 会場候補：${inv.venue}（${inv.meet||'現地集合'}）`});
+    c.msgs.push({who:'sys', t:`${inv.date} の${inv.mode||'ラウンド'}にお誘い（${inv.pay}）`});
+    if(inv.venue) c.msgs.push({who:'sys', t:`会場候補：${inv.venue}（${inv.meet||'現地集合'}）`});
   }
   if(S.role==='m') S.bridge.to = u.name;
-  if(isTBD(inv.pay)) c.msgs.push({who:'sys', t:'💬 費用は「相談して決める」設定です。このチャットで話し合って決めましょう'});
+  if(isTBD(inv.pay)) c.msgs.push({who:'sys', t:'費用は「相談して決める」設定です。このチャットで話し合って決めましょう'});
   const _invMsg = `はじめまして！${inv.date}に${inv.mode&&inv.mode!=='ラウンド'?inv.mode:'ラウンド'}をご一緒できたら嬉しいです。${inv.pay}。`;
   c.msgs.push({who:'me', t:_invMsg, tm:'いま'});
-  if(S.role==='m') S.bridge.msgs.push({sys:`⛳ ${inv.date} の${inv.mode||'ラウンド'}にお誘い（${inv.pay}）`+(inv.venue?`\n📍 会場候補：${inv.venue}（${inv.meet||'現地集合'}）`:''), t:_invMsg, tm:'いま'});
+  if(S.role==='m') S.bridge.msgs.push({sys:`${inv.date} の${inv.mode||'ラウンド'}にお誘い（${inv.pay}）`+(inv.venue?`\n会場候補：${inv.venue}（${inv.meet||'現地集合'}）`:''), t:_invMsg, tm:'いま'});
   save(); closeSheet();
   go('#/chat/'+inv.id); render();
   setTimeout(()=>toast(S.role==='f' ? '誘いを送りました' : '誘いを送りました。謝礼は発生しません'),300);
@@ -1238,7 +1238,7 @@ V.messages = () => {
   initUnread();
   const rows = (S.chats||[]).map((c,i)=>{
     const u = find(c.id); const last = c.msgs[c.msgs.length-1] || {};
-    const CARD_PV = {match:'✅ マッチが成立しました', invite:'⛳ お誘いが届いています', offer:'⛳ オファーのやり取り', plan:'📋 当日の段取り', venue:'📍 会場変更の希望', review:'⭐ 評価のお願い'};
+    const CARD_PV = {match:'マッチが成立しました', invite:'お誘いが届いています', offer:'オファーのやり取り', plan:'当日の段取り', venue:'会場変更の希望', review:'評価のお願い'};
     const pv = last.who==='card' ? (CARD_PV[last.kind]||'カード') : (last.t || '');
     const tm = (last.tm||'').split(' ')[0];
     return `<button class="thread" style="width:100%;text-align:left" onclick="go('#/chat/${c.id}')">
@@ -1335,7 +1335,7 @@ V.chat = id => {
     if(m.who==='card' && m.kind==='mutual') return `
       <div class="chatcard match">
         <div class="cc-h"><span class="cc-ck">${I.check.replace('width="40" height="40"','width="13" height="13"')}</span> いいねが一致しました！</div>
-        <p style="font-size:11.5px;color:var(--ink-soft);margin:2px 0 8px">お互いに「あり」でした🎉 気持ちが通じているうちに誘ってみましょう</p>
+        <p style="font-size:11.5px;color:var(--ink-soft);margin:2px 0 8px">お互いに「あり」でした。気持ちが通じているうちに誘ってみましょう</p>
         <button class="btn sm" style="width:100%" onclick="${S.role==='m' && WOMEN.includes(u) && u.st==='o' ? `go('#/offer/${id}')` : `inviteSheet('${id}')`}">${I.invite} さっそく誘ってみる</button>
       </div>`;
     if(m.who==='card' && m.kind==='review'){
@@ -1425,7 +1425,7 @@ V.chat = id => {
   ${appbar({title:esc(u.name), back:true, noBell:true})}
   <div class="page nofoot" style="display:flex;flex-direction:column;min-height:calc(100dvh - 60px)">
     ${fixbar}
-    <div class="chat">${(msgs + matchCard) || `<div class="empty" style="padding-top:60px"><div class="big">⛳</div>${esc(u.name)}さんに挨拶してみましょう</div>`}</div>
+    <div class="chat">${(msgs + matchCard) || `<div class="empty" style="padding-top:60px"><div class="big" style="color:var(--line)">${I.flag.replace('<svg ','<svg width="40" height="40" ')}</div>${esc(u.name)}さんに挨拶してみましょう</div>`}</div>
     <div class="chatbar">
       <input class="input" id="chat-in" placeholder="メッセージを入力" onkeydown="if(event.key==='Enter')sendMsg('${id}')">
       <button class="send" onclick="sendMsg('${id}')">${I.send}</button>
@@ -1463,7 +1463,7 @@ function settleMatch(){
   if(settle.venue) fx.course = settle.venue;
   fx.tbd = [];
   const c = S.chats.find(x=>x.id===settle.id);
-  if(c) c.msgs.push({who:'sys', t:`📅 ${fx.date}・${fx.course} で確定しました`});
+  if(c) c.msgs.push({who:'sys', t:`${fx.date}・${fx.course} で確定しました`});
   save(); closeSheet(); render();
   setTimeout(()=>toast('確定しました。段取りの提案ができます'), 250);
 }
@@ -1730,7 +1730,7 @@ function submitReview(){
   S.reviews[id] = { stars, tags };
   S.reviewDue = null;
   const _c = S.chats.find(x=>x.id===id);
-  if(_c && !_c.msgs.some(m=>m.who==='sys' && m.t.includes('お疲れ様でした'))) _c.msgs.push({who:'sys', t:'⛳ ラウンドお疲れ様でした。'});
+  if(_c && !_c.msgs.some(m=>m.who==='sys' && m.t.includes('お疲れ様でした'))) _c.msgs.push({who:'sys', t:'ラウンドお疲れ様でした。'});
   if(S.role==='m') S.bridge.msgs.push({card:{kind:'review'}, reviewDue:true});
   save(); closeSheet();
   go('#/chat/'+id); render();
@@ -1763,7 +1763,7 @@ function sendAltVenue(id, name){
     card.ok = true;
     const fx = (S.fixed||{})[id];
     if(fx) fx.course = name;
-    c.msgs.push({who:'sys', t:`📍 会場を「${name}」に変更しました`});
+    c.msgs.push({who:'sys', t:`会場を「${name}」に変更しました`});
     c.msgs.push({who:'them', t:'そちらの会場でOKです！よろしくお願いします', tm:'いま'});
     save(); if(location.hash==='#/chat/'+id) render();
   }, 1400);
@@ -2638,7 +2638,7 @@ V.reco = () => {
   if(!u || S.reco.left<=0) return `
   ${appbar({title:'今日のおすすめ', back:true, noBell:true})}
   <div class="page nofoot" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70dvh;padding:0 32px;text-align:center">
-    <div style="font-size:40px;margin-bottom:12px">⛳</div>
+    <div style="margin-bottom:12px;color:var(--fairway)">${I.flag.replace('<svg ','<svg width="42" height="42" ')}</div>
     <b style="font-size:16px">本日のおすすめは終了です</b>
     <p class="muted" style="margin-top:8px">明日また10人ご紹介します。<br>日程マッチで「行ける日が合う相手」も探せます</p>
     <button class="btn" style="margin-top:20px;max-width:280px" onclick="go('#/tee')">日程マッチを見る</button>
@@ -2697,7 +2697,7 @@ V.likes = () => {
     ${likedMeRows || '<p class="muted" style="font-size:12px;padding:8px 2px">まだいません。おすすめでスワイプしてみましょう</p>'}
     <div class="sec-h" style="padding:12px 2px 0"><span class="t">あなたが「あり」した人</span><span class="s">${likedIds.length}人</span></div>
     ${likedRows || '<p class="muted" style="font-size:12px;padding:8px 2px">まだいません</p>'}
-    <button class="btn" style="margin-top:8px" onclick="go('#/reco')">♥ 今日のおすすめを見る</button>
+    <button class="btn" style="margin-top:8px" onclick="go('#/reco')">今日のおすすめを見る</button>
   </div>
   ${tabbar('')}${demoPill()}`;
 };
@@ -2851,7 +2851,7 @@ V.hostCompe = () => {
       <button class="opt ${hc.venue===v?'on':''}" style="border-radius:12px;text-align:left" onclick="hc.venue='${v}';render()">${v}</button>`).join('')}</div>
     <p class="muted" style="font-size:10.5px;margin-top:6px">提携施設のため枠は運営が確保します（予約不要）</p>`}
     <div class="label">コンペの内容</div>
-    <textarea class="input" rows="3" placeholder="例：初参加歓迎のゆるめの練習会です。前半はレッスン形式、後半はニアピン対決🏌️‍♀️" onchange="hc.desc=this.value">${esc(hc.desc)}</textarea>
+    <textarea class="input" rows="3" placeholder="例：初参加歓迎のゆるめの練習会です。前半はレッスン形式、後半はニアピン対決" onchange="hc.desc=this.value">${esc(hc.desc)}</textarea>
     <div class="label">表彰・景品</div>
     <input class="input" placeholder="例：優勝＝ゴルフボール1ダース／ニアピン賞・ドラコン賞あり" value="${esc(hc.prize)}" onchange="hc.prize=this.value">
     <div class="label">共同ホスト（友人と2人で幹事）</div>
