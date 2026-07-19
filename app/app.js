@@ -2645,13 +2645,11 @@ V.reco = () => {
   </div>`;
   const shared = (u.dates||[]).filter(d=>S.myDates.includes(d));
   const isWoman = WOMEN.includes(u);
-  const next = q[1];
   return `
   ${appbar({title:'今日のおすすめ', back:true, noBell:true})}
   <div class="page nofoot reco-stage">
     <div class="reco-count"><span class="chip line" style="font-size:10px">残り ${S.reco.left}人</span><span class="muted" style="font-size:10px">左右スワイプ or ボタンで判定・上スワイプで誘う</span></div>
     <div class="reco-deck">
-      ${next?`<div class="reco-card back"><img src="${next.img}"></div>`:''}
       <div class="reco-card" id="reco-card">
         <div class="rp"><img src="${u.img}" draggable="false"></div>
         <div class="rinfo">
