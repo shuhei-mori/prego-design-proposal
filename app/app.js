@@ -2653,26 +2653,23 @@ V.reco = () => {
     <div class="reco-deck">
       ${next?`<div class="reco-card back"><img src="${next.img}"></div>`:''}
       <div class="reco-card" id="reco-card">
-        <img src="${u.img}" draggable="false">
-        <div class="reco-grad"></div>
-        <div class="reco-info">
-          <div class="rn">${esc(u.name)} <span class="ra">${u.age}</span>
-            ${isWoman&&u.st?(u.st==='o'?'<span class="chip brass" style="font-size:8.5px">おもてなし</span>':'<span class="chip" style="font-size:8.5px;background:rgba(255,255,255,.9);color:var(--fairway-deep)">仲間探し</span>'):''}
+        <div class="rp"><img src="${u.img}" draggable="false"></div>
+        <div class="rinfo">
+          <div class="rn2">${esc(u.name)} <span class="ra2">${u.age}</span>
+            ${isWoman&&u.st?(u.st==='o'?'<span class="chip brass" style="font-size:8.5px">おもてなし</span>':'<span class="chip line" style="font-size:8.5px">仲間探し</span>'):''}
             ${isD()&&u.cert?'<span class="chip brass" style="font-size:8.5px">認定</span>':''}
           </div>
-          <div class="rr">
-            <span>⛳ Best ${u.best}・Ave ${u.ave}</span>
-            <span>💰 ${esc(u.pay||'話し合って決めたい')}</span>
-            <span>🚗 ${recoDistLabel(u)}</span>
-          </div>
-          ${shared.length?`<div class="rd">📅 ${shared.slice(0,3).join('・')} お互い空いています</div>`:''}
+          <div class="rrow">${I.flag.replace('<svg ','<svg width="15" height="15" ')}<span>Best <b>${u.best}</b>・Ave <b>${u.ave}</b></span></div>
+          <div class="rrow">${I.coin.replace('width="20" height="20"','width="15" height="15"')}<span>${esc(u.pay||'話し合って決めたい')}</span></div>
+          <div class="rrow">${I.car.replace('width="18" height="18"','width="15" height="15"')}<span>${recoDistLabel(u)}</span></div>
+          ${shared.length?`<div class="rd2">${I.cal.replace('<svg ','<svg width="13" height="13" ')} ${shared.slice(0,3).join('・')} お互い空いています</div>`:''}
         </div>
       </div>
     </div>
     <div class="reco-acts">
-      <button class="ra-btn pass" onclick="recoSwipeOut(document.getElementById('reco-card'),'pass')">✕<small>なし</small></button>
-      <button class="ra-btn go" onclick="recoAct('invite')">⛳<small>誘う</small></button>
-      <button class="ra-btn like" onclick="recoSwipeOut(document.getElementById('reco-card'),'like')">♥<small>あり</small></button>
+      <button class="ra-btn pass" onclick="recoSwipeOut(document.getElementById('reco-card'),'pass')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg><small>なし</small></button>
+      <button class="ra-btn go" onclick="recoAct('invite')">${I.invite.replace('width="17" height="17"','width="21" height="21"')}<small>誘う</small></button>
+      <button class="ra-btn like" onclick="recoSwipeOut(document.getElementById('reco-card'),'like')">${I.heart.replace('width="17" height="17"','width="22" height="22"')}<small>あり</small></button>
     </div>
   </div>`;
 };

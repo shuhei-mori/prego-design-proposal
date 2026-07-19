@@ -1031,7 +1031,17 @@ select.input{appearance:none;-webkit-appearance:none;background-image:url("data:
 .reco-count{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .reco-deck{position:relative;flex:none;height:min(54dvh, 440px)}
 .reco-card{position:absolute;inset:0;border-radius:20px;overflow:hidden;background:var(--paper);box-shadow:var(--sh-float);touch-action:pan-x;user-select:none;-webkit-user-select:none}
-.reco-card img{width:100%;height:100%;object-fit:cover;pointer-events:none}
+.reco-card{display:flex;flex-direction:column}
+.reco-card .rp{flex:1;overflow:hidden;min-height:0}
+.reco-card .rp img{width:100%;height:100%;object-fit:cover;pointer-events:none}
+.rinfo{flex:none;background:var(--paper);padding:12px 16px 13px;border-top:1px solid var(--line)}
+.rn2{display:flex;align-items:center;gap:7px;font-size:18px;font-weight:900;color:var(--ink);margin-bottom:7px}
+.ra2{font-family:var(--font-num);font-weight:400;font-size:14px;color:var(--ink-soft)}
+.rrow{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--ink);padding:2.5px 0}
+.rrow svg{color:var(--fairway);flex:none}
+.rrow b{font-family:var(--font-num);font-weight:500}
+.rd2{display:inline-flex;align-items:center;gap:5px;margin-top:7px;background:var(--brass-soft);color:var(--brass-ink);font-size:10px;font-weight:700;border-radius:99px;padding:4px 11px}
+.rd2 svg{flex:none}
 .reco-card.back{transform:scale(.95) translateY(10px);opacity:.6}
 .reco-grad{position:absolute;inset:auto 0 0 0;height:55%;background:linear-gradient(180deg,transparent,rgba(0,0,0,.62))}
 .reco-info{position:absolute;left:16px;right:16px;bottom:14px;color:#fff}
@@ -1045,6 +1055,8 @@ select.input{appearance:none;-webkit-appearance:none;background-image:url("data:
 .ra-btn:active{transform:scale(.92)}
 .ra-btn.pass{color:var(--ink-soft);border:1.5px solid var(--line)}
 .ra-btn.like{color:#FF7A93;border:1.5px solid #FFD3DC}
+.ra-btn.like svg path{fill:none}
+.ra-btn svg{display:block}
 .ra-btn.go{color:#fff;background:var(--fairway);width:64px;height:64px}
 
 /* v55: マイページのお知らせベル */
