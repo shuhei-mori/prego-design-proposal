@@ -318,7 +318,50 @@ function switchFemale(){
 const V = {};
 
 /* ---- login ---- */
-V.login = () => `
+V.loginE = () => `
+<div class="introE" id="ie-frame">
+  <div class="ie-photo"></div>
+  <div class="ie-sky"></div>
+  <div class="ie-shade"></div>
+  <button class="ie-replay" onclick="ieReplay(event)" aria-label="リプレイ"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 8.5A8 8 0 1 1 4 13"/><path d="M4.5 3.5v5h5"/></svg></button>
+  <div class="ie-ballwrap"><span class="ie-ballpos"><span class="ie-flash"></span><span class="ie-ball"><i class="ie-dimples"></i></span></span></div>
+  <div class="ie-head">
+    <div class="ie-logo">PreGo</div>
+    <div class="ie-under"></div>
+    <div class="ie-cap">PREMIUM GOLF</div>
+  </div>
+  <div class="ie-ui">
+    <p class="ie-copy">都合の合う<br>ゴルフ仲間が、見つかる</p>
+    <div class="ie-chips">
+      <span class="ie-chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 2.6v5.1c0 4.6-3 8.4-7 10.3-4-1.9-7-5.7-7-10.3V5.6z"/><path d="M9 12l2.2 2.2L15.5 10"/></svg>本人確認制</span>
+      <span class="ie-chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6z"/><path d="M5 5l14 14"/></svg>実名非公開</span>
+    </div>
+    <div class="ie-ctas">
+      <button class="ie-btn line" onclick="demoLogin()">LINEではじめる</button>
+      <button class="ie-btn glass" onclick="demoLogin()">メールアドレスではじめる</button>
+    </div>
+    <p class="ie-login">アカウントをお持ちの方は<a onclick="demoLogin()">ログイン</a></p>
+    <div class="ie-theme">
+      <span class="lbl2">配色パターン</span>
+      ${['b','e','g','1'].map(t=>`<button class="tbtn ${S.theme===t?'on':''}" onclick="setTheme('${t}')">${t.toUpperCase()}</button>`).join('')}
+    </div>
+    <p class="ie-note">DEMO PROTOTYPE — 認証・決済は動作しません</p>
+  </div>
+</div>`;
+function ieStart(){
+  const f = document.getElementById('ie-frame');
+  if(!f || f.classList.contains('run')) return;
+  const img = new Image();
+  img.onload = img.onerror = () => requestAnimationFrame(() => setTimeout(() => f.classList.add('run'), 250));
+  img.src = 'img/intro_e.jpg';
+}
+function ieReplay(e){
+  if(e) e.stopPropagation();
+  const f = document.getElementById('ie-frame');
+  if(!f) return;
+  f.classList.remove('run'); void f.offsetWidth; f.classList.add('run');
+}
+V.login = () => S.theme==='e' ? V.loginE() : `
 <div class="login">
   <svg class="art" viewBox="0 0 430 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
     <g fill="none" stroke="var(--art-stroke,#D9B96A)" stroke-width="1">
@@ -3134,6 +3177,7 @@ function render(){
   window.scrollTo(0,0);
   window.scrollTo(0, _sy);
   if(route==='reco') setTimeout(bindReco, 0);
+  if(!route || route==='login') setTimeout(ieStart, 0);
   countUp();
   if(route==='roundlog'){ document.fonts ? document.fonts.ready.then(drawFrame) : drawFrame(); setTimeout(drawFrame,300); }
 }

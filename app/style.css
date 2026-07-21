@@ -1120,3 +1120,66 @@ select.input{appearance:none;-webkit-appearance:none;background-image:url("data:
 .sum-row:last-child{border-bottom:none}
 .sum-row span{color:var(--ink-soft);font-size:11px;flex:none}
 .sum-row b{text-align:right;color:var(--ink)}
+
+/* ===== Intro E（Claude Design「PreGo Intro E」採用・配色Eのオープニング）===== */
+.introE{position:relative;width:100%;min-height:100dvh;overflow:hidden;background:var(--fairway-deep);font-family:var(--font-ui)}
+.introE .ie-photo{position:absolute;inset:0;background:url("img/intro_e.jpg") 50% 50%/cover no-repeat;transform:scale(1.16)}
+.introE .ie-shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,60,45,.15) 0%,rgba(0,60,45,0) 34%,rgba(0,70,52,.45) 66%,#00553F 100%)}
+.introE .ie-sky{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(24,96,168,.5) 0%,rgba(30,110,180,.28) 22%,rgba(40,120,190,0) 44%)}
+@keyframes ieBallFlightX{0%{transform:translateX(16px);animation-timing-function:cubic-bezier(.3,.5,.5,1)}45%{transform:translateX(40px);animation-timing-function:cubic-bezier(.5,0,.5,1)}100%{transform:translateX(0px)}}
+@keyframes ieBallFlightY{0%{transform:translateY(507px) scale(.05);opacity:0;animation-timing-function:cubic-bezier(.7,0,.84,0)}5%{opacity:1}100%{transform:translateY(0) scale(1);opacity:1}}
+@keyframes ieBallMelt{from{opacity:1;transform:scale(1)}60%{opacity:.5;transform:scale(1.35)}to{opacity:0;transform:scale(1.6)}}
+@keyframes ieFlash{0%{opacity:0;transform:scale(.4)}25%{opacity:.9}100%{opacity:0;transform:scale(2.1)}}
+@keyframes ieLogoIn{from{opacity:0;transform:scale(.86);filter:blur(10px);letter-spacing:.3em}to{opacity:1;transform:scale(1);filter:blur(0);letter-spacing:.1em}}
+@keyframes ieUnderIn{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes ieFadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes iePullBack{0%{transform:scale(1.16)}100%{transform:scale(1)}}
+.introE.run .ie-photo{animation:iePullBack 15s cubic-bezier(.2,.6,.3,1) 1.1s both;transform-origin:58% 52%}
+.introE .ie-ballwrap{position:absolute;left:50%;top:128px;width:0;height:0;pointer-events:none;z-index:6}
+.introE.run .ie-ballpos{animation:ieBallFlightX 1.1s both}
+.introE .ie-ballpos{display:block}
+.introE .ie-ball{position:absolute;left:-33px;top:-33px;width:66px;height:66px;border-radius:50%;opacity:0;background:radial-gradient(circle at 36% 30%,#ffffff 0%,#fbfcfb 40%,#eef1ee 62%,#d7ddd7 82%,#b9c2bb 100%);box-shadow:0 12px 30px rgba(0,40,30,.42),inset -9px -11px 20px rgba(120,135,125,.5),inset 6px 7px 12px rgba(255,255,255,.95)}
+.introE .ie-dimples{position:absolute;inset:0;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 50% 42%,rgba(70,80,72,.22) 0 9%,rgba(120,130,122,.06) 15%,rgba(255,255,255,.55) 24%,rgba(255,255,255,0) 32%) 0 0/11% 11%,radial-gradient(circle at 50% 42%,rgba(70,80,72,.18) 0 9%,rgba(255,255,255,.5) 24%,rgba(255,255,255,0) 32%) 5.5% 5.5%/11% 11%}
+.introE .ie-dimples::after{content:"";position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 36% 30%,rgba(255,255,255,.22) 0%,rgba(255,255,255,0) 34%),radial-gradient(circle at 50% 50%,rgba(255,255,255,0) 54%,rgba(120,132,124,.2) 80%,rgba(95,108,100,.4) 97%,rgba(85,98,90,.48) 100%)}
+@keyframes ieBallSpin{0%{background-position:0 0,5.5% 5.5%}50%{background-position:0 55px,5.5% calc(5.5% + 55px)}100%{background-position:0 330px,5.5% calc(5.5% + 330px)}}
+.introE.run .ie-dimples{animation:ieBallSpin 1.1s linear both}
+.introE .ie-ball::after{content:"";position:absolute;inset:0;border-radius:50%;z-index:2;background:radial-gradient(circle at 33% 26%,rgba(255,255,255,1) 0%,rgba(255,255,255,.7) 10%,rgba(255,255,255,0) 30%),radial-gradient(circle at 26% 20%,rgba(255,255,255,.9) 0%,rgba(255,255,255,0) 12%)}
+.introE .ie-ball::before{content:"";position:absolute;left:50%;top:52%;width:26%;height:460%;transform:translateX(-50%);border-radius:50% 50% 50% 50%/70% 70% 30% 30%;background:linear-gradient(180deg,rgba(255,255,255,.98) 0%,rgba(220,240,230,.6) 28%,rgba(180,220,200,.22) 58%,transparent 100%);filter:blur(1px);opacity:0;z-index:-1}
+@keyframes ieTrailFx{0%{opacity:0}10%{opacity:.9}45%{opacity:.85}70%{opacity:.45}88%{opacity:0}100%{opacity:0}}
+.introE.run .ie-ball::before{animation:ieTrailFx 1.1s var(--ease) both}
+.introE.run .ie-ball{animation:ieBallFlightY 1.1s both,ieBallMelt .5s var(--ease) 1.2s forwards}
+.introE .ie-flash{position:absolute;left:-70px;top:-70px;width:140px;height:140px;border-radius:50%;opacity:0;background:radial-gradient(circle,rgba(255,255,255,.95) 0%,rgba(166,239,220,.6) 45%,transparent 72%)}
+.introE.run .ie-flash{animation:ieFlash .6s var(--ease) 1.1s both}
+.introE .ie-head{position:absolute;top:88px;left:0;right:0;text-align:center;color:#fff;pointer-events:none}
+.introE .ie-logo{font-family:var(--font-brand);font-size:48px;letter-spacing:.1em;opacity:0}
+.introE.run .ie-logo{animation:ieLogoIn .5s var(--ease) 1.25s both}
+.introE .ie-under{width:44px;height:2px;background:#7FE6CE;margin:8px auto;transform:scaleX(0)}
+.introE.run .ie-under{animation:ieUnderIn .25s var(--ease) 1.5s both}
+.introE .ie-cap{font-family:var(--font-brand);font-size:9.5px;letter-spacing:.44em;padding-left:.44em;color:rgba(166,239,220,.85);opacity:0}
+.introE.run .ie-cap{animation:ieFadeUp .4s var(--ease) 1.55s both}
+.introE .ie-ui{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;padding:0 24px 28px;color:#fff}
+.introE .ie-copy{text-align:center;font-size:16px;font-weight:500;letter-spacing:.12em;line-height:1.9;color:rgba(255,255,255,.92);text-shadow:0 1px 12px rgba(0,40,30,.4);opacity:0}
+.introE .ie-chips{display:flex;justify-content:center;gap:8px;margin:24px 0 16px;opacity:0}
+.introE .ie-chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;letter-spacing:.03em;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;backdrop-filter:blur(4px);border-radius:99px;padding:4px 12px;white-space:nowrap}
+.introE .ie-chip svg{flex:none}
+.introE .ie-ctas{display:flex;flex-direction:column;gap:12px;opacity:0}
+.introE .ie-btn{display:flex;align-items:center;justify-content:center;gap:8px;border-radius:99px;height:56px;width:100%;font-weight:700;font-size:15px;letter-spacing:.05em;transition:transform .15s var(--ease);box-shadow:none}
+.introE .ie-btn:active{transform:scale(.98)}
+.introE .ie-btn.line{background:#06C755;color:#fff;box-shadow:0 6px 18px rgba(6,199,85,.25)}
+.introE .ie-btn.glass{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);color:#fff;backdrop-filter:blur(4px)}
+.introE .ie-login{text-align:center;font-size:12px;color:rgba(255,255,255,.6);margin-top:16px;opacity:0}
+.introE .ie-login a{color:#7FE6CE;font-weight:700;margin-left:8px;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.introE.run .ie-copy{animation:ieFadeUp .4s var(--ease) 1.6s both}
+.introE.run .ie-chips{animation:ieFadeUp .4s var(--ease) 1.68s both}
+.introE.run .ie-ctas{animation:ieFadeUp .4s var(--ease) 1.76s both}
+.introE.run .ie-login{animation:ieFadeUp .4s var(--ease) 1.84s both}
+.introE .ie-theme{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:18px;opacity:0}
+.introE .ie-theme .lbl2{font-size:10px;letter-spacing:.14em;color:rgba(255,255,255,.55)}
+.introE .ie-theme .tbtn{width:34px;height:30px;border-radius:10px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);color:#fff;font-family:var(--font-num);font-size:11.5px;font-weight:600}
+.introE .ie-theme .tbtn.on{background:#fff;color:var(--fairway-deep);border-color:#fff}
+.introE .ie-note{text-align:center;font-size:9px;letter-spacing:.12em;color:rgba(255,255,255,.4);margin-top:12px;opacity:0}
+.introE.run .ie-theme{animation:ieFadeUp .4s var(--ease) 1.9s both}
+.introE.run .ie-note{animation:ieFadeUp .4s var(--ease) 1.96s both}
+.introE .ie-replay{position:absolute;top:16px;right:16px;z-index:10;width:44px;height:44px;border-radius:50%;background:rgba(8,46,33,.4);backdrop-filter:blur(6px);color:#fff;display:flex;align-items:center;justify-content:center;transition:transform .15s var(--ease)}
+.introE .ie-replay:active{transform:scale(.92) rotate(-40deg)}
+@media(prefers-reduced-motion:reduce){.introE.run *{animation-duration:.01s!important;animation-delay:0s!important}.introE.run .ie-photo{animation:none!important}}
