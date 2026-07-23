@@ -3315,23 +3315,23 @@ V.games = () => `
   ${tabbar('my')}${demoPill()}`;
 
 /* --- A) パター --- */
-let gp = {pow:0, dir:1, raf:null, state:'ready', combo:0, left:5, sum:0};
+let gp = {pow:0, ang:0, dir:1, adir:1, raf:null, state:'ready', combo:0, left:5, sum:0};
 V.gputt = () => `
   ${appbar({title:'ワングリップパター', back:true, noBell:true})}
   <div class="page nofoot g-page">
-    ${goldHud()}
-    <div class="g-stats"><span>コンボ <b id="gp-combo" style="font-family:var(--font-num)">×${gp.combo||'-'}</b></span><span>残り <b id="gp-left" style="font-family:var(--font-num)">${gp.left}</b> 打</span><span>獲得 <b id="gp-sum" style="font-family:var(--font-num)">${gp.sum}</b> G</span></div>
-    <div class="gp-field" id="gp-field" onclick="gpTap()">
-      <div class="gp-cup"><span class="gp-hole"></span><span class="gp-flag"><svg width="34" height="52" viewBox="0 0 34 52" fill="none"><path d="M6 2v48" stroke="#eef2ef" stroke-width="3" stroke-linecap="round"/><path d="M8 4l22 6-22 9z" fill="#e23b3b"/></svg></span></div>
+    <div class="g-stats"><span>コンボ <b id="gp-combo">×${gp.combo||'-'}</b></span><span>残り <b id="gp-left">${gp.left}</b> 打</span><span>獲得 <b id="gp-sum">${gp.sum}</b> G</span><span class="gs-gold">${I.trophy.replace('width="22" height="22"','width="13" height="13"')} <b>${(S.gold||0).toLocaleString()}</b></span></div>
+    <div class="gp-field prem" id="gp-field" onclick="gpTap()">
+      <div class="gp-cup"><span class="gp-hole"></span><span class="gp-flag"><svg width="34" height="56" viewBox="0 0 34 56" fill="none"><path d="M6 4v48" stroke="#F4F7F4" stroke-width="3" stroke-linecap="round"/><path class="gp-flagcloth" d="M8 6l22 6-22 9z" fill="#E23B3B"/></svg></span></div>
       <div class="gp-orbit" id="gp-orbit"><span class="gp-oball"></span></div>
+      <div class="gp-dir" id="gp-dir"><svg width="46" height="64" viewBox="0 0 46 64" fill="none"><path d="M23 60V16" stroke="#FFE9A8" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 8"/><path d="M23 4l9 14H14z" fill="#FFE9A8"/></svg></div>
       <div class="gp-ball" id="gp-ball"></div>
       <div class="gp-result" id="gp-result"></div>
     </div>
     <div class="gp-meterrow">
       <div class="gp-meter"><div class="gp-zone"></div><div class="gp-fill" id="gp-fill"></div></div>
-      <button class="btn" id="gp-btn" style="flex:1" onclick="gpTap()">タップでストローク</button>
+      <button class="btn g-btn" id="gp-btn" style="flex:1" onclick="gpTap()">タップで方向を決める</button>
     </div>
-    <p class="muted" style="font-size:10px;text-align:center;margin-top:8px">緑のゾーンで止めるとカップイン。無料5打/日・追加は100G</p>
+    <p class="g-note">方向を止めて、金のゾーンでストローク。無料5打/日・追加は100G</p>
   </div>${demoPill()}`;
 function gpInit(){ gp.state='ready'; gpAim(); }
 function gpAim(){
@@ -3339,8 +3339,21 @@ function gpAim(){
   b.style.transition='none'; b.style.transform='none'; b.style.opacity='1';
   const o = document.getElementById('gp-orbit'); o.className='gp-orbit'; o.style.opacity='0';
   document.getElementById('gp-result').className='gp-result';
-  document.getElementById('gp-btn').textContent='タップでストローク';
+  const d = document.getElementById('gp-dir'); d.style.opacity='1';
+  document.getElementById('gp-fill').style.height='0%';
+  document.getElementById('gp-btn').textContent='タップで方向を決める';
+  gp.state='dir'; gp.ang=0; gp.adir=1;
+  cancelAnimationFrame(gp.raf);
+  const step=()=>{ if(gp.state!=='dir') return;
+    gp.ang += gp.adir*1.35;
+    if(gp.ang>=30){gp.ang=30;gp.adir=-1} if(gp.ang<=-30){gp.ang=-30;gp.adir=1}
+    const el=document.getElementById('gp-dir'); if(el) el.style.transform=`rotate(${gp.ang}deg)`;
+    gp.raf=requestAnimationFrame(step); };
+  gp.raf=requestAnimationFrame(step);
+}
+function gpPower(){
   gp.state='aim'; gp.pow=0; gp.dir=1;
+  document.getElementById('gp-btn').textContent='タップでストローク';
   cancelAnimationFrame(gp.raf);
   const step=()=>{ if(gp.state!=='aim') return;
     gp.pow += gp.dir*2.1;
@@ -3351,23 +3364,31 @@ function gpAim(){
 }
 function gpTap(){
   if(gp.state==='done'){ gpNext(); return; }
+  if(gp.state==='dir'){
+    if(gp.left<=0){ gpRefill(); return; }
+    cancelAnimationFrame(gp.raf); gpPower(); return;
+  }
   if(gp.state!=='aim') return;
-  if(gp.left<=0){ gpRefill(); return; }
   gp.state='roll'; cancelAnimationFrame(gp.raf); gp.left--;
   const el=id=>document.getElementById(id);
   el('gp-left').textContent=gp.left;
+  el('gp-dir').style.opacity='0';
   const diff = gp.pow - 70;
   const field = el('gp-field'); const fh = field.clientHeight;
   const perfect = fh - 100;
   const travel = Math.max(30, Math.min(fh-40, perfect * (gp.pow/70)));
+  const dx = Math.sin(gp.ang*Math.PI/180) * travel;
   const ball = el('gp-ball');
   ball.style.transition='transform 1.1s cubic-bezier(.15,.7,.3,1)';
-  ball.style.transform=`translateY(${-travel}px)`;
+  ball.style.transform=`translate(${dx}px, ${-travel}px)`;
   const showR=(txt,cls,g)=>{ const r=el('gp-result'); r.innerHTML=txt+(g?`<small>+${g} G</small>`:''); r.className='gp-result show '+cls; };
   setTimeout(()=>{
-    if(Math.abs(diff)<=3){ gpCupIn(false, showR); }
-    else if(diff>3 && diff<=6){ gpRim(true, showR); }
-    else if(diff>6 && diff<=10){ gpRim(false, showR); }
+    const offLine = Math.abs(dx) > 20;
+    if(offLine && travel > perfect*0.6){ gp.combo=0; showR(dx<0?'左へ外れた…':'右へ外れた…','miss'); gpDone(); }
+    else if(Math.abs(diff)<=3 && Math.abs(dx)<=9){ gpCupIn(false, showR); }
+    else if(Math.abs(diff)<=3 && Math.abs(dx)<=20){ gpRim(true, showR); }
+    else if(diff>3 && diff<=6 && !offLine){ gpRim(true, showR); }
+    else if(diff>6 && diff<=10 && !offLine){ gpRim(false, showR); }
     else if(diff<-3){ gp.combo=0; showR('ショート…','miss'); gpDone(); }
     else { gp.combo=0; showR('強すぎ！オーバー','miss'); gpDone(); }
   }, 1120);
@@ -3402,23 +3423,43 @@ function gpRefill(){
 
 /* --- B) ドラコン --- */
 let gd = {state:'ready', pow:0, meet:0, dir:1, raf:null, best:0, left:5};
+const GD_GOLFER = `<svg id="gd-golfer" width="110" height="130" viewBox="0 0 110 130">
+  <g fill="#08281B">
+    <circle cx="60" cy="22" r="10"/>
+    <path d="M50 32q13 7 21 3l7 26q-7 6-20 6l-10-6z"/>
+    <path d="M52 62l-8 44 9 2 9-36 6 34 9-2-7-46z"/>
+    <path d="M44 106l-4 6 12 2 2-7zM76 104l6 6-11 3-3-7z"/>
+  </g>
+  <g id="gd-arm" style="transform-box:fill-box;transform-origin:64px 40px">
+    <path d="M58 38l30 14-3 7-31-12z" fill="#08281B"/>
+    <rect x="84" y="50" width="3.4" height="52" rx="1.7" transform="rotate(-28 84 50)" fill="#B9C4BE"/>
+    <path d="M110 96q8 4 6 10q-8 2 -12-4z" fill="#2B3634" transform="rotate(-28 84 50)"/>
+  </g>
+</svg>`;
 V.gdrive = () => `
   ${appbar({title:'ドラコンメーター', back:true, noBell:true})}
   <div class="page nofoot g-page">
-    ${goldHud()}
-    <div class="g-stats"><span>ベスト <b id="gd-best" style="font-family:var(--font-num)">${gd.best||'-'}</b> y</span><span>残り <b id="gd-left" style="font-family:var(--font-num)">${gd.left}</b> 打</span></div>
-    <div class="gd-stage">
+    <div class="g-stats"><span>ベスト <b id="gd-best">${gd.best||'-'}</b> y</span><span>残り <b id="gd-left">${gd.left}</b> 打</span><span class="gs-gold">${I.trophy.replace('width="22" height="22"','width="13" height="13"')} <b>${(S.gold||0).toLocaleString()}</b></span></div>
+    <div class="gd-scene" id="gd-scene">
+      <div class="gd-sun"></div>
+      <div class="gd-fair"></div>
+      <div class="gd-yline y150">150y</div><div class="gd-yline y250">250y</div>
+      ${GD_GOLFER}
+      <span class="gd-tee"></span>
+      <div class="gd-bf" id="gd-bf"><i class="gd-bx" id="gd-bx"><i class="gd-by" id="gd-by"></i></i></div>
+      <div class="gd-flash" id="gd-flash"></div>
       <div class="gd-num" id="gd-num">---<small>yards</small></div>
-      <div class="gd-msg" id="gd-msg">パワーを決めよう</div>
-      <div class="gd-meter"><div class="gd-zone" id="gd-zone" style="left:58%;width:26%"></div><div class="gd-mark" id="gd-mark"></div></div>
-      <div class="gd-meter" style="margin-top:10px"><div class="gd-zone just" style="left:46%;width:8%"></div><div class="gd-mark" id="gd-mark2" style="opacity:.25"></div></div>
     </div>
-    <button class="btn" id="gd-btn" onclick="gdTap()">タップでスイング開始</button>
+    <div class="gd-msg" id="gd-msg">パワーを決めよう</div>
+    <div class="gd-meter"><div class="gd-zone" style="left:58%;width:26%"></div><div class="gd-mark" id="gd-mark"></div></div>
+    <div class="gd-meter" style="margin-top:8px"><div class="gd-zone just" style="left:46%;width:8%"></div><div class="gd-mark" id="gd-mark2" style="opacity:.25"></div></div>
+    <button class="btn g-btn" id="gd-btn" style="margin-top:12px" onclick="gdTap()">タップでスイング開始</button>
     <div class="g-rank" id="gd-rank">
       <div class="sec-h" style="padding:12px 2px 6px"><span class="t" style="font-size:12px">今週のドラコンランキング</span></div>
-      ${[['1','GOLFMAN',312],['2','Dai',298],['3','SHU',287],['4','Nori',280]].map(([r,n,y])=>`<div class="g-rrow"><b style="font-family:var(--font-num)">${r}</b><span>${n}</span><b style="font-family:var(--font-num)">${y}y</b></div>`).join('')}
+      ${[['1','GOLFMAN',312],['2','Dai',298],['3','SHU',287],['4','Nori',280]].map(([r,n,y])=>`<div class="g-rrow"><b>${r}</b><span>${n}</span><b>${y}y</b></div>`).join('')}
     </div>
   </div>${demoPill()}`;
+
 function gdInit(){ gd.state='ready'; document.getElementById('gd-btn').textContent='タップでスイング開始'; }
 function gdTap(){
   const el=id=>document.getElementById(id);
@@ -3448,16 +3489,28 @@ function gdTap(){
     const meetScore = 100 - Math.min(100, Math.abs(gd.meet-50)*6);
     const dist = Math.round(150 + powScore*0.9 + meetScore*0.7 + Math.random()*8);
     el('gd-msg').textContent='';
-    const t0 = Date.now();
-    const iv = setInterval(()=>{
-      const p = Math.min(1, (Date.now()-t0)/1400);
-      const cur = Math.round(dist * (1-Math.pow(1-p,3)));
-      const n = el('gd-num'); if(n) n.innerHTML=cur+'<small>yards</small>';
-      if(p>=1){ clearInterval(iv); gdLand(dist); }
-    }, 45);
+    const scene = el('gd-scene');
+    scene.classList.add('swing');
+    setTimeout(()=>{
+      el('gd-flash').classList.add('on');
+      scene.classList.add('shake');
+      el('gd-bf').classList.add('fly');
+      const t0 = Date.now();
+      const iv = setInterval(()=>{
+        const p = Math.min(1, (Date.now()-t0)/1600);
+        const cur = Math.round(dist * (1-Math.pow(1-p,3)));
+        const n = el('gd-num'); if(n) n.innerHTML=cur+'<small>yards</small>';
+        if(p>=1){ clearInterval(iv); gdLand(dist); }
+      }, 45);
+    }, 430);
     return;
   }
-  if(gd.state==='done'){ gd.state='ready'; el('gd-num').innerHTML='---<small>yards</small>'; el('gd-msg').textContent='パワーを決めよう'; el('gd-mark2').style.opacity='.25'; gdTap(); }
+  if(gd.state==='done'){
+    gd.state='ready';
+    el('gd-num').innerHTML='---<small>yards</small>'; el('gd-msg').textContent='パワーを決めよう'; el('gd-mark2').style.opacity='.25';
+    const sc=el('gd-scene'); sc.classList.remove('swing','shake'); el('gd-flash').classList.remove('on'); el('gd-bf').classList.remove('fly');
+    gdTap();
+  }
 }
 function gdLand(dist){
   const el=id=>document.getElementById(id);
