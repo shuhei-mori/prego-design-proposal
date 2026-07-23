@@ -3307,6 +3307,7 @@ V.games = () => `
       ['gputt','沈めろ！ワングリップパター','メーターをタップで止めてパット。カップ縁の攻防にドキドキ','連続カップインでコンボ倍率'],
       ['gdrive','ドラコンメーター','パワー＋ジャストミートの2段タップで飛距離に挑戦','300y超えでビッグボーナス'],
       ['gwind','風読みニアピン','風を読んで狙いをずらす1打勝負。ピタリと寄せろ','1m以内で100G'],
+      ['gtarget','スタンプ的あて','流れるキャラをタップで撃ち落とす30秒シューティング','レアキャラは50点'],
     ].map(([r,t,s,b])=>`
     <div class="card g-card" onclick="go('#/${r}')">
       <div style="flex:1">
@@ -3440,6 +3441,11 @@ const GD_GOLFER = `<svg id="gd-golfer" width="110" height="130" viewBox="0 0 110
     <rect x="84" y="50" width="3.4" height="52" rx="1.7" transform="rotate(-28 84 50)" fill="#B9C4BE"/>
     <path d="M110 96q8 4 6 10q-8 2 -12-4z" fill="#2B3634" transform="rotate(-28 84 50)"/>
   </g>
+  <g id="gd-arm2" opacity="0">
+    <path d="M60 42L40 20l7-6 19 22z" fill="#08281B"/>
+    <path d="M44 18L16 2" stroke="#B9C4BE" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M16 2q-9-3-12 3q6 5 13 2z" fill="#2B3634"/>
+  </g>
 </svg>`;
 V.gdrive = () => `
   ${appbar({title:'ドラコンメーター', back:true, noBell:true})}
@@ -3507,7 +3513,7 @@ function gdTap(){
         const n = el('gd-num'); if(n) n.innerHTML=cur+'<small>yards</small>';
         if(p>=1){ clearInterval(iv); gdLand(dist); }
       }, 45);
-    }, 430);
+    }, 460);
     return;
   }
   if(gd.state==='done'){
@@ -3603,6 +3609,112 @@ function gwRetry(){
   <button class="btn ghost" style="margin-top:10px" onclick="closeSheet()">また明日</button>`);
 }
 
+
+/* --- D) スタンプ的あて --- */
+let gt = {score:0, time:30, playing:false, spawnIv:null, timeIv:null, best:0, left:3, seq:0};
+const GT_CHARS = [
+  {id:'revenge', nm:'ブラックイーグル', pts:50, size:52, dur:2400, w:1},
+  {id:'best',    nm:'クールシーガル',   pts:30, size:60, dur:3300, w:2},
+  {id:'night',   nm:'ナイターフクロウ', pts:30, size:60, dur:3500, w:2},
+  {id:'range',   nm:'ダックフック',     pts:20, size:66, dur:4200, w:3},
+  {id:'morning', nm:'モーニングルースター', pts:20, size:66, dur:4300, w:3},
+  {id:'round',   nm:'ゴルフグリーン',   pts:10, size:76, dur:5200, w:3},
+];
+function stampArt(id){
+  const s = STAMPS.find(x=>x.id===id);
+  return s ? s.svg.replace(/<g transform="rotate\(-3[\s\S]*?<\/g><\/svg>/,'</svg>') : '';
+}
+V.gtarget = () => `
+  ${appbar({title:'スタンプ的あて', back:true, noBell:true})}
+  <div class="page nofoot g-page">
+    <div class="g-stats"><span>スコア <b id="gt-score">${gt.score}</b></span><span>残り <b id="gt-time">${gt.time}</b> 秒</span><span>今日 <b id="gt-left">${gt.left}</b> 回</span><span class="gs-gold">${I.trophy.replace('width="22" height="22"','width="13" height="13"')} <b>${gGold().toLocaleString()}</b></span></div>
+    <div class="gt-scene" id="gt-scene">
+      <div class="gt-lane l1"></div><div class="gt-lane l2"></div><div class="gt-lane l3"></div>
+      <div class="gt-start" id="gt-start">
+        <b>キャラをタップして撃ち落とせ</b>
+        <span>30秒・レアキャラほど高得点</span>
+        <div class="gt-legend">${GT_CHARS.slice(0,3).map(ch=>`<span class="gt-lg"><i>${stampArt(ch.id)}</i><b>${ch.pts}</b></span>`).join('')}</div>
+        <button class="btn brass" style="margin-top:14px;min-width:200px" onclick="gtStart()">スタート</button>
+      </div>
+    </div>
+    <p class="g-note">無料3回/日・追加は100G。ハイスコアでゴールド大量獲得</p>
+  </div>${demoPill()}`;
+function gtInit(){ gtStop(); gt.playing=false; }
+function gtStop(){ clearInterval(gt.spawnIv); clearInterval(gt.timeIv); }
+function gtStart(){
+  if(gt.left<=0){ gtRefill(); return; }
+  gt.left--; gt.playing=true; gt.score=0; gt.time=30;
+  const el=id=>document.getElementById(id);
+  el('gt-left').textContent=gt.left;
+  el('gt-score').textContent='0';
+  el('gt-time').textContent='30';
+  el('gt-start').style.display='none';
+  document.querySelectorAll('.gt-t').forEach(t=>t.remove());
+  gtStop();
+  gt.spawnIv=setInterval(()=>{
+    if(location.hash!=='#/gtarget'){ gtStop(); return; }
+    if(gt.playing) gtSpawn();
+  }, 620);
+  gt.timeIv=setInterval(()=>{
+    if(location.hash!=='#/gtarget'){ gtStop(); return; }
+    gt.time--; const t=el('gt-time'); if(t) t.textContent=gt.time;
+    if(gt.time<=0) gtEnd();
+  }, 1000);
+  gtSpawn(); setTimeout(()=>{ if(gt.playing) gtSpawn(); }, 300);
+}
+function gtPick(){
+  const pool=[]; GT_CHARS.forEach(c=>{ for(let i=0;i<c.w;i++) pool.push(c); });
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+function gtSpawn(){
+  const scene=document.getElementById('gt-scene'); if(!scene) return;
+  const ch=gtPick();
+  const lane=Math.floor(Math.random()*3);
+  const fromLeft=lane%2===0;
+  const d=document.createElement('div');
+  d.className='gt-t '+(fromLeft?'ltr':'rtl');
+  d.style.top=(28+lane*102)+'px';
+  d.style.width=d.style.height=ch.size+'px';
+  d.style.animationDuration=ch.dur+'ms';
+  d.innerHTML=stampArt(ch.id)+`<span class="gt-badge">${ch.pts}</span>`;
+  d.onclick=(e)=>{ e.stopPropagation(); gtHit(d, ch); };
+  d.addEventListener('animationend', ()=>{ if(!d.classList.contains('hit')) d.remove(); });
+  scene.appendChild(d);
+}
+function gtHit(d, ch){
+  if(!gt.playing || d.classList.contains('hit')) return;
+  d.classList.add('hit');
+  gt.score+=ch.pts;
+  const s=document.getElementById('gt-score'); if(s) s.textContent=gt.score;
+  const p=document.createElement('span');
+  p.className='gt-pts'; p.textContent='+'+ch.pts;
+  p.style.left=d.style.width && d.offsetLeft+'px'; p.style.top=d.offsetTop+'px';
+  p.style.left=d.offsetLeft+'px';
+  document.getElementById('gt-scene').appendChild(p);
+  setTimeout(()=>{ p.remove(); d.remove(); }, 600);
+}
+function gtEnd(){
+  gt.playing=false; gtStop();
+  document.querySelectorAll('.gt-t').forEach(t=>t.remove());
+  const g=Math.max(5, Math.round(gt.score/5));
+  gAdd(g); save();
+  const isBest = gt.score>gt.best; if(isBest) gt.best=gt.score;
+  if(gt.score>=300) celebrate();
+  sheet(`<h3>タイムアップ！</h3>
+  <div class="sum-box" style="margin-top:10px">
+    <div class="sum-row"><span>スコア</span><b style="font-family:var(--font-num);font-size:18px">${gt.score}${isBest?'　<span style="color:var(--brass-ink);font-size:11px">自己ベスト！</span>':''}</b></div>
+    <div class="sum-row"><span>獲得ゴールド</span><b style="font-family:var(--font-num);color:var(--brass-ink)">+${g} G</b></div>
+  </div>
+  <button class="btn brass" style="margin-top:14px" onclick="closeSheet();document.getElementById('gt-start').style.display='';render()">もう1回あそぶ</button>
+  <button class="btn ghost" style="margin-top:10px" onclick="closeSheet();go('#/games')">ゲーム一覧へ</button>`);
+}
+function gtRefill(){
+  sheet(`<h3>本日の無料3回が終了しました</h3>
+  <p class="muted">100ゴールドで3回追加できます（保有 ${gGold().toLocaleString()} G）</p>
+  <button class="btn brass" style="margin-top:12px" ${gGold()>=100?'':'disabled'} onclick="gAdd(-100);save();gt.left=3;closeSheet();render();toast('3回追加しました（-100G）')">100Gで3回追加</button>
+  <button class="btn ghost" style="margin-top:10px" onclick="closeSheet()">また明日</button>`);
+}
+
 /* ---------- router ---------- */
 let _lastRoute = null;
 function render(){
@@ -3625,7 +3737,7 @@ function render(){
     'notif-settings': V.notifSettings, 'blocked': V.blocked, 'card': V.card,
     'password': V.password, 'verify': V.verify,
     'articles': V.articles, 'article': ()=>V.article(arg),
-    'me': V.me, 'gold': V.gold, 'games': V.games, 'gputt': V.gputt, 'gdrive': V.gdrive, 'gwind': V.gwind, 'edit-profile': V.editProfile, 'invite-set': V.inviteSet, 'host-compe': V.hostCompe, 'reco': V.reco, 'likes': V.likes, 'footprints': V.footprints,
+    'me': V.me, 'gold': V.gold, 'games': V.games, 'gputt': V.gputt, 'gdrive': V.gdrive, 'gwind': V.gwind, 'gtarget': V.gtarget, 'edit-profile': V.editProfile, 'invite-set': V.inviteSet, 'host-compe': V.hostCompe, 'reco': V.reco, 'likes': V.likes, 'footprints': V.footprints,
   };
   $app.innerHTML = (map[route] || V.login)();
   window.scrollTo(0,0);
@@ -3636,6 +3748,7 @@ function render(){
   if(route==='gputt') setTimeout(gpInit, 0);
   if(route==='gdrive') setTimeout(gdInit, 0);
   if(route==='gwind') setTimeout(gwInit, 0);
+  if(route==='gtarget') setTimeout(gtInit, 0);
   countUp();
   if(route==='roundlog'){ document.fonts ? document.fonts.ready.then(drawFrame) : drawFrame(); setTimeout(drawFrame,300); }
 }
