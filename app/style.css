@@ -1197,3 +1197,17 @@ select.input{appearance:none;-webkit-appearance:none;background-image:url("data:
 .stamp-pick .stamp-svg,.stamp-pick svg{display:block;width:100%;height:100%}
 .chatbar .stamp-btn{background:var(--paper);color:var(--fairway);border:1.5px solid var(--line)}
 body.no-page-anim .stamp-svg .spk>*{animation-duration:2.6s!important}
+
+/* ===== ログインボーナス ===== */
+.bn-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.bn-cell{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;background:var(--ivory);border:1.5px solid var(--line)}
+.bn-cell .d{font-size:9.5px;font-weight:700;color:var(--ink-soft)}
+.bn-cell .a{font-family:var(--font-num);font-size:14px;font-weight:600}
+.bn-cell .ic{color:var(--brass-ink)}
+.bn-cell .ck{width:18px;height:18px;border-radius:50%;background:var(--fairway);color:#fff;display:flex;align-items:center;justify-content:center}
+.bn-cell .ck svg{animation:ckPop .3s var(--ease)}
+.bn-cell.done{opacity:.55}
+.bn-cell.now{border-color:var(--fairway);background:var(--turf-soft);box-shadow:var(--sh-card)}
+.bn-cell.now .a{color:var(--fairway-deep)}
+.bn-cell.big{grid-column:span 2;background:linear-gradient(120deg,var(--brass-soft),#fff);border-color:var(--brass-bright)}
+.bn-cell.big .a{font-size:17px;color:var(--brass-ink)}

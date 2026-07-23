@@ -1196,6 +1196,42 @@ const STAMPS = [
   {id:'best', label:'ベストスコアは？', chr:'クールシーガル', svg:`<svg viewBox="0 0 200 200"><g transform="translate(20 4) scale(.8)"><path d="M40 122L72 108L76 130Z" fill="#fff" stroke="#e2ece9" stroke-width="1.4"></path><path d="M44 122l26 -10" stroke="#2fb6ab" stroke-width="4" stroke-linecap="round"></path><path d="M60 120Q64 84 104 86Q133 90 129 118Q124 140 96 140Q66 140 60 120Z" fill="#fff" stroke="#e2ece9" stroke-width="1.5"></path><g stroke="#3bbcae" stroke-width="4" stroke-linecap="round" fill="none"><path d="M74 112q22 -6 40 -2"></path><path d="M72 121q24 -4 44 0"></path><path d="M76 130q20 -2 38 2"></path></g><g stroke="#f0902a" stroke-width="3.6" stroke-linecap="round"><path d="M92 140l-3 16"></path><path d="M106 140l3 16"></path></g><g fill="#f0902a"><path d="M80 156l14 0 -7 6Z"></path><path d="M100 156l14 0 -7 6Z"></path></g><circle cx="114" cy="78" r="18.5" fill="#fff" stroke="#e2ece9" stroke-width="1.5"></circle><path d="M130 80l17 -2 -4 8 -13 3Z" fill="#f5972a"></path><path d="M130 84l13 1 -11 4Z" fill="#e0801a"></path><g fill="#232323"><rect x="101" y="72" width="12.5" height="8.4" rx="3.4"></rect><rect x="115.5" y="72" width="12" height="8.4" rx="3.4"></rect></g><path d="M113.5 75.5h2.2" stroke="#232323" stroke-width="2"></path><path d="M94 70Q114 48 134 70Q114 62 94 70Z" fill="#e2433a"></path><path d="M94 70q20 -7 40 0" stroke="#c5362e" stroke-width="3.4" fill="none" stroke-linecap="round"></path><circle cx="114" cy="50" r="4.2" fill="#fff"></circle><g class="spk"><use href="#spark" x="150" y="86" width="20" height="20" fill="#ffd23f"></use><use href="#spark" x="40" y="70" width="18" height="18" fill="#3bbcae"></use></g></g><g transform="rotate(-3 100 182)"><text class="st" x="100" y="190" font-size="23" fill="#2fb6ab">ベストスコアは？</text></g></svg>`},
   {id:'morning', label:'朝イチ集合！', chr:'モーニングルースター', svg:`<svg viewBox="0 0 200 200"><g transform="translate(20 0) scale(.8)"><circle cx="158" cy="44" r="14" fill="#ffd23f"></circle><g stroke="#ffd23f" stroke-width="3" stroke-linecap="round"><path d="M158 22l0 -8"></path><path d="M178 34l6 -6"></path><path d="M182 50l8 0"></path><path d="M138 32l-6 -6"></path></g><ellipse cx="92" cy="152" rx="52" ry="8" fill="#d9efe2"></ellipse><g fill="#2e7d6b"><path d="M56 110q-24 -8 -28 -30q18 2 31 18Z"></path><path d="M56 122q-28 0 -38 -18q20 -2 37 8Z"></path></g><g stroke="#f0902a" stroke-width="3.2" stroke-linecap="round"><path d="M78 140l-2 14"></path><path d="M92 140l2 14"></path></g><g fill="#f0902a"><path d="M69 154l14 0 -7 5Z"></path><path d="M87 154l14 0 -7 5Z"></path></g><ellipse cx="84" cy="116" rx="30" ry="26" fill="#fff" stroke="#e2ece9" stroke-width="1.5"></ellipse><path d="M70 110Q66 94 86 92Q100 92 98 104Q96 116 82 118Q70 118 70 110Z" fill="#eef2ef"></path><circle cx="112" cy="78" r="15" fill="#fff" stroke="#e2ece9" stroke-width="1.5"></circle><g fill="#e2433a"><circle cx="105" cy="62" r="5"></circle><circle cx="112" cy="58" r="5.5"></circle><circle cx="119" cy="62" r="5"></circle></g><path d="M114 92q1 9 -5 12q-3 -7 1 -12Z" fill="#e2433a"></path><path d="M126 72l17 -5 -11 9Z" fill="#f0902a"></path><path d="M126 78l13 5 -14 1Z" fill="#e0801a"></path><circle cx="116" cy="71" r="2.4" fill="#241c12"></circle><g stroke="#c9d6e4" stroke-width="3" stroke-linecap="round"><path d="M148 62l10 -7"></path><path d="M150 72l12 -1"></path></g><g class="spk"><use href="#spark" x="36" y="48" width="18" height="18" fill="#ffd23f"></use><use href="#spark" x="156" y="110" width="15" height="15" fill="#a06bff"></use></g></g><g transform="rotate(-3 100 182)"><text class="st" x="100" y="190" font-size="25" fill="#e2433a">朝イチ集合！</text></g></svg>`}
 ];
+const BONUS7 = [10,20,30,50,70,100,300];
+function todayKey(){ const d=new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
+function maybeLoginBonus(){
+  if(!isD() || !S.role) return;
+  if(S.lastBonus === todayKey()) return;
+  openBonusSheet();
+}
+function openBonusSheet(){
+  const day = ((S.loginDay||0) % 7) + 1;
+  const unit = S.role==='f' ? 'コイン' : 'pt';
+  const cells = BONUS7.map((amt,i)=>{
+    const n = i+1;
+    const state = n < day ? 'done' : n === day ? 'now' : '';
+    return `<div class="bn-cell ${state} ${n===7?'big':''}">
+      <span class="d">${n}日</span>
+      ${n<day?`<span class="ck">${I.check.replace('width="40" height="40"','width="13" height="13"')}</span>`:`<span class="ic">${I.coin.replace('width="20" height="20"','width="15" height="15"')}</span>`}
+      <span class="a">${amt}</span>
+    </div>`;
+  }).join('');
+  sheet(`<h3>ログインボーナス</h3>
+  <p class="muted">連続ログイン <b style="font-family:var(--font-num)">${day}</b> 日目。7日目には <b>300${unit}</b> が届きます</p>
+  <div class="bn-strip">${cells}</div>
+  <button class="btn brass" style="margin-top:14px" onclick="claimBonus()">${BONUS7[day-1]}${unit} を受け取る</button>
+  <p class="muted" style="font-size:10px;margin-top:10px;text-align:center">ログインが1日空くと1日目に戻ります　<u style="cursor:pointer" onclick="bonusDemoNext()">（デモ）翌日のログインを再現</u></p>`);
+}
+function claimBonus(){
+  const day = ((S.loginDay||0) % 7) + 1;
+  const amt = BONUS7[day-1];
+  if(S.role==='f') S.coins += amt; else S.points += amt;
+  S.loginDay = (S.loginDay||0) + 1;
+  S.lastBonus = todayKey();
+  save(); closeSheet(); celebrate();
+  setTimeout(()=>toast(`ログインボーナス ${amt}${S.role==='f'?'コイン':'pt'} を受け取りました`), 300);
+  render();
+}
+function bonusDemoNext(){ S.lastBonus = null; save(); openBonusSheet(); }
 const SPARK_DEF = '<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="spark" viewBox="-10 -10 20 20"><path d="M0 -9C1.3 -2.5 2.5 -1.3 9 0C2.5 1.3 1.3 2.5 0 9C-1.3 2.5 -2.5 1.3 -9 0C-2.5 -1.3 -1.3 -2.5 0 -9Z"/></symbol></defs></svg>';
 function stampSvg(id){ const s = STAMPS.find(x=>x.id===id); return s ? s.svg : ''; }
 function openStampSheet(id){
@@ -2490,12 +2526,6 @@ V.subscription = () => {
       </div>
     </div>
     <div style="height:18px"></div>
-    <div class="plan reco">
-      <span class="reco-tag">アップグレード案</span>
-      <div class="nm">プレミアム</div>
-      <div class="pr">¥9,800<small> /月</small></div>
-      <ul><li>オファーのサービス利用料 0円</li><li>惜しいマッチの優先提案</li><li>コンペ先行エントリー</li><li>検索結果で優先表示</li></ul>
-    </div>
     <button class="btn ghost" style="margin-top:8px" onclick="S.subActive=false;save();render();toast('サブスクを解約しました（デモ）')">サブスクの解約</button>
     <p class="muted" style="font-size:10.5px;margin-top:8px">サブスクは即時解約となり、返金はありません（デモ）</p>
   </div>
@@ -3224,6 +3254,7 @@ function render(){
   window.scrollTo(0, _sy);
   if(route==='reco') setTimeout(bindReco, 0);
   if(!route || route==='login') setTimeout(ieStart, 0);
+  if(route==='home') setTimeout(maybeLoginBonus, 700);
   countUp();
   if(route==='roundlog'){ document.fonts ? document.fonts.ready.then(drawFrame) : drawFrame(); setTimeout(drawFrame,300); }
 }
