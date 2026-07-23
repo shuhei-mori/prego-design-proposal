@@ -1196,7 +1196,7 @@ const STAMPS = [
   {id:'best', label:'ベストスコアは？', chr:'クールシーガル', svg:`<svg viewBox="0 0 200 200"><g transform="translate(20 4) scale(.8)"><path d="M40 122L72 108L76 130Z" fill="#fff" stroke="#e2ece9" stroke-width="1.4"></path><path d="M44 122l26 -10" stroke="#2fb6ab" stroke-width="4" stroke-linecap="round"></path><path d="M60 120Q64 84 104 86Q133 90 129 118Q124 140 96 140Q66 140 60 120Z" fill="#fff" stroke="#e2ece9" stroke-width="1.5"></path><g stroke="#3bbcae" stroke-width="4" stroke-linecap="round" fill="none"><path d="M74 112q22 -6 40 -2"></path><path d="M72 121q24 -4 44 0"></path><path d="M76 130q20 -2 38 2"></path></g><g stroke="#f0902a" stroke-width="3.6" stroke-linecap="round"><path d="M92 140l-3 16"></path><path d="M106 140l3 16"></path></g><g fill="#f0902a"><path d="M80 156l14 0 -7 6Z"></path><path d="M100 156l14 0 -7 6Z"></path></g><circle cx="114" cy="78" r="18.5" fill="#fff" stroke="#e2ece9" stroke-width="1.5"></circle><path d="M130 80l17 -2 -4 8 -13 3Z" fill="#f5972a"></path><path d="M130 84l13 1 -11 4Z" fill="#e0801a"></path><g fill="#232323"><rect x="101" y="72" width="12.5" height="8.4" rx="3.4"></rect><rect x="115.5" y="72" width="12" height="8.4" rx="3.4"></rect></g><path d="M113.5 75.5h2.2" stroke="#232323" stroke-width="2"></path><path d="M94 70Q114 48 134 70Q114 62 94 70Z" fill="#e2433a"></path><path d="M94 70q20 -7 40 0" stroke="#c5362e" stroke-width="3.4" fill="none" stroke-linecap="round"></path><circle cx="114" cy="50" r="4.2" fill="#fff"></circle><g class="spk"><use href="#spark" x="150" y="86" width="20" height="20" fill="#ffd23f"></use><use href="#spark" x="40" y="70" width="18" height="18" fill="#3bbcae"></use></g></g><g transform="rotate(-3 100 182)"><text class="st" x="100" y="190" font-size="23" fill="#2fb6ab">ベストスコアは？</text></g></svg>`},
   {id:'morning', label:'朝イチ集合！', chr:'モーニングルースター', svg:`<svg viewBox="0 0 200 200"><g transform="translate(20 0) scale(.8)"><circle cx="158" cy="44" r="14" fill="#ffd23f"></circle><g stroke="#ffd23f" stroke-width="3" stroke-linecap="round"><path d="M158 22l0 -8"></path><path d="M178 34l6 -6"></path><path d="M182 50l8 0"></path><path d="M138 32l-6 -6"></path></g><ellipse cx="92" cy="152" rx="52" ry="8" fill="#d9efe2"></ellipse><g fill="#2e7d6b"><path d="M56 110q-24 -8 -28 -30q18 2 31 18Z"></path><path d="M56 122q-28 0 -38 -18q20 -2 37 8Z"></path></g><g stroke="#f0902a" stroke-width="3.2" stroke-linecap="round"><path d="M78 140l-2 14"></path><path d="M92 140l2 14"></path></g><g fill="#f0902a"><path d="M69 154l14 0 -7 5Z"></path><path d="M87 154l14 0 -7 5Z"></path></g><ellipse cx="84" cy="116" rx="30" ry="26" fill="#fff" stroke="#e2ece9" stroke-width="1.5"></ellipse><path d="M70 110Q66 94 86 92Q100 92 98 104Q96 116 82 118Q70 118 70 110Z" fill="#eef2ef"></path><circle cx="112" cy="78" r="15" fill="#fff" stroke="#e2ece9" stroke-width="1.5"></circle><g fill="#e2433a"><circle cx="105" cy="62" r="5"></circle><circle cx="112" cy="58" r="5.5"></circle><circle cx="119" cy="62" r="5"></circle></g><path d="M114 92q1 9 -5 12q-3 -7 1 -12Z" fill="#e2433a"></path><path d="M126 72l17 -5 -11 9Z" fill="#f0902a"></path><path d="M126 78l13 5 -14 1Z" fill="#e0801a"></path><circle cx="116" cy="71" r="2.4" fill="#241c12"></circle><g stroke="#c9d6e4" stroke-width="3" stroke-linecap="round"><path d="M148 62l10 -7"></path><path d="M150 72l12 -1"></path></g><g class="spk"><use href="#spark" x="36" y="48" width="18" height="18" fill="#ffd23f"></use><use href="#spark" x="156" y="110" width="15" height="15" fill="#a06bff"></use></g></g><g transform="rotate(-3 100 182)"><text class="st" x="100" y="190" font-size="25" fill="#e2433a">朝イチ集合！</text></g></svg>`}
 ];
-const BONUS7 = [10,20,30,50,70,100,300];
+const BONUS7 = [100,200,300,500,700,1000,3000];
 function todayKey(){ const d=new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
 function maybeLoginBonus(){
   if(!isD() || !S.role) return;
@@ -1205,7 +1205,7 @@ function maybeLoginBonus(){
 }
 function openBonusSheet(){
   const day = ((S.loginDay||0) % 7) + 1;
-  const unit = S.role==='f' ? 'コイン' : 'pt';
+  const unit = 'ゴールド';
   const cells = BONUS7.map((amt,i)=>{
     const n = i+1;
     const state = n < day ? 'done' : n === day ? 'now' : '';
@@ -1218,17 +1218,54 @@ function openBonusSheet(){
   sheet(`<h3>ログインボーナス</h3>
   <p class="muted">連続ログイン <b style="font-family:var(--font-num)">${day}</b> 日目。7日目には <b>300${unit}</b> が届きます</p>
   <div class="bn-strip">${cells}</div>
-  <button class="btn brass" style="margin-top:14px" onclick="claimBonus()">${BONUS7[day-1]}${unit} を受け取る</button>
-  <p class="muted" style="font-size:10px;margin-top:10px;text-align:center">ログインが1日空くと1日目に戻ります　<u style="cursor:pointer" onclick="bonusDemoNext()">（デモ）翌日のログインを再現</u></p>`);
+  <button class="btn brass" style="margin-top:14px" onclick="claimBonus()">${BONUS7[day-1].toLocaleString()} ${unit}を受け取る</button>
+  <p class="muted" style="font-size:10.5px;margin-top:10px;text-align:center">貯めたゴールドは<u style="cursor:pointer;font-weight:700" onclick="closeSheet();go('#/gold')">ゴールド交換所</u>で特典と交換できます</p>
+  <p class="muted" style="font-size:10px;margin-top:6px;text-align:center">ログインが1日空くと1日目に戻ります　<u style="cursor:pointer" onclick="bonusDemoNext()">（デモ）翌日のログインを再現</u></p>`);
 }
 function claimBonus(){
   const day = ((S.loginDay||0) % 7) + 1;
   const amt = BONUS7[day-1];
-  if(S.role==='f') S.coins += amt; else S.points += amt;
+  S.gold = (S.gold||0) + amt;
   S.loginDay = (S.loginDay||0) + 1;
   S.lastBonus = todayKey();
   save(); closeSheet(); celebrate();
-  setTimeout(()=>toast(`ログインボーナス ${amt}${S.role==='f'?'コイン':'pt'} を受け取りました`), 300);
+  setTimeout(()=>toast(`ログインボーナス ${amt.toLocaleString()}ゴールドを受け取りました`), 300);
+  render();
+}
+const GOLD_ITEMS = [
+  {g:500,  t:'プロフィール優先表示 24時間', s:'検索・おすすめで上位に表示されます'},
+  {g:1000, t:'限定フレーム「ゴールドリング」', s:'プロフィール写真に金の縁どり'},
+  {g:1500, t:'おすすめ枠に1日掲載', s:'ホーム上部のおすすめに登場します'},
+  {g:3000, t:'提携ゴルフ場 割引券 ¥1,000', s:'予約時にそのまま使えます'},
+  {g:5000, t:'提携ショップ ギア割引券 ¥2,000', s:'ウェア・ボールなどに使えます'},
+];
+V.gold = () => `
+  ${appbar({title:'ゴールド交換所', back:true})}
+  <div class="page wrap" style="padding-bottom:calc(var(--tab-h) + 40px)">
+    <div class="card" style="padding:18px 16px;margin-top:12px;text-align:center;background:linear-gradient(120deg,var(--brass-soft),#fff)">
+      <div class="muted" style="font-size:10.5px;letter-spacing:.12em">保有ゴールド</div>
+      <div style="font-family:var(--font-num);font-weight:300;font-size:40px;color:var(--brass-ink)">${(S.gold||0).toLocaleString()}<small style="font-size:14px;font-weight:600">　G</small></div>
+      <div class="muted" style="font-size:10.5px">ログインボーナスやイベントで貯まります</div>
+    </div>
+    <div class="sec-h" style="padding:14px 2px 8px"><span class="t">交換できる特典</span></div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      ${GOLD_ITEMS.map((it,i)=>`
+      <div class="card" style="padding:13px 15px;display:flex;gap:12px;align-items:center">
+        <div style="flex:1">
+          <b style="font-size:12.5px">${it.t}</b>
+          <div class="muted" style="font-size:10.5px">${it.s}</div>
+        </div>
+        <button class="btn sm ${(S.gold||0)>=it.g?'':'ghost'}" style="flex:none" ${(S.gold||0)>=it.g?`onclick="exchangeGold(${i})"`:'disabled'}>${it.g.toLocaleString()} G</button>
+      </div>`).join('')}
+    </div>
+    <p class="muted" style="font-size:10px;margin-top:12px">交換した特典は即時反映されます（デモ）。ゴールドの有効期限は最終ログインから180日です</p>
+  </div>
+  ${tabbar('my')}${demoPill()}`;
+function exchangeGold(i){
+  const it = GOLD_ITEMS[i];
+  if((S.gold||0) < it.g) return;
+  S.gold -= it.g; save(); celebrate();
+  setTimeout(()=>toast(`「${it.t}」と交換しました`), 300);
   render();
 }
 function bonusDemoNext(){ S.lastBonus = null; save(); openBonusSheet(); }
@@ -2203,6 +2240,7 @@ V.mypage = () => {
   const menu = [
     ['プロフィール', I.user, ()=>`go('#/me')`],
     [isF?'コイン':'ポイント', I.coin, ()=>`go('#/points')`],
+    ['ゴールド', I.trophy.replace('width="22" height="22"','width="20" height="20"'), ()=>`go('#/gold')`],
     ['オファー', I.invite, ()=>`go('#/offers')`, offerBadgeCount()||''],
     ['設定', I.gear, ()=>`go('#/settings')`],
     ...(isF && isD() ? [['お誘い設定', I.sliders, ()=>`go('#/invite-set')`]] : []),
@@ -2497,10 +2535,35 @@ V.settings = () => `
   </div>
   ${tabbar('my')}${demoPill()}`;
 function taikai(){
-  sheet(`<h3>退会</h3>
-    <p style="font-size:13px;line-height:1.8">退会すると、プロフィール・マッチング履歴・保有ポイントはすべて削除され、復元できません。本当に退会しますか？</p>
-    <button class="btn" style="margin-top:16px;background:var(--danger)" onclick="closeSheet();toast('退会処理はデモのため実行されません')">退会する</button>
-    <button class="btn ghost" style="margin-top:10px" onclick="closeSheet()">キャンセル</button>`);
+  const isM = S.role==='m';
+  const rows = [
+    ['ゴールド', `${(S.gold||0).toLocaleString()} G`, 'ログインボーナスで貯めた分がすべて失効'],
+    isM ? ['ポイント', `${S.points.toLocaleString()} pt`, '未使用分も返金されません']
+        : ['コイン', `${S.coins.toLocaleString()} コイン`, '未出金分は受け取れなくなります'],
+    ['評価・実績', '★4.9・認定', '積み上げた評価と認定は復元できません'],
+    ['マッチ・メッセージ', `${(S.chats||[]).length}件`, 'やり取りはすべて削除されます'],
+    ...(isM && S.subActive ? [['サブスク残り期間', '19日分', '残り期間の料金は返金されません']] : []),
+  ];
+  sheet(`<h3>ちょっと待ってください</h3>
+  <p class="muted">退会すると、これらが<b style="color:var(--danger)">すべて失われます</b></p>
+  <div class="sum-box" style="margin-top:10px">
+    ${rows.map(([k,v,s])=>`<div class="sum-row"><span>${k}<small style="display:block;font-size:9px;color:var(--ink-soft)">${s}</small></span><b style="font-family:var(--font-num)">${v}</b></div>`).join('')}
+  </div>
+  <button class="btn" style="margin-top:16px" onclick="closeSheet()">やめておく</button>
+  <button class="btn ghost" style="margin-top:10px;color:var(--ink-soft)" onclick="${isM && S.subActive ? 'taikaiStep2()' : 'taikaiStep3()'}">それでも手続きを進める</button>`);
+}
+function taikaiStep2(){
+  sheet(`<h3>サブスクだけを解約しますか？</h3>
+  <p style="font-size:12.5px;line-height:1.8">退会しなくても、サブスクの解約だけで月額のお支払いは止まります。ゴールド・評価・マッチ履歴は<b>そのまま残ります</b>。</p>
+  <button class="btn" style="margin-top:16px" onclick="S.subActive=false;save();closeSheet();render();toast('サブスクを解約しました。データはそのまま残っています（デモ）')">サブスクだけ解約する</button>
+  <button class="btn ghost" style="margin-top:10px;color:var(--ink-soft)" onclick="taikaiStep3()">退会手続きを続ける</button>`);
+}
+function taikaiStep3(){
+  sheet(`<h3>休止という方法もあります</h3>
+  <p style="font-size:12.5px;line-height:1.8">休止中は検索・おすすめに表示されず、通知も止まります。データはすべて保持され、<b>いつでも再開できます</b>。</p>
+  <button class="btn" style="margin-top:16px" onclick="S.paused=true;save();closeSheet();render();toast('休止しました。再開はいつでもできます')">休止する（データは残る）</button>
+  <button class="btn" style="margin-top:10px;background:var(--danger)" onclick="closeSheet();toast('退会処理はデモのため実行されません')">退会する（すべて削除）</button>
+  <button class="btn ghost" style="margin-top:10px" onclick="closeSheet()">キャンセル</button>`);
 }
 function logout(){ S.role=null; save(); go('#/login'); render(); }
 
@@ -3247,7 +3310,7 @@ function render(){
     'notif-settings': V.notifSettings, 'blocked': V.blocked, 'card': V.card,
     'password': V.password, 'verify': V.verify,
     'articles': V.articles, 'article': ()=>V.article(arg),
-    'me': V.me, 'edit-profile': V.editProfile, 'invite-set': V.inviteSet, 'host-compe': V.hostCompe, 'reco': V.reco, 'likes': V.likes, 'footprints': V.footprints,
+    'me': V.me, 'gold': V.gold, 'edit-profile': V.editProfile, 'invite-set': V.inviteSet, 'host-compe': V.hostCompe, 'reco': V.reco, 'likes': V.likes, 'footprints': V.footprints,
   };
   $app.innerHTML = (map[route] || V.login)();
   window.scrollTo(0,0);
