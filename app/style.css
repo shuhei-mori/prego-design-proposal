@@ -1183,3 +1183,17 @@ select.input{appearance:none;-webkit-appearance:none;background-image:url("data:
 .introE .ie-replay{position:absolute;top:16px;right:16px;z-index:10;width:44px;height:44px;border-radius:50%;background:rgba(8,46,33,.4);backdrop-filter:blur(6px);color:#fff;display:flex;align-items:center;justify-content:center;transition:transform .15s var(--ease)}
 .introE .ie-replay:active{transform:scale(.92) rotate(-40deg)}
 @media(prefers-reduced-motion:reduce){.introE.run *{animation-duration:.01s!important;animation-delay:0s!important}.introE.run .ie-photo{animation:none!important}}
+
+/* ===== お誘いスタンプ（テーマ1・Claude Design作） ===== */
+.stamp-msg{display:block;width:148px;height:148px;flex:none}
+.stamp-svg svg{width:100%;height:100%;filter:drop-shadow(0 3px 5px rgba(20,40,30,.14))}
+.stamp-svg .st{font-family:var(--font-ui);font-weight:900;text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:7px;stroke-linejoin:round}
+@keyframes stTw{0%,100%{opacity:.4;transform:scale(.82)}50%{opacity:1;transform:scale(1)}}
+.stamp-svg .spk>*{transform-box:fill-box;transform-origin:center;animation:stTw 2.6s var(--ease) infinite}
+.stamp-svg .spk>*:nth-child(2){animation-delay:.5s}.stamp-svg .spk>*:nth-child(3){animation-delay:1s}
+.stamp-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:6px}
+.stamp-pick{background:var(--ivory);border:1px solid var(--line);border-radius:16px;padding:8px;aspect-ratio:1;transition:transform .15s var(--ease)}
+.stamp-pick:active{transform:scale(.94)}
+.stamp-pick .stamp-svg,.stamp-pick svg{display:block;width:100%;height:100%}
+.chatbar .stamp-btn{background:var(--paper);color:var(--fairway);border:1.5px solid var(--line)}
+body.no-page-anim .stamp-svg .spk>*{animation-duration:2.6s!important}

@@ -91,7 +91,7 @@ const S = Object.assign({
 const save = () => localStorage.setItem('prego-demo', JSON.stringify(S));
 
 /* ---------- color themes (A/B/C) ---------- */
-const THEME_NAMES = { b:'B ミント', e:'E エメラルド', g:'G ミント×エメラルド', '1':'1 新プラン（チケット制）' };
+const THEME_NAMES = { b:'B ミント', e:'E エメラルド', g:'G ミント×エメラルド', '1':'1 新機能' };
 const isD = () => S.theme === '1';
 const qsTheme = new URLSearchParams(location.search).get('theme');
 if(qsTheme && THEME_NAMES[qsTheme]) S.theme = qsTheme;
@@ -297,6 +297,7 @@ function mergeBridgeF(){
       return;
     }
     if(m.sys) c.msgs.push({who:'sys', t:m.sys});
+    if(m.stamp){ c.msgs.push({who:'them', stamp:m.stamp, tm:m.tm}); return; }
     if(m.t) c.msgs.push({who:'them', t:m.t, tm:m.tm});
   });
   S.bridge.msgs = (S.bridge.msgs||[]).filter(m=>m.tid && m.tid!==fid);
@@ -1179,28 +1180,6 @@ function sendInvite(){
   setTimeout(()=>toast(S.role==='f' ? '誘いを送りました' : '誘いを送りました。謝礼は発生しません'),300);
 }
 function paywall(){
-  if(isD()){
-    sheet(`<div class="paywall">
-    <div class="pw-h">サブスクプラン（チケット制）</div>
-    <p class="muted" style="font-size:10.5px;margin-bottom:10px;text-align:center">無料でも：誘い（全形式・宣言つき）／謝礼オファー（都度）／マッチ当日のメッセージ</p>
-    <ul class="pw-list">
-      <li>新規メッセージと、マッチ翌日以降のやり取りが使い放題</li>
-      <li>プレミアムは謝礼オファーチケットが毎月1枚届く（都度購入より55%お得）</li>
-      <li>チケットは当月限り有効。使わないと失効します</li>
-    </ul>
-    <button class="pw-plan reco" onclick="subscribe('プレミアム')">
-      <span class="pm">プレミアム<small>オファーチケット 月1枚つき</small></span><span class="pp">¥9,800<small>/月</small></span>
-    </button>
-    <button class="pw-plan" onclick="subscribe('スタンダード')">
-      <span class="pm">スタンダード<small>メッセージ＋ラウンド誘い</small></span><span class="pp">¥2,480<small>/月</small></span>
-    </button>
-    <button class="pw-plan" onclick="subscribe('年間プラン')">
-      <span class="pm">年間プラン<small>チケット3枚つき・月あたり¥1,980</small></span><span class="pp">¥23,760<small>/年</small></span>
-    </button>
-    <p class="muted" style="font-size:10.5px;margin-top:10px">チケット1枚＝デビューオファー1回（お相手には謝礼¥4,400が届きます）。上位ランクの方への指名は差額のみ追加。税込・自動更新・いつでも解約可（デモ）</p>
-  </div>`);
-    return;
-  }
   sheet(`<div class="paywall">${pwPlansHtml()}</div>`);
 }
 function modeKeyOf(m){ return m==='ラウンド' ? 'rnd' : m==='インドアゴルフ' ? 'sim' : 'rng'; }
@@ -1208,6 +1187,36 @@ function modeStyleOf(u, m){ const k = modeKeyOf(m); return (u[k] && u[k].st) || 
 function modePriceOf(u, m){
   if(m==='ラウンド') return u.cert ? 22000 : 5500;
   const k = modeKeyOf(m); return (u[k] && u[k].fee) || 1000;
+}
+const STAMPS = [
+  {id:'round', label:'ラウンド行かない？', chr:'ゴルフグリーン', svg:`<svg viewBox="0 0 200 200"><g transform="translate(20 0) scale(.8)"><defs><clipPath id="gc1"><circle cx="100" cy="100" r="97"></circle></clipPath><linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#79cbee"></stop><stop offset="1" stop-color="#c9edfb"></stop></linearGradient><linearGradient id="grs1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7ccf57"></stop><stop offset="1" stop-color="#45a029"></stop></linearGradient></defs><circle cx="100" cy="100" r="97" fill="#eaf6f0"></circle><g clip-path="url(#gc1)"><rect width="200" height="200" fill="url(#sky1)"></rect><ellipse cx="52" cy="42" rx="27" ry="11" fill="#fff" opacity=".92"></ellipse><ellipse cx="150" cy="32" rx="20" ry="8" fill="#fff" opacity=".9"></ellipse><path d="M-2 118Q55 92 118 112Q166 126 202 112L202 202L-2 202Z" fill="#84d461"></path><path d="M-2 140Q70 116 150 138Q180 146 202 138L202 202L-2 202Z" fill="url(#grs1)"></path><rect x="126" y="60" width="3.4" height="94" rx="1.7" fill="#eef2ef"></rect><path d="M129 62L162 71L129 86Z" fill="#e23b3b"></path><ellipse cx="108" cy="152" rx="18" ry="7.4" fill="#2c6a1c"></ellipse><ellipse cx="108" cy="151" rx="12.5" ry="5" fill="#123008"></ellipse><circle cx="78" cy="150" r="12.6" fill="#fff"></circle><circle cx="78" cy="150" r="12.6" fill="none" stroke="#d7e5d8" stroke-width="1"></circle><g fill="#ccd8cd"><circle cx="75" cy="147" r="1"></circle><circle cx="80" cy="146" r="1"></circle><circle cx="82" cy="151" r="1"></circle><circle cx="76" cy="152" r="1"></circle></g></g><g class="spk"><use href="#spark" x="138" y="108" width="24" height="24" fill="#ffd23f"></use><use href="#spark" x="34" y="86" width="18" height="18" fill="#a06bff"></use></g></g><g transform="rotate(-3 100 182)"><text class="st" x="100" y="190" font-size="21" fill="#6a3fb0">ラウンド行かない？</text></g></svg>`},
+  {id:'range', label:'打ちっぱなし行きませんか？', chr:'ダックフック', svg:`<svg viewBox="0 0 200 200"><g transform="translate(30 -2) scale(.7)"><path d="M128 152Q180 116 158 62Q148 36 118 32" stroke="#7fb8ff" stroke-width="4" stroke-dasharray="1 10" fill="none" stroke-linecap="round"></path><circle cx="118" cy="32" r="9" fill="#fff" stroke="#d7e5d8" stroke-width="1"></circle><path d="M86 106L124 144" stroke="#8a9199" stroke-width="4" stroke-linecap="round"></path><path d="M124 144q11 7 3 13q-9 3 -12 -8Z" fill="#5b6770"></path><ellipse cx="74" cy="120" rx="30" ry="26" fill="#ffd23f"></ellipse><ellipse cx="79" cy="130" rx="16" ry="12" fill="#fff4cd"></ellipse><g stroke="#f0902a" stroke-width="3.2" stroke-linecap="round"><path d="M66 144l-2 10"></path><path d="M82 144l2 10"></path></g><ellipse cx="88" cy="106" rx="11" ry="7" fill="#f2c322" transform="rotate(42 88 106)"></ellipse><circle cx="66" cy="82" r="17" fill="#ffd23f"></circle><path d="M52 88q-15 -3 -19 4q7 6 19 3Z" fill="#f0902a"></path><circle cx="63" cy="83" r="2.4" fill="#241c12"></circle><path d="M52 74q3 -15 21 -13q7 2 9 9l-30 9Z" fill="#45a029"></path><rect x="38" y="72" width="22" height="5" rx="2.5" fill="#3f9724"></rect><g class="spk"><use href="#spark" x="152" y="142" width="16" height="16" fill="#ffd23f"></use><use href="#spark" x="32" y="36" width="15" height="15" fill="#a06bff"></use></g></g><g transform="rotate(-3 100 176)"><text class="st" font-size="20" fill="#3f9724"><tspan x="100" y="166">打ちっぱなし</tspan><tspan x="100" y="188">行きませんか？</tspan></text></g></svg>`},
+  {id:'night', label:'ナイター行く？', chr:'ナイターフクロウ', svg:`<svg viewBox="0 0 200 200"><g transform="translate(20 0) scale(.8)"><defs><clipPath id="nc8"><circle cx="100" cy="100" r="97"></circle></clipPath></defs><circle cx="100" cy="100" r="97" fill="#20305c"></circle><g clip-path="url(#nc8)"><circle cx="150" cy="48" r="20" fill="#ffe58a"></circle><circle cx="141" cy="42" r="17" fill="#20305c"></circle><g fill="#fff" opacity=".85"><circle cx="40" cy="44" r="2"></circle><circle cx="64" cy="28" r="1.5"></circle><circle cx="170" cy="92" r="1.7"></circle><circle cx="30" cy="84" r="1.5"></circle></g><path d="M-2 158Q100 134 202 158L202 202 -2 202Z" fill="#2c5a3a"></path><rect x="98" y="92" width="3.4" height="66" rx="1.7" fill="#d9dee2"></rect><path d="M101 96L134 105 101 118Z" fill="#e23b3b"></path><circle cx="146" cy="166" r="7" fill="#fff"></circle><ellipse cx="100" cy="68" rx="20" ry="23" fill="#8a5a34"></ellipse><ellipse cx="100" cy="75" rx="12" ry="13" fill="#c99a6a"></ellipse><path d="M85 50l-5 -10 10 5Z" fill="#8a5a34"></path><path d="M115 50l5 -10 -10 5Z" fill="#8a5a34"></path><g fill="#ffe58a"><circle cx="92" cy="62" r="6.5"></circle><circle cx="108" cy="62" r="6.5"></circle></g><g fill="#241c12"><circle cx="92" cy="62" r="2.8"></circle><circle cx="108" cy="62" r="2.8"></circle></g><path d="M97 69l6 0 -3 5Z" fill="#f0902a"></path><g stroke="#f0902a" stroke-width="2.4" stroke-linecap="round"><path d="M94 89l0 5"></path><path d="M100 90l0 5"></path><path d="M106 89l0 5"></path></g></g></g><g transform="rotate(-3 100 182)"><text class="st" x="100" y="190" font-size="24" fill="#20305c">ナイター行く？</text></g></svg>`},
+  {id:'revenge', label:'リベンジしよう', chr:'ブラックイーグル', svg:`<svg viewBox="0 0 200 200"><g transform="translate(20 4) scale(.8)"><g fill="#161616"><path d="M96 96C40 96 34 44 74 40C52 52 60 78 92 74C58 66 66 40 96 52Z"></path><path d="M92 72C48 60 52 24 84 30C64 38 70 58 96 60Z"></path><path d="M100 108C60 116 40 92 60 78C60 96 84 96 100 90Z"></path><path d="M90 58C58 40 66 14 92 22C72 30 78 46 98 48Z"></path></g><path d="M96 58C108 34 152 40 152 76C152 92 138 100 118 100C100 100 86 88 96 58Z" fill="#fff" stroke="#e6ebe9" stroke-width="1.5"></path><path d="M96 58l-9 -8 11 2 -4 -11 9 8 3 -11 4 12 9 -5 -4 12Z" fill="#fff"></path><path d="M150 72l20 3 -8 13 -14 3Z" fill="#f6b41e"></path><path d="M152 86l14 2 -12 7Z" fill="#df9a10"></path><circle cx="128" cy="70" r="3.2" fill="#161616"></circle><g class="spk"><use href="#spark" x="150" y="118" width="18" height="18" fill="#ffd23f"></use><use href="#spark" x="52" y="120" width="16" height="16" fill="#7fb8ff"></use></g></g><g transform="rotate(-3 100 182)"><text class="st" x="100" y="190" font-size="24" fill="#161616">リベンジしよう</text></g></svg>`},
+  {id:'best', label:'ベストスコアは？', chr:'クールシーガル', svg:`<svg viewBox="0 0 200 200"><g transform="translate(20 4) scale(.8)"><path d="M40 122L72 108L76 130Z" fill="#fff" stroke="#e2ece9" stroke-width="1.4"></path><path d="M44 122l26 -10" stroke="#2fb6ab" stroke-width="4" stroke-linecap="round"></path><path d="M60 120Q64 84 104 86Q133 90 129 118Q124 140 96 140Q66 140 60 120Z" fill="#fff" stroke="#e2ece9" stroke-width="1.5"></path><g stroke="#3bbcae" stroke-width="4" stroke-linecap="round" fill="none"><path d="M74 112q22 -6 40 -2"></path><path d="M72 121q24 -4 44 0"></path><path d="M76 130q20 -2 38 2"></path></g><g stroke="#f0902a" stroke-width="3.6" stroke-linecap="round"><path d="M92 140l-3 16"></path><path d="M106 140l3 16"></path></g><g fill="#f0902a"><path d="M80 156l14 0 -7 6Z"></path><path d="M100 156l14 0 -7 6Z"></path></g><circle cx="114" cy="78" r="18.5" fill="#fff" stroke="#e2ece9" stroke-width="1.5"></circle><path d="M130 80l17 -2 -4 8 -13 3Z" fill="#f5972a"></path><path d="M130 84l13 1 -11 4Z" fill="#e0801a"></path><g fill="#232323"><rect x="101" y="72" width="12.5" height="8.4" rx="3.4"></rect><rect x="115.5" y="72" width="12" height="8.4" rx="3.4"></rect></g><path d="M113.5 75.5h2.2" stroke="#232323" stroke-width="2"></path><path d="M94 70Q114 48 134 70Q114 62 94 70Z" fill="#e2433a"></path><path d="M94 70q20 -7 40 0" stroke="#c5362e" stroke-width="3.4" fill="none" stroke-linecap="round"></path><circle cx="114" cy="50" r="4.2" fill="#fff"></circle><g class="spk"><use href="#spark" x="150" y="86" width="20" height="20" fill="#ffd23f"></use><use href="#spark" x="40" y="70" width="18" height="18" fill="#3bbcae"></use></g></g><g transform="rotate(-3 100 182)"><text class="st" x="100" y="190" font-size="23" fill="#2fb6ab">ベストスコアは？</text></g></svg>`},
+  {id:'morning', label:'朝イチ集合！', chr:'モーニングルースター', svg:`<svg viewBox="0 0 200 200"><g transform="translate(20 0) scale(.8)"><circle cx="158" cy="44" r="14" fill="#ffd23f"></circle><g stroke="#ffd23f" stroke-width="3" stroke-linecap="round"><path d="M158 22l0 -8"></path><path d="M178 34l6 -6"></path><path d="M182 50l8 0"></path><path d="M138 32l-6 -6"></path></g><ellipse cx="92" cy="152" rx="52" ry="8" fill="#d9efe2"></ellipse><g fill="#2e7d6b"><path d="M56 110q-24 -8 -28 -30q18 2 31 18Z"></path><path d="M56 122q-28 0 -38 -18q20 -2 37 8Z"></path></g><g stroke="#f0902a" stroke-width="3.2" stroke-linecap="round"><path d="M78 140l-2 14"></path><path d="M92 140l2 14"></path></g><g fill="#f0902a"><path d="M69 154l14 0 -7 5Z"></path><path d="M87 154l14 0 -7 5Z"></path></g><ellipse cx="84" cy="116" rx="30" ry="26" fill="#fff" stroke="#e2ece9" stroke-width="1.5"></ellipse><path d="M70 110Q66 94 86 92Q100 92 98 104Q96 116 82 118Q70 118 70 110Z" fill="#eef2ef"></path><circle cx="112" cy="78" r="15" fill="#fff" stroke="#e2ece9" stroke-width="1.5"></circle><g fill="#e2433a"><circle cx="105" cy="62" r="5"></circle><circle cx="112" cy="58" r="5.5"></circle><circle cx="119" cy="62" r="5"></circle></g><path d="M114 92q1 9 -5 12q-3 -7 1 -12Z" fill="#e2433a"></path><path d="M126 72l17 -5 -11 9Z" fill="#f0902a"></path><path d="M126 78l13 5 -14 1Z" fill="#e0801a"></path><circle cx="116" cy="71" r="2.4" fill="#241c12"></circle><g stroke="#c9d6e4" stroke-width="3" stroke-linecap="round"><path d="M148 62l10 -7"></path><path d="M150 72l12 -1"></path></g><g class="spk"><use href="#spark" x="36" y="48" width="18" height="18" fill="#ffd23f"></use><use href="#spark" x="156" y="110" width="15" height="15" fill="#a06bff"></use></g></g><g transform="rotate(-3 100 182)"><text class="st" x="100" y="190" font-size="25" fill="#e2433a">朝イチ集合！</text></g></svg>`}
+];
+const SPARK_DEF = '<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="spark" viewBox="-10 -10 20 20"><path d="M0 -9C1.3 -2.5 2.5 -1.3 9 0C2.5 1.3 1.3 2.5 0 9C-1.3 2.5 -2.5 1.3 -9 0C-2.5 -1.3 -1.3 -2.5 0 -9Z"/></symbol></defs></svg>';
+function stampSvg(id){ const s = STAMPS.find(x=>x.id===id); return s ? s.svg : ''; }
+function openStampSheet(id){
+  sheet(`<h3>スタンプ</h3>
+  <p class="muted">お誘いスタンプ（タップで送信）</p>
+  <div class="stamp-grid">${STAMPS.map(s=>`
+    <button class="stamp-pick" onclick="sendStamp('${id}','${s.id}')"><span class="stamp-svg">${s.svg}</span></button>`).join('')}
+  </div>`);
+}
+function sendStamp(id, sid){
+  if(S.role==='m' && !S.subActive && !(isD() && freeMsgOK(id))){ closeSheet(); toast('メッセージ機能にはサブスク登録が必要です'); setTimeout(paywall, 700); return; }
+  let c = S.chats.find(x=>x.id===id);
+  if(!c){ c={id,msgs:[]}; S.chats.unshift(c); }
+  c.msgs.push({who:'me', stamp:sid, tm:'いま'});
+  if(S.role==='m') S.bridge.msgs.push({tid:id, stamp:sid, tm:'いま'});
+  save(); closeSheet(); render();
+  setTimeout(()=>{
+    const c2 = S.chats.find(x=>x.id===id); if(!c2) return;
+    c2.msgs.push({who:'them', t:'（デモ自動返信）スタンプありがとうございます！ぜひ行きましょう', tm:'いま'});
+    save(); if(location.hash==='#/chat/'+id) render();
+  }, 900);
 }
 const MOB_LABELS = { M1:'車あり・送迎できます', M2:'車あり・自分の移動のみ', M3:'車なし・現地集合（電車等）' };
 function wishOf(u){ return u.wish || (u.mob==='f2' ? 'need' : 'no'); }
@@ -1456,7 +1465,7 @@ V.messages = () => {
   const rows = (S.chats||[]).map((c,i)=>{
     const u = find(c.id); const last = c.msgs[c.msgs.length-1] || {};
     const CARD_PV = {match:'マッチが成立しました', invite:'お誘いが届いています', offer:'オファーのやり取り', plan:'当日の段取り', venue:'会場変更の希望', review:'評価のお願い'};
-    const pv = last.who==='card' ? (CARD_PV[last.kind]||'カード') : (last.t || '');
+    const pv = last.stamp ? 'スタンプを送信しました' : last.who==='card' ? (CARD_PV[last.kind]||'カード') : (last.t || '');
     const tm = (last.tm||'').split(' ')[0];
     return `<button class="thread" style="width:100%;text-align:left" onclick="go('#/chat/${c.id}')">
       <img class="av" src="${u.img}" style="width:52px;height:52px">
@@ -1641,6 +1650,11 @@ V.chat = id => {
              </div>`}
       </div>`;
     if(m.who==='sys') return `<div class="msg sys">${m.t}</div>`;
+    if(m.stamp){
+      return m.who==='me'
+        ? `<div class="mrow me"><span class="mmeta">${c.msgs.slice(i+1).some(x=>x.who==='them')?'既読<br>':''}${m.tm}</span><span class="stamp-msg stamp-svg">${stampSvg(m.stamp)}</span></div>`
+        : `<div class="mrow"><span class="stamp-msg stamp-svg">${stampSvg(m.stamp)}</span><span class="mmeta" style="align-self:flex-end">${m.tm||''}</span></div>`;
+    }
     if(m.who==='me'){
       const read = c.msgs.slice(i+1).some(x=>x.who==='them');
       return `<div class="mrow me">
@@ -1667,9 +1681,11 @@ V.chat = id => {
     ${fixbar}
     <div class="chat">${(msgs + matchCard) || `<div class="empty" style="padding-top:60px"><div class="big" style="color:var(--line)">${I.flag.replace('<svg ','<svg width="40" height="40" ')}</div>${esc(u.name)}さんに挨拶してみましょう</div>`}</div>
     <div class="chatbar">
+      ${isD()?`<button class="send stamp-btn" onclick="openStampSheet('${id}')"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M8.6 14.2a4.4 4.4 0 0 0 6.8 0"/><path d="M9.3 10h.01M14.7 10h.01"/></svg></button>`:''}
       <input class="input" id="chat-in" placeholder="メッセージを入力" onkeydown="if(event.key==='Enter')sendMsg('${id}')">
       <button class="send" onclick="sendMsg('${id}')">${I.send}</button>
     </div>
+    ${isD()?SPARK_DEF:''}
   </div>`;
 };
 let settle = {};
@@ -2453,29 +2469,6 @@ function taikai(){
 function logout(){ S.role=null; save(); go('#/login'); render(); }
 
 V.subscription = () => {
-  if(!S.subActive && isD()) return `
-  ${appbar({title:'サブスクリプション', back:true})}
-  <div class="page wrap paywall">
-    <div style="height:10px"></div>
-    <p class="muted" style="text-align:center">お客様のサブスクご利用状況：<b>未加入</b></p>
-    <div class="pw-h" style="margin-top:14px">サブスクプラン（チケット制）</div>
-    <ul class="pw-list">
-      <li>メッセージ・ラウンド誘い（プレー代宣言）が使い放題</li>
-      <li>プレミアムは謝礼オファーチケットが毎月1枚届く</li>
-      <li>年間プランは割引ではなくチケット3枚を付与</li>
-    </ul>
-    <button class="pw-plan reco" onclick="subscribe('プレミアム')">
-      <span class="pm">プレミアム<small>オファーチケット 月1枚つき</small></span><span class="pp">¥9,800<small>/月</small></span>
-    </button>
-    <button class="pw-plan" onclick="subscribe('スタンダード')">
-      <span class="pm">スタンダード<small>メッセージ＋ラウンド誘い</small></span><span class="pp">¥2,480<small>/月</small></span>
-    </button>
-    <button class="pw-plan" onclick="subscribe('年間プラン')">
-      <span class="pm">年間プラン<small>チケット3枚つき・月あたり¥1,980</small></span><span class="pp">¥23,760<small>/年</small></span>
-    </button>
-    <p class="muted" style="font-size:10.5px">チケット1枚＝デビューオファー1回（お相手に謝礼¥4,400）。当月限り有効。税込・自動更新・いつでも解約可（デモ）</p>
-  </div>
-  ${tabbar('my')}${demoPill()}`;
   if(!S.subActive) return `
   ${appbar({title:'サブスクリプション', back:true})}
   <div class="page wrap paywall">
@@ -2491,9 +2484,8 @@ V.subscription = () => {
     <div class="card" style="padding:16px">
       <div class="spec" style="grid-template-columns:1fr">
         <div class="row"><span class="k">ステータス</span><span class="v">利用中</span></div>
-        <div class="row"><span class="k">プラン名</span><span class="v">${isD()?'プレミアム（チケット制）':'12ヶ月プラン（トライアル中）'}</span></div>
-        <div class="row"><span class="k">金額</span><span class="v">${isD()?'¥9,800／月':'¥980／月'}</span></div>
-        ${isD()?`<div class="row"><span class="k">オファーチケット</span><span class="v">残り1枚（7/31失効）</span></div>`:''}
+        <div class="row"><span class="k">プラン名</span><span class="v">3ヶ月プラン（トライアル中）</span></div>
+        <div class="row"><span class="k">金額</span><span class="v">¥1,980／月</span></div>
         <div class="row"><span class="k">次回更新日</span><span class="v">2026/8/11（Stripe自動更新）</span></div>
       </div>
     </div>
