@@ -1196,15 +1196,20 @@ const STAMPS = [
   {id:'best', label:'ベストスコアは？', chr:'クールシーガル', svg:`<svg viewBox="0 0 200 200"><g transform="translate(20 4) scale(.8)"><path d="M40 122L72 108L76 130Z" fill="#fff" stroke="#e2ece9" stroke-width="1.4"></path><path d="M44 122l26 -10" stroke="#2fb6ab" stroke-width="4" stroke-linecap="round"></path><path d="M60 120Q64 84 104 86Q133 90 129 118Q124 140 96 140Q66 140 60 120Z" fill="#fff" stroke="#e2ece9" stroke-width="1.5"></path><g stroke="#3bbcae" stroke-width="4" stroke-linecap="round" fill="none"><path d="M74 112q22 -6 40 -2"></path><path d="M72 121q24 -4 44 0"></path><path d="M76 130q20 -2 38 2"></path></g><g stroke="#f0902a" stroke-width="3.6" stroke-linecap="round"><path d="M92 140l-3 16"></path><path d="M106 140l3 16"></path></g><g fill="#f0902a"><path d="M80 156l14 0 -7 6Z"></path><path d="M100 156l14 0 -7 6Z"></path></g><circle cx="114" cy="78" r="18.5" fill="#fff" stroke="#e2ece9" stroke-width="1.5"></circle><path d="M130 80l17 -2 -4 8 -13 3Z" fill="#f5972a"></path><path d="M130 84l13 1 -11 4Z" fill="#e0801a"></path><g fill="#232323"><rect x="101" y="72" width="12.5" height="8.4" rx="3.4"></rect><rect x="115.5" y="72" width="12" height="8.4" rx="3.4"></rect></g><path d="M113.5 75.5h2.2" stroke="#232323" stroke-width="2"></path><path d="M94 70Q114 48 134 70Q114 62 94 70Z" fill="#e2433a"></path><path d="M94 70q20 -7 40 0" stroke="#c5362e" stroke-width="3.4" fill="none" stroke-linecap="round"></path><circle cx="114" cy="50" r="4.2" fill="#fff"></circle><g class="spk"><use href="#spark" x="150" y="86" width="20" height="20" fill="#ffd23f"></use><use href="#spark" x="40" y="70" width="18" height="18" fill="#3bbcae"></use></g></g><g transform="rotate(-3 100 182)"><text class="st" x="100" y="190" font-size="23" fill="#2fb6ab">ベストスコアは？</text></g></svg>`},
   {id:'morning', label:'朝イチ集合！', chr:'モーニングルースター', svg:`<svg viewBox="0 0 200 200"><g transform="translate(20 0) scale(.8)"><circle cx="158" cy="44" r="14" fill="#ffd23f"></circle><g stroke="#ffd23f" stroke-width="3" stroke-linecap="round"><path d="M158 22l0 -8"></path><path d="M178 34l6 -6"></path><path d="M182 50l8 0"></path><path d="M138 32l-6 -6"></path></g><ellipse cx="92" cy="152" rx="52" ry="8" fill="#d9efe2"></ellipse><g fill="#2e7d6b"><path d="M56 110q-24 -8 -28 -30q18 2 31 18Z"></path><path d="M56 122q-28 0 -38 -18q20 -2 37 8Z"></path></g><g stroke="#f0902a" stroke-width="3.2" stroke-linecap="round"><path d="M78 140l-2 14"></path><path d="M92 140l2 14"></path></g><g fill="#f0902a"><path d="M69 154l14 0 -7 5Z"></path><path d="M87 154l14 0 -7 5Z"></path></g><ellipse cx="84" cy="116" rx="30" ry="26" fill="#fff" stroke="#e2ece9" stroke-width="1.5"></ellipse><path d="M70 110Q66 94 86 92Q100 92 98 104Q96 116 82 118Q70 118 70 110Z" fill="#eef2ef"></path><circle cx="112" cy="78" r="15" fill="#fff" stroke="#e2ece9" stroke-width="1.5"></circle><g fill="#e2433a"><circle cx="105" cy="62" r="5"></circle><circle cx="112" cy="58" r="5.5"></circle><circle cx="119" cy="62" r="5"></circle></g><path d="M114 92q1 9 -5 12q-3 -7 1 -12Z" fill="#e2433a"></path><path d="M126 72l17 -5 -11 9Z" fill="#f0902a"></path><path d="M126 78l13 5 -14 1Z" fill="#e0801a"></path><circle cx="116" cy="71" r="2.4" fill="#241c12"></circle><g stroke="#c9d6e4" stroke-width="3" stroke-linecap="round"><path d="M148 62l10 -7"></path><path d="M150 72l12 -1"></path></g><g class="spk"><use href="#spark" x="36" y="48" width="18" height="18" fill="#ffd23f"></use><use href="#spark" x="156" y="110" width="15" height="15" fill="#a06bff"></use></g></g><g transform="rotate(-3 100 182)"><text class="st" x="100" y="190" font-size="25" fill="#e2433a">朝イチ集合！</text></g></svg>`}
 ];
+function ensureGold(){ if(S.gold!==undefined){ S.goldM=(S.goldM||0)+(S.gold||0); delete S.gold; } }
+function gGold(){ ensureGold(); return S[S.role==='f'?'goldF':'goldM']||0; }
+function gAdd(n){ ensureGold(); const k=S.role==='f'?'goldF':'goldM'; S[k]=(S[k]||0)+n; }
+function bDayKey(){ return S.role==='f'?'loginDayF':'loginDay'; }
+function bLastKey(){ return S.role==='f'?'lastBonusF':'lastBonus'; }
 const BONUS7 = [100,200,300,500,700,1000,3000];
 function todayKey(){ const d=new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
 function maybeLoginBonus(){
   if(!isD() || !S.role) return;
-  if(S.lastBonus === todayKey()) return;
+  if(S[bLastKey()] === todayKey()) return;
   openBonusSheet();
 }
 function openBonusSheet(){
-  const day = ((S.loginDay||0) % 7) + 1;
+  const day = ((S[bDayKey()]||0) % 7) + 1;
   const unit = 'ゴールド';
   const cells = BONUS7.map((amt,i)=>{
     const n = i+1;
@@ -1223,11 +1228,11 @@ function openBonusSheet(){
   <p class="muted" style="font-size:10px;margin-top:6px;text-align:center">ログインが1日空くと1日目に戻ります　<u style="cursor:pointer" onclick="bonusDemoNext()">（デモ）翌日のログインを再現</u></p>`);
 }
 function claimBonus(){
-  const day = ((S.loginDay||0) % 7) + 1;
+  const day = ((S[bDayKey()]||0) % 7) + 1;
   const amt = BONUS7[day-1];
-  S.gold = (S.gold||0) + amt;
-  S.loginDay = (S.loginDay||0) + 1;
-  S.lastBonus = todayKey();
+  gAdd(amt);
+  S[bDayKey()] = (S[bDayKey()]||0) + 1;
+  S[bLastKey()] = todayKey();
   save(); closeSheet(); celebrate();
   setTimeout(()=>toast(`ログインボーナス ${amt.toLocaleString()}ゴールドを受け取りました`), 300);
   render();
@@ -1244,7 +1249,7 @@ V.gold = () => `
   <div class="page wrap" style="padding-bottom:calc(var(--tab-h) + 40px)">
     <div class="card" style="padding:18px 16px;margin-top:12px;text-align:center;background:linear-gradient(120deg,var(--brass-soft),#fff)">
       <div class="muted" style="font-size:10.5px;letter-spacing:.12em">保有ゴールド</div>
-      <div style="font-family:var(--font-num);font-weight:300;font-size:40px;color:var(--brass-ink)">${(S.gold||0).toLocaleString()}<small style="font-size:14px;font-weight:600">　G</small></div>
+      <div style="font-family:var(--font-num);font-weight:300;font-size:40px;color:var(--brass-ink)">${gGold().toLocaleString()}<small style="font-size:14px;font-weight:600">　G</small></div>
       <div class="muted" style="font-size:10.5px">ログインボーナスやイベントで貯まります</div>
     </div>
     <div class="sec-h" style="padding:14px 2px 8px"><span class="t">交換できる特典</span></div>
@@ -1255,7 +1260,7 @@ V.gold = () => `
           <b style="font-size:12.5px">${it.t}</b>
           <div class="muted" style="font-size:10.5px">${it.s}</div>
         </div>
-        <button class="btn sm ${(S.gold||0)>=it.g?'':'ghost'}" style="flex:none" ${(S.gold||0)>=it.g?`onclick="exchangeGold(${i})"`:'disabled'}>${it.g.toLocaleString()} G</button>
+        <button class="btn sm ${gGold()>=it.g?'':'ghost'}" style="flex:none" ${gGold()>=it.g?`onclick="exchangeGold(${i})"`:'disabled'}>${it.g.toLocaleString()} G</button>
       </div>`).join('')}
     </div>
     <p class="muted" style="font-size:10px;margin-top:12px">交換した特典は即時反映されます（デモ）。ゴールドの有効期限は最終ログインから180日です</p>
@@ -1263,12 +1268,12 @@ V.gold = () => `
   ${tabbar('my')}${demoPill()}`;
 function exchangeGold(i){
   const it = GOLD_ITEMS[i];
-  if((S.gold||0) < it.g) return;
-  S.gold -= it.g; save(); celebrate();
+  if(gGold() < it.g) return;
+  gAdd(-it.g); save(); celebrate();
   setTimeout(()=>toast(`「${it.t}」と交換しました`), 300);
   render();
 }
-function bonusDemoNext(){ S.lastBonus = null; save(); openBonusSheet(); }
+function bonusDemoNext(){ S[bLastKey()] = null; save(); openBonusSheet(); }
 const SPARK_DEF = '<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="spark" viewBox="-10 -10 20 20"><path d="M0 -9C1.3 -2.5 2.5 -1.3 9 0C2.5 1.3 1.3 2.5 0 9C-1.3 2.5 -2.5 1.3 -9 0C-2.5 -1.3 -1.3 -2.5 0 -9Z"/></symbol></defs></svg>';
 function stampSvg(id){ const s = STAMPS.find(x=>x.id===id); return s ? s.svg : ''; }
 function openStampSheet(id){
@@ -2538,7 +2543,7 @@ V.settings = () => `
 function taikai(){
   const isM = S.role==='m';
   const rows = [
-    ['ゴールド', `${(S.gold||0).toLocaleString()} G`, 'ログインボーナスで貯めた分がすべて失効'],
+    ['ゴールド', `${gGold().toLocaleString()} G`, 'ログインボーナスで貯めた分がすべて失効'],
     isM ? ['ポイント', `${S.points.toLocaleString()} pt`, '未使用分も返金されません']
         : ['コイン', `${S.coins.toLocaleString()} コイン`, '未出金分は受け取れなくなります'],
     ['評価・実績', '★4.9・認定', '積み上げた評価と認定は復元できません'],
@@ -3292,7 +3297,7 @@ V.hostCompe = () => {
 
 /* ---- ミニゲーム（テーマ1・サンプル） ---- */
 function goldHud(){
-  return `<div class="g-hud"><span>${I.trophy.replace('width="22" height="22"','width="14" height="14"')} <b style="font-family:var(--font-num)">${(S.gold||0).toLocaleString()}</b> G</span></div>`;
+  return `<div class="g-hud"><span>${I.trophy.replace('width="22" height="22"','width="14" height="14"')} <b style="font-family:var(--font-num)">${gGold().toLocaleString()}</b> G</span></div>`;
 }
 V.games = () => `
   ${appbar({title:'ゴルフゲーム', back:true})}
@@ -3319,7 +3324,7 @@ let gp = {pow:0, ang:0, dir:1, adir:1, raf:null, state:'ready', combo:0, left:5,
 V.gputt = () => `
   ${appbar({title:'ワングリップパター', back:true, noBell:true})}
   <div class="page nofoot g-page">
-    <div class="g-stats"><span>コンボ <b id="gp-combo">×${gp.combo||'-'}</b></span><span>残り <b id="gp-left">${gp.left}</b> 打</span><span>獲得 <b id="gp-sum">${gp.sum}</b> G</span><span class="gs-gold">${I.trophy.replace('width="22" height="22"','width="13" height="13"')} <b>${(S.gold||0).toLocaleString()}</b></span></div>
+    <div class="g-stats"><span>コンボ <b id="gp-combo">×${gp.combo||'-'}</b></span><span>残り <b id="gp-left">${gp.left}</b> 打</span><span>獲得 <b id="gp-sum">${gp.sum}</b> G</span><span class="gs-gold">${I.trophy.replace('width="22" height="22"','width="13" height="13"')} <b>${gGold().toLocaleString()}</b></span></div>
     <div class="gp-field prem" id="gp-field" onclick="gpTap()">
       <div class="gp-cup"><span class="gp-hole"></span><span class="gp-flag"><svg width="34" height="56" viewBox="0 0 34 56" fill="none"><path d="M6 4v48" stroke="#F4F7F4" stroke-width="3" stroke-linecap="round"/><path class="gp-flagcloth" d="M8 6l22 6-22 9z" fill="#E23B3B"/></svg></span></div>
       <div class="gp-orbit" id="gp-orbit"><span class="gp-oball"></span></div>
@@ -3406,7 +3411,7 @@ function gpCupIn(fromRim, showR, o){
   if(!fromRim){ const ball=document.getElementById('gp-ball'); ball.style.transition='transform .25s var(--ease), opacity .25s'; ball.style.opacity='0'; }
   gp.combo=Math.min(5, gp.combo+1);
   const g = 50*gp.combo;
-  S.gold=(S.gold||0)+g; gp.sum+=g; save();
+  gAdd(g); gp.sum+=g; save();
   document.getElementById('gp-combo').textContent='×'+gp.combo;
   document.getElementById('gp-sum').textContent=gp.sum;
   showR(fromRim?'ぐるっと回って…カップイン！':'ナイスパット！カップイン', 'in', g);
@@ -3416,8 +3421,8 @@ function gpDone(){ gp.state='done'; const b=document.getElementById('gp-btn'); i
 function gpNext(){ if(gp.left<=0){ gpRefill(); return; } gpAim(); }
 function gpRefill(){
   sheet(`<h3>本日の無料5打が終了しました</h3>
-  <p class="muted">100ゴールドで5打追加できます（保有 ${(S.gold||0).toLocaleString()} G）</p>
-  <button class="btn brass" style="margin-top:12px" ${(S.gold||0)>=100?'':'disabled'} onclick="S.gold-=100;save();gp.left=5;closeSheet();gpAim();document.getElementById('gp-left').textContent=gp.left;toast('5打追加しました（-100G）')">100Gで5打追加</button>
+  <p class="muted">100ゴールドで5打追加できます（保有 ${gGold().toLocaleString()} G）</p>
+  <button class="btn brass" style="margin-top:12px" ${gGold()>=100?'':'disabled'} onclick="gAdd(-100);save();gp.left=5;closeSheet();gpAim();document.getElementById('gp-left').textContent=gp.left;toast('5打追加しました（-100G）')">100Gで5打追加</button>
   <button class="btn ghost" style="margin-top:10px" onclick="closeSheet()">また明日</button>`);
 }
 
@@ -3439,7 +3444,7 @@ const GD_GOLFER = `<svg id="gd-golfer" width="110" height="130" viewBox="0 0 110
 V.gdrive = () => `
   ${appbar({title:'ドラコンメーター', back:true, noBell:true})}
   <div class="page nofoot g-page">
-    <div class="g-stats"><span>ベスト <b id="gd-best">${gd.best||'-'}</b> y</span><span>残り <b id="gd-left">${gd.left}</b> 打</span><span class="gs-gold">${I.trophy.replace('width="22" height="22"','width="13" height="13"')} <b>${(S.gold||0).toLocaleString()}</b></span></div>
+    <div class="g-stats"><span>ベスト <b id="gd-best">${gd.best||'-'}</b> y</span><span>残り <b id="gd-left">${gd.left}</b> 打</span><span class="gs-gold">${I.trophy.replace('width="22" height="22"','width="13" height="13"')} <b>${gGold().toLocaleString()}</b></span></div>
     <div class="gd-scene" id="gd-scene">
       <div class="gd-sun"></div>
       <div class="gd-fair"></div>
@@ -3518,7 +3523,7 @@ function gdLand(dist){
   if(dist>=300){ msg='モンスター級！300y超え！！'; g=100; celebrate(); }
   else if(dist>=280){ msg='ビッグドライブ！'; g=30; celebrate(); }
   else if(dist<200){ msg='チョロ…ドンマイ'; g=0; }
-  S.gold=(S.gold||0)+g; save();
+  gAdd(g); save();
   if(dist>gd.best){ gd.best=dist; el('gd-best').textContent=gd.best; msg+='　自己ベスト更新！'; }
   el('gd-msg').innerHTML=msg+(g?`　<b style="color:var(--brass-ink)">+${g} G</b>`:'');
   el('gd-btn').textContent='もう1打';
@@ -3526,8 +3531,8 @@ function gdLand(dist){
 }
 function gdRefill(){
   sheet(`<h3>本日の無料5打が終了しました</h3>
-  <p class="muted">100ゴールドで5打追加できます（保有 ${(S.gold||0).toLocaleString()} G）</p>
-  <button class="btn brass" style="margin-top:12px" ${(S.gold||0)>=100?'':'disabled'} onclick="S.gold-=100;save();gd.left=5;closeSheet();document.getElementById('gd-left').textContent=gd.left;toast('5打追加しました（-100G）')">100Gで5打追加</button>
+  <p class="muted">100ゴールドで5打追加できます（保有 ${gGold().toLocaleString()} G）</p>
+  <button class="btn brass" style="margin-top:12px" ${gGold()>=100?'':'disabled'} onclick="gAdd(-100);save();gd.left=5;closeSheet();document.getElementById('gd-left').textContent=gd.left;toast('5打追加しました（-100G）')">100Gで5打追加</button>
   <button class="btn ghost" style="margin-top:10px" onclick="closeSheet()">また明日</button>`);
 }
 
@@ -3583,7 +3588,7 @@ function gwShot(){
     else if(distM<3){ g=30; rank=Math.floor(Math.random()*80)+20; }
     else if(distM<5){ g=10; rank=Math.floor(Math.random()*200)+120; }
     else { rank=Math.floor(Math.random()*400)+400; }
-    S.gold=(S.gold||0)+g; save();
+    gAdd(g); save();
     const r=document.getElementById('gw-result');
     r.innerHTML=`ピンまで <b style="font-family:var(--font-num)">${distM}</b>m・全国${rank}位${g?`<small>+${g} G</small>`:''}`;
     r.className='gp-result show '+(g>=100?'in':'');
@@ -3593,8 +3598,8 @@ function gwShot(){
 }
 function gwRetry(){
   sheet(`<h3>本日の1打は終了しました</h3>
-  <p class="muted">100ゴールドで再挑戦できます（保有 ${(S.gold||0).toLocaleString()} G）</p>
-  <button class="btn brass" style="margin-top:12px" ${(S.gold||0)>=100?'':'disabled'} onclick="S.gold-=100;save();closeSheet();document.getElementById('gw-ball').classList.remove('land');document.getElementById('gw-aimmark').classList.remove('show');document.getElementById('gw-result').className='gp-result';gwInit();document.getElementById('gw-btn').textContent='狙いをタップ → ショット';toast('再挑戦！（-100G）')">100Gで再挑戦</button>
+  <p class="muted">100ゴールドで再挑戦できます（保有 ${gGold().toLocaleString()} G）</p>
+  <button class="btn brass" style="margin-top:12px" ${gGold()>=100?'':'disabled'} onclick="gAdd(-100);save();closeSheet();document.getElementById('gw-ball').classList.remove('land');document.getElementById('gw-aimmark').classList.remove('show');document.getElementById('gw-result').className='gp-result';gwInit();document.getElementById('gw-btn').textContent='狙いをタップ → ショット';toast('再挑戦！（-100G）')">100Gで再挑戦</button>
   <button class="btn ghost" style="margin-top:10px" onclick="closeSheet()">また明日</button>`);
 }
 
