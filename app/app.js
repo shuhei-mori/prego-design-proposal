@@ -2241,6 +2241,7 @@ V.mypage = () => {
     ['プロフィール', I.user, ()=>`go('#/me')`],
     [isF?'コイン':'ポイント', I.coin, ()=>`go('#/points')`],
     ['ゴールド', I.trophy.replace('width="22" height="22"','width="20" height="20"'), ()=>`go('#/gold')`],
+    ...(isD() ? [['ゲーム', '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>', ()=>`go('#/games')`]] : []),
     ['オファー', I.invite, ()=>`go('#/offers')`, offerBadgeCount()||''],
     ['設定', I.gear, ()=>`go('#/settings')`],
     ...(isF && isD() ? [['お誘い設定', I.sliders, ()=>`go('#/invite-set')`]] : []),
@@ -2523,11 +2524,11 @@ V.settings = () => `
       <button class="srow" onclick="go('#/notif-settings')"><span class="ic">${I.bell}</span>通知設定<span class="arw">›</span></button>
       <button class="srow" onclick="go('#/blocked')"><span class="ic">${I.shield}</span>ブロック中<span class="arw">›</span></button>
       ${S.role==='m'?`<button class="srow" onclick="go('#/subscription')"><span class="ic">${I.coin}</span>サブスクリプション<span class="tag2">${S.subActive?'利用中':'未加入'}</span></button>`:''}
-      ${isD()?`<button class="srow" onclick="togglePause()"><span class="ic">${I.bell.replace('width="21" height="21"','width="18" height="18"')}</span>${S.paused?'休止中（タップで再開）':'休止する'}<span class="tag2">${S.paused?'停止中':''}</span></button>`:''}
       <button class="srow" onclick="go('#/card')"><span class="ic">${I.coin}</span>クレジットカード情報の更新<span class="arw">›</span></button>
       <button class="srow" onclick="go('#/password')"><span class="ic">${I.gear}</span>パスワード更新<span class="arw">›</span></button>
       <button class="srow" onclick="go('#/verify')"><span class="ic">${I.shield}</span>本人確認<span class="tag2">${S.verified?'認証済':'要登録'}</span></button>
       <button class="srow" onclick="toast('ドライバー認証：免許証・任意保険を確認します（デモ）')"><span class="ic">${I.car}</span>ドライバー認証<span class="tag2">${S.role==='m'?'認証済':'—'}</span></button>
+      ${isD()?`<button class="srow" onclick="togglePause()"><span class="ic">${I.bell.replace('width="21" height="21"','width="18" height="18"')}</span>${S.paused?'休止中（タップで再開）':'休止する'}<span class="tag2">${S.paused?'停止中':''}</span></button>`:''}
       <button class="srow" onclick="taikai()" style="color:var(--danger)"><span class="ic" style="color:var(--danger)">${I.back}</span>退会<span class="arw">›</span></button>
       <button class="srow" onclick="logout()"><span class="ic">${I.back}</span>ログアウト<span class="arw">›</span></button>
     </div>
@@ -3288,6 +3289,262 @@ V.hostCompe = () => {
   </div>${demoPill()}`;
 };
 
+
+/* ---- ミニゲーム（テーマ1・サンプル） ---- */
+function goldHud(){
+  return `<div class="g-hud"><span>${I.trophy.replace('width="22" height="22"','width="14" height="14"')} <b style="font-family:var(--font-num)">${(S.gold||0).toLocaleString()}</b> G</span></div>`;
+}
+V.games = () => `
+  ${appbar({title:'ゴルフゲーム', back:true})}
+  <div class="page wrap" style="padding-bottom:calc(var(--tab-h) + 40px)">
+    <p class="muted" style="margin:12px 0 12px;font-size:12px">遊ぶとゴールドが貯まります。貯めたゴールドは交換所で特典に</p>
+    ${[
+      ['gputt','沈めろ！ワングリップパター','メーターをタップで止めてパット。カップ縁の攻防にドキドキ','連続カップインでコンボ倍率'],
+      ['gdrive','ドラコンメーター','パワー＋ジャストミートの2段タップで飛距離に挑戦','300y超えでビッグボーナス'],
+      ['gwind','風読みニアピン','風を読んで狙いをずらす1打勝負。ピタリと寄せろ','1m以内で100G'],
+    ].map(([r,t,s,b])=>`
+    <div class="card g-card" onclick="go('#/${r}')">
+      <div style="flex:1">
+        <b style="font-size:13.5px">${t}</b>
+        <div class="muted" style="font-size:10.5px;margin-top:2px">${s}</div>
+        <span class="chip brass" style="font-size:8.5px;margin-top:6px;display:inline-block">${b}</span>
+      </div>
+      <span class="g-go">${I.back.replace('width="20" height="20"','width="16" height="16"').replace('M15 4.5L7.5 12l7.5 7.5','M9 4.5L16.5 12L9 19.5')}</span>
+    </div>`).join('')}
+  </div>
+  ${tabbar('my')}${demoPill()}`;
+
+/* --- A) パター --- */
+let gp = {pow:0, dir:1, raf:null, state:'ready', combo:0, left:5, sum:0};
+V.gputt = () => `
+  ${appbar({title:'ワングリップパター', back:true, noBell:true})}
+  <div class="page nofoot g-page">
+    ${goldHud()}
+    <div class="g-stats"><span>コンボ <b id="gp-combo" style="font-family:var(--font-num)">×${gp.combo||'-'}</b></span><span>残り <b id="gp-left" style="font-family:var(--font-num)">${gp.left}</b> 打</span><span>獲得 <b id="gp-sum" style="font-family:var(--font-num)">${gp.sum}</b> G</span></div>
+    <div class="gp-field" id="gp-field" onclick="gpTap()">
+      <div class="gp-cup"><span class="gp-hole"></span><span class="gp-flag"><svg width="34" height="52" viewBox="0 0 34 52" fill="none"><path d="M6 2v48" stroke="#eef2ef" stroke-width="3" stroke-linecap="round"/><path d="M8 4l22 6-22 9z" fill="#e23b3b"/></svg></span></div>
+      <div class="gp-orbit" id="gp-orbit"><span class="gp-oball"></span></div>
+      <div class="gp-ball" id="gp-ball"></div>
+      <div class="gp-result" id="gp-result"></div>
+    </div>
+    <div class="gp-meterrow">
+      <div class="gp-meter"><div class="gp-zone"></div><div class="gp-fill" id="gp-fill"></div></div>
+      <button class="btn" id="gp-btn" style="flex:1" onclick="gpTap()">タップでストローク</button>
+    </div>
+    <p class="muted" style="font-size:10px;text-align:center;margin-top:8px">緑のゾーンで止めるとカップイン。無料5打/日・追加は100G</p>
+  </div>${demoPill()}`;
+function gpInit(){ gp.state='ready'; gpAim(); }
+function gpAim(){
+  const b = document.getElementById('gp-ball'); if(!b) return;
+  b.style.transition='none'; b.style.transform='none'; b.style.opacity='1';
+  const o = document.getElementById('gp-orbit'); o.className='gp-orbit'; o.style.opacity='0';
+  document.getElementById('gp-result').className='gp-result';
+  document.getElementById('gp-btn').textContent='タップでストローク';
+  gp.state='aim'; gp.pow=0; gp.dir=1;
+  cancelAnimationFrame(gp.raf);
+  const step=()=>{ if(gp.state!=='aim') return;
+    gp.pow += gp.dir*2.1;
+    if(gp.pow>=100){gp.pow=100;gp.dir=-1} if(gp.pow<=0){gp.pow=0;gp.dir=1}
+    const f=document.getElementById('gp-fill'); if(f) f.style.height=gp.pow+'%';
+    gp.raf=requestAnimationFrame(step); };
+  gp.raf=requestAnimationFrame(step);
+}
+function gpTap(){
+  if(gp.state==='done'){ gpNext(); return; }
+  if(gp.state!=='aim') return;
+  if(gp.left<=0){ gpRefill(); return; }
+  gp.state='roll'; cancelAnimationFrame(gp.raf); gp.left--;
+  const el=id=>document.getElementById(id);
+  el('gp-left').textContent=gp.left;
+  const diff = gp.pow - 70;
+  const field = el('gp-field'); const fh = field.clientHeight;
+  const perfect = fh - 100;
+  const travel = Math.max(30, Math.min(fh-40, perfect * (gp.pow/70)));
+  const ball = el('gp-ball');
+  ball.style.transition='transform 1.1s cubic-bezier(.15,.7,.3,1)';
+  ball.style.transform=`translateY(${-travel}px)`;
+  const showR=(txt,cls,g)=>{ const r=el('gp-result'); r.innerHTML=txt+(g?`<small>+${g} G</small>`:''); r.className='gp-result show '+cls; };
+  setTimeout(()=>{
+    if(Math.abs(diff)<=3){ gpCupIn(false, showR); }
+    else if(diff>3 && diff<=6){ gpRim(true, showR); }
+    else if(diff>6 && diff<=10){ gpRim(false, showR); }
+    else if(diff<-3){ gp.combo=0; showR('ショート…','miss'); gpDone(); }
+    else { gp.combo=0; showR('強すぎ！オーバー','miss'); gpDone(); }
+  }, 1120);
+}
+function gpRim(goesIn, showR){
+  const ball=document.getElementById('gp-ball'), o=document.getElementById('gp-orbit');
+  ball.style.opacity='0'; o.style.opacity='1';
+  o.classList.add('spin');
+  setTimeout(()=>{
+    if(goesIn){ o.classList.add('drop'); setTimeout(()=>gpCupIn(true, showR, o), 350); }
+    else{ o.classList.add('out'); gp.combo=0; showR('リップアウト！惜しい…','miss'); gpDone(); }
+  }, 1150);
+}
+function gpCupIn(fromRim, showR, o){
+  if(!fromRim){ const ball=document.getElementById('gp-ball'); ball.style.transition='transform .25s var(--ease), opacity .25s'; ball.style.opacity='0'; }
+  gp.combo=Math.min(5, gp.combo+1);
+  const g = 50*gp.combo;
+  S.gold=(S.gold||0)+g; gp.sum+=g; save();
+  document.getElementById('gp-combo').textContent='×'+gp.combo;
+  document.getElementById('gp-sum').textContent=gp.sum;
+  showR(fromRim?'ぐるっと回って…カップイン！':'ナイスパット！カップイン', 'in', g);
+  celebrate(); gpDone();
+}
+function gpDone(){ gp.state='done'; const b=document.getElementById('gp-btn'); if(b) b.textContent='次の1打へ'; }
+function gpNext(){ if(gp.left<=0){ gpRefill(); return; } gpAim(); }
+function gpRefill(){
+  sheet(`<h3>本日の無料5打が終了しました</h3>
+  <p class="muted">100ゴールドで5打追加できます（保有 ${(S.gold||0).toLocaleString()} G）</p>
+  <button class="btn brass" style="margin-top:12px" ${(S.gold||0)>=100?'':'disabled'} onclick="S.gold-=100;save();gp.left=5;closeSheet();gpAim();document.getElementById('gp-left').textContent=gp.left;toast('5打追加しました（-100G）')">100Gで5打追加</button>
+  <button class="btn ghost" style="margin-top:10px" onclick="closeSheet()">また明日</button>`);
+}
+
+/* --- B) ドラコン --- */
+let gd = {state:'ready', pow:0, meet:0, dir:1, raf:null, best:0, left:5};
+V.gdrive = () => `
+  ${appbar({title:'ドラコンメーター', back:true, noBell:true})}
+  <div class="page nofoot g-page">
+    ${goldHud()}
+    <div class="g-stats"><span>ベスト <b id="gd-best" style="font-family:var(--font-num)">${gd.best||'-'}</b> y</span><span>残り <b id="gd-left" style="font-family:var(--font-num)">${gd.left}</b> 打</span></div>
+    <div class="gd-stage">
+      <div class="gd-num" id="gd-num">---<small>yards</small></div>
+      <div class="gd-msg" id="gd-msg">パワーを決めよう</div>
+      <div class="gd-meter"><div class="gd-zone" id="gd-zone" style="left:58%;width:26%"></div><div class="gd-mark" id="gd-mark"></div></div>
+      <div class="gd-meter" style="margin-top:10px"><div class="gd-zone just" style="left:46%;width:8%"></div><div class="gd-mark" id="gd-mark2" style="opacity:.25"></div></div>
+    </div>
+    <button class="btn" id="gd-btn" onclick="gdTap()">タップでスイング開始</button>
+    <div class="g-rank" id="gd-rank">
+      <div class="sec-h" style="padding:12px 2px 6px"><span class="t" style="font-size:12px">今週のドラコンランキング</span></div>
+      ${[['1','GOLFMAN',312],['2','Dai',298],['3','SHU',287],['4','Nori',280]].map(([r,n,y])=>`<div class="g-rrow"><b style="font-family:var(--font-num)">${r}</b><span>${n}</span><b style="font-family:var(--font-num)">${y}y</b></div>`).join('')}
+    </div>
+  </div>${demoPill()}`;
+function gdInit(){ gd.state='ready'; document.getElementById('gd-btn').textContent='タップでスイング開始'; }
+function gdTap(){
+  const el=id=>document.getElementById(id);
+  if(gd.state==='ready'){
+    if(gd.left<=0){ gdRefill(); return; }
+    gd.state='pow'; gd.pow=0; gd.dir=1;
+    el('gd-msg').textContent='いいところで止めろ！（パワー）';
+    el('gd-btn').textContent='タップでパワー決定';
+    cancelAnimationFrame(gd.raf);
+    const step=()=>{ if(gd.state!=='pow') return; gd.pow+=gd.dir*2.4; if(gd.pow>=100){gd.pow=100;gd.dir=-1} if(gd.pow<=0){gd.pow=0;gd.dir=1} el('gd-mark').style.left=gd.pow+'%'; gd.raf=requestAnimationFrame(step); };
+    gd.raf=requestAnimationFrame(step);
+    return;
+  }
+  if(gd.state==='pow'){
+    gd.state='meet'; cancelAnimationFrame(gd.raf); gd.meet=0; gd.dir=1;
+    el('gd-msg').textContent='ジャストミート！（中央の金ゾーン）';
+    el('gd-btn').textContent='タップでインパクト';
+    el('gd-mark2').style.opacity='1';
+    const step=()=>{ if(gd.state!=='meet') return; gd.meet+=gd.dir*3.1; if(gd.meet>=100){gd.meet=100;gd.dir=-1} if(gd.meet<=0){gd.meet=0;gd.dir=1} el('gd-mark2').style.left=gd.meet+'%'; gd.raf=requestAnimationFrame(step); };
+    gd.raf=requestAnimationFrame(step);
+    return;
+  }
+  if(gd.state==='meet'){
+    gd.state='fly'; cancelAnimationFrame(gd.raf); gd.left--;
+    el('gd-left').textContent=gd.left;
+    const powScore = 100 - Math.min(100, Math.abs(gd.pow-71)*3);
+    const meetScore = 100 - Math.min(100, Math.abs(gd.meet-50)*6);
+    const dist = Math.round(150 + powScore*0.9 + meetScore*0.7 + Math.random()*8);
+    el('gd-msg').textContent='';
+    const t0 = Date.now();
+    const iv = setInterval(()=>{
+      const p = Math.min(1, (Date.now()-t0)/1400);
+      const cur = Math.round(dist * (1-Math.pow(1-p,3)));
+      const n = el('gd-num'); if(n) n.innerHTML=cur+'<small>yards</small>';
+      if(p>=1){ clearInterval(iv); gdLand(dist); }
+    }, 45);
+    return;
+  }
+  if(gd.state==='done'){ gd.state='ready'; el('gd-num').innerHTML='---<small>yards</small>'; el('gd-msg').textContent='パワーを決めよう'; el('gd-mark2').style.opacity='.25'; gdTap(); }
+}
+function gdLand(dist){
+  const el=id=>document.getElementById(id);
+  let msg='ナイスショット', g=10;
+  if(dist>=300){ msg='モンスター級！300y超え！！'; g=100; celebrate(); }
+  else if(dist>=280){ msg='ビッグドライブ！'; g=30; celebrate(); }
+  else if(dist<200){ msg='チョロ…ドンマイ'; g=0; }
+  S.gold=(S.gold||0)+g; save();
+  if(dist>gd.best){ gd.best=dist; el('gd-best').textContent=gd.best; msg+='　自己ベスト更新！'; }
+  el('gd-msg').innerHTML=msg+(g?`　<b style="color:var(--brass-ink)">+${g} G</b>`:'');
+  el('gd-btn').textContent='もう1打';
+  gd.state='done';
+}
+function gdRefill(){
+  sheet(`<h3>本日の無料5打が終了しました</h3>
+  <p class="muted">100ゴールドで5打追加できます（保有 ${(S.gold||0).toLocaleString()} G）</p>
+  <button class="btn brass" style="margin-top:12px" ${(S.gold||0)>=100?'':'disabled'} onclick="S.gold-=100;save();gd.left=5;closeSheet();document.getElementById('gd-left').textContent=gd.left;toast('5打追加しました（-100G）')">100Gで5打追加</button>
+  <button class="btn ghost" style="margin-top:10px" onclick="closeSheet()">また明日</button>`);
+}
+
+/* --- C) 風読みニアピン --- */
+let gw = {state:'ready', windDeg:0, windPow:0, aim:null, left:1};
+V.gwind = () => `
+  ${appbar({title:'風読みニアピン', back:true, noBell:true})}
+  <div class="page nofoot g-page">
+    ${goldHud()}
+    <div class="g-stats"><span>本日の挑戦 <b style="font-family:var(--font-num)">1</b> 打</span><span id="gw-windlab">風 <b style="font-family:var(--font-num)">-</b></span></div>
+    <div class="gw-field" id="gw-field" onclick="gwAim(event)">
+      <div class="gw-green"></div>
+      <div class="gw-pin"><svg width="26" height="44" viewBox="0 0 26 44" fill="none"><path d="M4 2v40" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><path d="M6 3l17 5-17 7z" fill="#e23b3b"/></svg></div>
+      <div class="gw-wind" id="gw-wind">${I.send.replace('width="19" height="19"','width="17" height="17"')}<b id="gw-windval" style="font-family:var(--font-num)">-</b><small>m/s</small></div>
+      <div class="gw-aim" id="gw-aimmark"></div>
+      <div class="gw-ball" id="gw-ball"></div>
+      <div class="gp-result" id="gw-result"></div>
+    </div>
+    <button class="btn" id="gw-btn" onclick="gwShot()">狙いをタップ → ショット</button>
+    <p class="muted" style="font-size:10px;text-align:center;margin-top:8px">風に流されます。風上を狙うのがコツ。1日1打・再挑戦は100G</p>
+  </div>${demoPill()}`;
+function gwInit(){
+  gw.state='aim'; gw.aim=null;
+  gw.windDeg = Math.floor(Math.random()*360);
+  gw.windPow = (2 + Math.random()*6);
+  const w=document.getElementById('gw-wind');
+  if(w){ w.querySelector('svg').style.transform=`rotate(${gw.windDeg}deg)`; document.getElementById('gw-windval').textContent=gw.windPow.toFixed(1); }
+  const lab=document.getElementById('gw-windlab'); if(lab) lab.innerHTML=`風 <b style="font-family:var(--font-num)">${gw.windPow.toFixed(1)}</b> m/s`;
+}
+function gwAim(ev){
+  if(gw.state!=='aim') return;
+  const f=document.getElementById('gw-field').getBoundingClientRect();
+  gw.aim={x:ev.clientX-f.left, y:ev.clientY-f.top};
+  const m=document.getElementById('gw-aimmark');
+  m.style.left=gw.aim.x+'px'; m.style.top=gw.aim.y+'px'; m.classList.add('show');
+}
+function gwShot(){
+  if(gw.state==='done'){ gwRetry(); return; }
+  if(gw.state!=='aim' || !gw.aim){ toast('先にグリーン上の狙いをタップ'); return; }
+  gw.state='fly';
+  const rad=(gw.windDeg-90)*Math.PI/180;
+  const drift=gw.windPow*7;
+  const lx=gw.aim.x+Math.cos(rad)*drift+(Math.random()*14-7);
+  const ly=gw.aim.y+Math.sin(rad)*drift+(Math.random()*14-7);
+  const b=document.getElementById('gw-ball');
+  b.style.left=lx+'px'; b.style.top=ly+'px'; b.classList.add('land');
+  setTimeout(()=>{
+    const f=document.getElementById('gw-field');
+    const px=f.clientWidth/2, py=f.clientHeight/2 - 8;
+    const distM=(Math.hypot(lx-px, ly-py)/14).toFixed(1);
+    let g=0, rank;
+    if(distM<1){ g=100; rank=Math.floor(Math.random()*8)+1; celebrate(); }
+    else if(distM<3){ g=30; rank=Math.floor(Math.random()*80)+20; }
+    else if(distM<5){ g=10; rank=Math.floor(Math.random()*200)+120; }
+    else { rank=Math.floor(Math.random()*400)+400; }
+    S.gold=(S.gold||0)+g; save();
+    const r=document.getElementById('gw-result');
+    r.innerHTML=`ピンまで <b style="font-family:var(--font-num)">${distM}</b>m・全国${rank}位${g?`<small>+${g} G</small>`:''}`;
+    r.className='gp-result show '+(g>=100?'in':'');
+    document.getElementById('gw-btn').textContent='100Gで再挑戦';
+    gw.state='done';
+  }, 900);
+}
+function gwRetry(){
+  sheet(`<h3>本日の1打は終了しました</h3>
+  <p class="muted">100ゴールドで再挑戦できます（保有 ${(S.gold||0).toLocaleString()} G）</p>
+  <button class="btn brass" style="margin-top:12px" ${(S.gold||0)>=100?'':'disabled'} onclick="S.gold-=100;save();closeSheet();document.getElementById('gw-ball').classList.remove('land');document.getElementById('gw-aimmark').classList.remove('show');document.getElementById('gw-result').className='gp-result';gwInit();document.getElementById('gw-btn').textContent='狙いをタップ → ショット';toast('再挑戦！（-100G）')">100Gで再挑戦</button>
+  <button class="btn ghost" style="margin-top:10px" onclick="closeSheet()">また明日</button>`);
+}
+
 /* ---------- router ---------- */
 let _lastRoute = null;
 function render(){
@@ -3310,7 +3567,7 @@ function render(){
     'notif-settings': V.notifSettings, 'blocked': V.blocked, 'card': V.card,
     'password': V.password, 'verify': V.verify,
     'articles': V.articles, 'article': ()=>V.article(arg),
-    'me': V.me, 'gold': V.gold, 'edit-profile': V.editProfile, 'invite-set': V.inviteSet, 'host-compe': V.hostCompe, 'reco': V.reco, 'likes': V.likes, 'footprints': V.footprints,
+    'me': V.me, 'gold': V.gold, 'games': V.games, 'gputt': V.gputt, 'gdrive': V.gdrive, 'gwind': V.gwind, 'edit-profile': V.editProfile, 'invite-set': V.inviteSet, 'host-compe': V.hostCompe, 'reco': V.reco, 'likes': V.likes, 'footprints': V.footprints,
   };
   $app.innerHTML = (map[route] || V.login)();
   window.scrollTo(0,0);
@@ -3318,6 +3575,9 @@ function render(){
   if(route==='reco') setTimeout(bindReco, 0);
   if(!route || route==='login') setTimeout(ieStart, 0);
   if(route==='home') setTimeout(maybeLoginBonus, 700);
+  if(route==='gputt') setTimeout(gpInit, 0);
+  if(route==='gdrive') setTimeout(gdInit, 0);
+  if(route==='gwind') setTimeout(gwInit, 0);
   countUp();
   if(route==='roundlog'){ document.fonts ? document.fonts.ready.then(drawFrame) : drawFrame(); setTimeout(drawFrame,300); }
 }
